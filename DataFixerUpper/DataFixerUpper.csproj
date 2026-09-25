@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>14</LangVersion>
+        <RootNamespace>DataFixerUpper</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+        <IsTrimmable>true</IsTrimmable>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DocumentationFile>XmlDocs.xml</DocumentationFile>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Porting of com.mojang.datafixerupper</Title>
+        <Description>C# porting of com.mojang.datafixerupper.</Description>
+        <Copyright>MIT</Copyright>
+        <PackageTags>datafixerupper, mojang</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="XmlDocs.xml"/>
+        <AdditionalFiles Include="Licenses/*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </AdditionalFiles>
+        <AdditionalFiles Include="LICENSE">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </AdditionalFiles>
+    </ItemGroup>
+</Project>

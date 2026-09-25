@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataFixerUpper", "DataFixerUpper\DataFixerUpper.csproj", "{BCB0238D-3540-4690-85A6-232492572523}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataFixerUpper.Test", "DataFixerUpper.Test\DataFixerUpper.Test.csproj", "{5918C5E5-57B3-43DC-ACC8-36F6A5062FBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCB0238D-3540-4690-85A6-232492572523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCB0238D-3540-4690-85A6-232492572523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCB0238D-3540-4690-85A6-232492572523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCB0238D-3540-4690-85A6-232492572523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5918C5E5-57B3-43DC-ACC8-36F6A5062FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5918C5E5-57B3-43DC-ACC8-36F6A5062FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5918C5E5-57B3-43DC-ACC8-36F6A5062FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5918C5E5-57B3-43DC-ACC8-36F6A5062FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
