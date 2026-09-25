@@ -18,11 +18,11 @@
 
     <ItemGroup>
         <None Include="XmlDocs.xml"/>
-        <AdditionalFiles Include="Licenses/*.*">
+        <None Include="../Licenses/*.txt" >
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </AdditionalFiles>
-        <AdditionalFiles Include="LICENSE">
+        </None>
+        <None Include="../LICENSE">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </AdditionalFiles>
+        </None>
     </ItemGroup>
 </Project>

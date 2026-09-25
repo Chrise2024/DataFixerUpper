@@ -2222,6 +2222,9 @@
             </summary>
             <seealso cref="T:DataFixerUpper.Serialization.DataResult`1"/>
         </member>
+        <member name="M:DataFixerUpper.Serialization.DataResultExtension.GetResult``1(DataFixerUpper.Serialization.DataResult{``0})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DataResultExtension.&lt;G&gt;$CC8E2E87D006B887DA60C2D46A1E7686`1.GetResult"/>
+        </member>
         <member name="M:DataFixerUpper.Serialization.DataResultExtension.GetResultOrDefault``1(DataFixerUpper.Serialization.DataResult{``0},``0)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DataResultExtension.&lt;G&gt;$CC8E2E87D006B887DA60C2D46A1E7686`1.GetResultOrDefault(`0)"/>
         </member>
@@ -2263,6 +2266,12 @@
         </member>
         <member name="M:DataFixerUpper.Serialization.DataResultExtension.Combine``4(DataFixerUpper.Serialization.DataResult{``0},System.Func{``0,``1,``2,``3},DataFixerUpper.Serialization.DataResult{``1},DataFixerUpper.Serialization.DataResult{``2})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DataResultExtension.&lt;G&gt;$CC8E2E87D006B887DA60C2D46A1E7686`1.Combine``3(System.Func{`0,``0,``1,``2},DataFixerUpper.Serialization.DataResult{``0},DataFixerUpper.Serialization.DataResult{``1})"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DataResultExtension.&lt;G&gt;$CC8E2E87D006B887DA60C2D46A1E7686`1.GetResult">
+            <summary>
+            Gets the successful result if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/> or empty value if <see langword="false"/>.
+            </summary>
+            <returns>The successful result or a default value.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DataResultExtension.&lt;G&gt;$CC8E2E87D006B887DA60C2D46A1E7686`1.GetResultOrDefault(`0)">
             <summary>
@@ -4615,6 +4624,19 @@
             <param name="lifecycle">Lifecycle of this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/></param>
             <exception cref="T:System.ArgumentNullException">Any argument is null.</exception>
         </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.IsSuccess">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.SuccessResult">
+            <summary>
+            Represents self.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.ErrorResult">
+            <summary>
+            Error is always <see langword="null"/> if success.
+            </summary>
+        </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.Result">
             <summary>
             Wrapped result.
@@ -4622,11 +4644,6 @@
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.Lifecycle">
             <inheritdoc/>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.ErrorResult">
-            <summary>
-            Error is always <see langword="null"/> if success.
-            </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.HasResultOrPartial">
             <inheritdoc/>
@@ -4687,6 +4704,17 @@
             <param name="partial">Partial value.</param>
             <param name="lifecycle">Lifecycle of this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</param>
         </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.IsSuccess">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.SuccessResult">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.ErrorResult">
+            <summary>
+            Represents self.
+            </summary>
+        </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.Message">
             <summary>
             Error message.
@@ -4697,18 +4725,8 @@
             Partial value of result.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.Result">
-            <summary>
-            Result is always <see langword="null"/> if error.
-            </summary>
-        </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.Lifecycle">
             <inheritdoc/>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.ErrorResult">
-            <summary>
-            Represents self.
-            </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.HasResultOrPartial">
             <inheritdoc/>
@@ -4759,14 +4777,14 @@
             </summary>
             <typeparam name="T">The type of the wrapped result.</typeparam>
         </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult`1.Result">
-            <summary>
-            Gets the successful result.
-            </summary>
-        </member>
         <member name="P:DataFixerUpper.Serialization.DataResult`1.Lifecycle">
             <summary>
             Gets the lifecycle of the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DataResult`1.SuccessResult">
+            <summary>
+            Gets the success result if the operation was successful.
             </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult`1.ErrorResult">
@@ -4813,7 +4831,7 @@
         </member>
         <member name="M:DataFixerUpper.Serialization.DataResult`1.IfSuccess(DataFixerUpper.Utils.Consumer{`0})">
             <summary>
-            If <see cref="M:IsSuccess"/> returns <see langword="true"/> perform the given action on the <see cref="P:Result"/>.
+            If <see cref="M:IsSuccess"/> returns <see langword="true"/> perform the given action on the success result.
             </summary>
             <param name="ifSuccess">Action to perform.</param>
             <returns>Self.</returns>
@@ -5140,41 +5158,37 @@
             <summary>
             First value of tuple.
             </summary>
-            <remarks><see cref="F:System.ValueTuple`2.Item1"/></remarks>
+            <remarks><see cref="F:System.ValueTuple`2.Item1"/>.</remarks>
         </member>
         <member name="P:DataFixerUpper.Extensions.TupleExtension.&lt;G&gt;$B6FEF98A1719AAFE96009C5CC65441CB`2.Second">
             <summary>
             Second value of tuple.
             </summary>
-            <remarks><see cref="F:System.ValueTuple`2.Item2"/></remarks>
+            <remarks><see cref="F:System.ValueTuple`2.Item2"/>.</remarks>
         </member>
         <member name="M:DataFixerUpper.Extensions.TupleExtension.&lt;G&gt;$B6FEF98A1719AAFE96009C5CC65441CB`2.MapFirst``1(System.Func{`0,``0})">
             <summary>
             Transform first value with <paramref name="mapper"/>.
             </summary>
             <param name="mapper">Transformer.</param>
-            <returns></returns>
         </member>
         <member name="M:DataFixerUpper.Extensions.TupleExtension.&lt;G&gt;$B6FEF98A1719AAFE96009C5CC65441CB`2.MapSecond``1(System.Func{`1,``0})">
             <summary>
             Transform second value with <paramref name="mapper"/>.
             </summary>
             <param name="mapper">Transformer.</param>
-            <returns></returns>
         </member>
         <member name="M:DataFixerUpper.Extensions.TupleExtension.&lt;G&gt;$F9A05F0C2727948431BAFCE09F60AA7B`2.MapKey``1(System.Func{`0,``0})">
             <summary>
             Transform key with <paramref name="mapper"/>.
             </summary>
             <param name="mapper">Transformer.</param>
-            <returns></returns>
         </member>
         <member name="M:DataFixerUpper.Extensions.TupleExtension.&lt;G&gt;$F9A05F0C2727948431BAFCE09F60AA7B`2.MapValue``1(System.Func{`1,``0})">
             <summary>
             Transform value with <paramref name="mapper"/>.
             </summary>
             <param name="mapper">Transformer.</param>
-            <returns></returns>
         </member>
         <member name="T:DataFixerUpper.Utils.Either">
             <summary>
@@ -5521,6 +5535,16 @@
         <member name="M:DataFixerUpper.Utils.Optional`1.GetOrDefault">
             <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or <see langword="default"/>.</summary>
             <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="default"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Utils.Optional`1.GetOrDefault(`0)">
+            <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
+            <param name="defaultValue">A value to return if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.</param>
+            <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Utils.Optional`1.GetOrDefault(DataFixerUpper.Utils.Provider{`0})">
+            <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
+            <param name="defaultValue">A value to return if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.</param>
+            <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
         </member>
         <member name="M:DataFixerUpper.Utils.Optional`1.GetOrDefault(DataFixerUpper.Utils.ValueHolder{`0})">
             <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
