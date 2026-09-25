@@ -9,11 +9,20 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>XmlDocs.xml</DocumentationFile>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <Copyright>MIT</Copyright>
+        <IsPackable>true</IsPackable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>Porting of com.mojang.datafixerupper</Title>
         <Description>C# porting of com.mojang.datafixerupper.</Description>
-        <Copyright>MIT</Copyright>
         <PackageTags>datafixerupper, mojang</PackageTags>
+        <PackageProjectUrl>https://github.com/Chrise2024/DataFixerUpper</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Chrise2024/DataFixerUpper</RepositoryUrl>
+        <RepositoryType>Github</RepositoryType>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +30,10 @@
         <None Include="../Licenses/*.txt" >
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Include="../LICENSE">
+        <None Include="../README.md" Pack="true" PackagePath="">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="../LICENSE" Pack="true" PackagePath="">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
