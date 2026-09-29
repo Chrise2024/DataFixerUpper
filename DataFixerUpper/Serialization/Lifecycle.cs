@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 
 namespace DataFixerUpper.Serialization;
 
@@ -9,7 +8,7 @@ namespace DataFixerUpper.Serialization;
 /// Experimental results are may change incompatibly in the future and deprecated results may be removed in the future.
 /// </remarks>
 /// </summary>
-public abstract class Lifecycle : IEquatable<Lifecycle>, IAdditionOperators<Lifecycle, Lifecycle, Lifecycle>, IEqualityOperators<Lifecycle, Lifecycle, bool>
+public abstract class Lifecycle : IEquatable<Lifecycle>
 {
     /// <summary>
     /// Experimental instance.
@@ -93,22 +92,33 @@ public abstract class Lifecycle : IEquatable<Lifecycle>, IAdditionOperators<Life
         return hash.ToHashCode();
     }
 
-    /// <inheritdoc/>
-    public static Lifecycle operator +(Lifecycle lifecycle1, Lifecycle lifecycle2)
+    /// <summary>Adds two values together to compute their sum.</summary>
+    /// <param name="left">The value to which <paramref name="right" /> is added.</param>
+    /// <param name="right">The value which is added to <paramref name="left" />.</param>
+    /// <returns>The sum of <paramref name="left" /> and <paramref name="right" />.</returns>
+    public static Lifecycle operator +(Lifecycle left, Lifecycle right)
     {
-        return lifecycle1.Add(lifecycle2);
+        return left.Add(right);
     }
 
-    /// <inheritdoc/>
-    public static bool operator ==(Lifecycle? lifecycle1, Lifecycle? lifecycle2)
+    /// <summary>Compares two values to determine equality.</summary>
+    /// <param name="left">The value to compare with <paramref name="right" />.</param>
+    /// <param name="right">The value to compare with <paramref name="left" />.</param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    public static bool operator ==(Lifecycle? left, Lifecycle? right)
     {
-        return lifecycle1?.State == lifecycle2?.State;
+        return left?.State == right?.State;
     }
 
-    /// <inheritdoc/>
-    public static bool operator !=(Lifecycle? lifecycle1, Lifecycle? lifecycle2)
+    /// <summary>Compares two values to determine inequality.</summary>
+    /// <param name="left">The value to compare with <paramref name="right" />.</param>
+    /// <param name="right">The value to compare with <paramref name="left" />.</param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
+    public static bool operator !=(Lifecycle? left, Lifecycle? right)
     {
-        return !(lifecycle1 == lifecycle2);
+        return !(left == right);
     }
     
     private bool EqualsCore(Lifecycle? other)

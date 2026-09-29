@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using DataFixerUpper.Extensions;
 
 namespace DataFixerUpper.Utils;
@@ -39,7 +38,7 @@ public static class Optional
 
 /// <summary>Represents universal wrap for nullables, both ref type and value type.</summary>
 /// <typeparam name="T">The underlying type of the <see cref="T:DataFixerUpper.Utils.Optional`1"/> generic type.</typeparam>
-public readonly struct Optional<T> : IEquatable<Optional<T>>, IEqualityOperators<Optional<T>, Optional<T>, bool>
+public readonly struct Optional<T> : IEquatable<Optional<T>>
 {
     /// <summary>
     /// Empty instance.
@@ -61,7 +60,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>, IEqualityOperators
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has a value; <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has no value.
     /// </returns>
-    [MemberNotNullWhen(true, nameof(_value))] 
+    [MemberNotNullWhen(true, nameof(_value))]
     public bool HasValue => _hasValue;
 
     internal Optional(T value)
@@ -188,13 +187,21 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>, IEqualityOperators
         };
     }
 
-    /// <inheritdoc/>
+    /// <summary>Compares two values to determine equality.</summary>
+    /// <param name="left">The value to compare with <paramref name="right" />.</param>
+    /// <param name="right">The value to compare with <paramref name="left" />.</param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
     public static bool operator ==(Optional<T> left, Optional<T> right)
     {
         return left.EqualsCore(right);
     }
 
-    /// <inheritdoc/>
+    /// <summary>Compares two values to determine inequality.</summary>
+    /// <param name="left">The value to compare with <paramref name="right" />.</param>
+    /// <param name="right">The value to compare with <paramref name="left" />.</param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
     public static bool operator !=(Optional<T> left, Optional<T> right)
     {
         return !(left == right);
