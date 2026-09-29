@@ -20,7 +20,7 @@ public sealed class DotnetOps : DynamicOps<object>
     /// Instance of <see cref="T:DataFixerUpper.Serialization.DynamicOps.DotnetOps"/>.
     /// </summary>
     public static readonly DotnetOps Instance = new();
-    
+
     private DotnetOps() { }
 
     /// <inheritdoc/>
@@ -28,13 +28,13 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         return null;
     }
-    
+
     /// <inheritdoc/>
     public override object EmptyMap()
     {
         return new Hashtable(0);
     }
-    
+
     /// <inheritdoc/>
     public override object EmptyList()
     {
@@ -42,7 +42,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override TOther? ConvertTo<TOther>(DynamicOps<TOther> otherOp, object? input) 
+    public override TOther? ConvertTo<TOther>(DynamicOps<TOther> otherOp, object? input)
         where TOther : default
     {
         if (input is null)
@@ -67,20 +67,28 @@ public sealed class DotnetOps : DynamicOps<object>
             return DataResult.CreateSuccess(num);
         }
 
-        if (input is IConvertible c)
+        if (input is not IConvertible c)
         {
-            return DataResult.CreateSuccess(TNumber.CreateSaturating(c.ToDecimal(null)));
+            return DataResult.CreateError<TNumber>($"Not assignable to number: {input}");
         }
 
-        return DataResult.CreateError<TNumber>($"Not a number: {input}");
+        try
+        {
+            TNumber pn = (TNumber) c.ToType(typeof(TNumber), null);
+            return DataResult.CreateSuccess(pn);
+        }
+        catch (InvalidCastException)
+        {
+            return DataResult.CreateError<TNumber>($"Cannot convert number {input} into target type {typeof(TNumber)}.");
+        }
     }
-    
+
     /// <inheritdoc/>
     public override object CreateNumber<TNumber>(TNumber number)
     {
         return number;
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<string> GetStringValue(object? @string)
     {
@@ -91,13 +99,13 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateError<string>($"Not a string: {@string}");
     }
-    
+
     /// <inheritdoc/>
     public override object CreateString(string @string)
     {
         return @string;
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<bool> GetBoolValue(object? @bool)
     {
@@ -108,25 +116,25 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateError<bool>($"Not a bool: {@bool}");
     }
-    
+
     /// <inheritdoc/>
     public override object CreateBoolValue(bool @bool)
     {
         return @bool;
     }
-    
+
     /// <inheritdoc/>
     public override object CreateList(IEnumerable<object?> list)
     {
         return list.ToImmutableList();
     }
-    
+
     /// <inheritdoc/>
     public override object CreateMap(IEnumerable<KeyValuePair<object, object?>> entries)
     {
         return entries.ToImmutableDictionary();
     }
-    
+
     /// <inheritdoc/>
     public override object CreateMap(IEnumerable<KeyValuePair<string, object?>> entries)
     {
@@ -153,9 +161,8 @@ public sealed class DotnetOps : DynamicOps<object>
         }
 
         return DataResult.CreateError($"{nameof(MergeToList)} called with not a list: {list}", Optional.Create(list));
-
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> MergeToList(object? list, IEnumerable<object?> values)
     {
@@ -163,16 +170,15 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess<object>(il.Cast<object?>().Concat(values).ToImmutableList());
         }
-        
+
         if (list is null)
         {
             return DataResult.CreateSuccess<object>(ImmutableList.CreateRange(values));
         }
 
         return DataResult.CreateError($"{nameof(MergeToList)} called with not a list: {list}", Optional.Create(list));
-
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> MergeToMap(object? dict, object key, object? value)
     {
@@ -193,13 +199,13 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateError($"{nameof(MergeToMap)} called with not a dict: {dict}", Optional.Create(dict));
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> MergeToMap(object? dict, string key, object? value)
     {
         return MergeToMap(dict, (object) key, value);
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<object, object?>> values)
     {
@@ -210,7 +216,7 @@ public sealed class DotnetOps : DynamicOps<object>
             builder.AddRange(values);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
         }
-        
+
         if (dict is null)
         {
             return DataResult.CreateSuccess<object>(ImmutableDictionary.CreateRange(values));
@@ -218,7 +224,7 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateError($"{nameof(MergeToMap)} called with not a dict: {dict}", Optional.Create(dict));
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<string, object?>> values)
     {
@@ -232,10 +238,10 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateError<IEnumerable<KeyValuePair<object, object?>>>($"{nameof(GetMapValues)} called with not a dict: {input}");
         }
-        
+
         return DataResult.CreateSuccess(GetDictionaryEntries(id));
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IEnumerable<object?>> GetListValues(object? input)
     {
@@ -246,7 +252,7 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateSuccess(il.Cast<object?>());
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IMapLike<object>> GetMap(object? input)
     {
@@ -257,7 +263,7 @@ public sealed class DotnetOps : DynamicOps<object>
 
         return DataResult.CreateSuccess(IMapLike<object>.ForMap(ImmutableDictionary.CreateRange(GetDictionaryEntries(id)), this));
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> Get(object? input, object key)
     {
@@ -271,25 +277,25 @@ public sealed class DotnetOps : DynamicOps<object>
             ? DataResult.CreateError<object>($"No value found for {key}")
             : DataResult.CreateSuccess(value);
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<object> Get(object? input, string key)
     {
         return Get(input, (object) key);
     }
-    
+
     /// <inheritdoc/>
     public override object? Set(object? input, string key, object? value)
     {
         return Set(input, (object) key, value);
     }
-    
+
     /// <inheritdoc/>
     public override object? Update(object? input, string key, Func<object, object> updater)
     {
         return Update(input, (object) key, updater);
     }
-    
+
     /// <inheritdoc/>
     public override object? Remove(object? input, object key)
     {
@@ -297,25 +303,25 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return input;
         }
-        
+
         ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
         builder.AddRange(id.Cast<DictionaryEntry>().Select(e => KeyValuePair.Create(e.Key, e.Value)));
         builder.Remove(key);
         return builder.ToImmutable();
     }
-    
+
     /// <inheritdoc/>
     public override object? Remove(object? input, string key)
     {
         return Remove(input, (object) key);
     }
-    
+
     /// <inheritdoc/>
     public override object? Copy(object? source)
     {
         return source;
     }
-    
+
     /// <inheritdoc/>
     public override bool IsEmpty([NotNullWhen(false)] object? input)
     {
@@ -361,17 +367,17 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return ImmutableDictionary.CreateBuilder<object, object?>();
         }
-        
+
         protected override DataResult<object> BuildResult(ImmutableDictionary<object, object?>.Builder builder, object? prefix)
         {
             return Ops.MergeToMap(prefix, builder.ToImmutable());
         }
-        
+
         protected override ImmutableDictionary<object, object?>.Builder Append(object key, object? value, ImmutableDictionary<object, object?>.Builder builder)
         {
             return builder.AddAndReturn(key, value);
         }
-        
+
         protected override ImmutableDictionary<object, object?>.Builder Append(string key, object? value, ImmutableDictionary<object, object?>.Builder builder)
         {
             return builder.AddAndReturn((object) key, value);

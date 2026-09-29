@@ -68,13 +68,16 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         {
             return DataResult.CreateError<TNumber>($"{nameof(GetNumberValue)} called with not an number: {input}");
         }
-        
-        if (!decimal.TryParse(jsonValue.ToString(), out decimal num))
+
+        try
+        {
+            decimal num = jsonValue.Deserialize(JsonOpsContext.Default.Decimal);
+            return DataResult.CreateSuccess(TNumber.CreateSaturating(num));
+        }
+        catch
         {
             return DataResult.CreateError<TNumber>($"Cannot parse value of {input}");
         }
-
-        return DataResult.CreateSuccess(TNumber.CreateSaturating(num));
     }
 
     /// <inheritdoc/>
