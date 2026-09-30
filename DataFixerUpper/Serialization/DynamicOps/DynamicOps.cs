@@ -408,6 +408,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual DataResult<TObject> MergeToMap(TObject map, string key, TObject value)
     {
+        ThrowIfKeyNull(key);
+        
         return MergeToMap(map, CreateString(key), value);
     }
 
@@ -608,6 +610,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual DataResult<TObject> Get(TObject input, string key)
     {
+        ThrowIfKeyNull(key);
+        
         return Get(input, CreateString(key));
     }
 
@@ -623,6 +627,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual TObject Set(TObject input, TObject key, TObject value)
     {
+        ThrowIfKeyNull(key);
+        
         if (IsEmpty(input))
         {
             return input;
@@ -643,6 +649,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual TObject Set(TObject input, string key, TObject value)
     {
+        ThrowIfKeyNull(key);
+        
         if (IsEmpty(input))
         {
             return input;
@@ -660,6 +668,8 @@ public abstract class DynamicOps<TObject>
     /// <returns>The modified map, or <paramref name="input"/> itself if it is empty or does not contain <paramref name="key"/>.</returns>
     public virtual TObject Update(TObject input, TObject key, Func<TObject, TObject> updater)
     {
+        ThrowIfKeyNull(key);
+        
         if (IsEmpty(input))
         {
             return input;
@@ -686,6 +696,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual TObject Update(TObject input, string key, Func<TObject, TObject> updater)
     {
+        ThrowIfKeyNull(key);
+        
         return Update(input, CreateString(key), updater);
     }
 
@@ -708,6 +720,8 @@ public abstract class DynamicOps<TObject>
     /// </remarks>
     public virtual TObject Remove(TObject input, string key)
     {
+        ThrowIfKeyNull(key);
+        
         return Remove(input, CreateString(key));
     }
 
@@ -736,5 +750,27 @@ public abstract class DynamicOps<TObject>
     public virtual bool CompressMaps()
     {
         return false;
+    }
+
+    /// <summary>
+    /// Helper to throw <see cref="T:System.ArgumentNullException"/> if key is null.
+    /// </summary>
+    protected static void ThrowIfKeyNull(string key)
+    {
+        if (key is null)
+        {
+            throw new ArgumentNullException(nameof(key), "Key cannot be null");
+        }
+    }
+    
+    /// <summary>
+    /// Helper to throw <see cref="T:System.ArgumentNullException"/> if key is null.
+    /// </summary>
+    protected static void ThrowIfKeyNull(TObject key)
+    {
+        if (key is null)
+        {
+            throw new ArgumentNullException(nameof(key), "Key cannot be null");
+        }
     }
 }

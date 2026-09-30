@@ -338,10 +338,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<JsonNode> MergeToMap(JsonNode map, string key, JsonNode value)
     {
-        if (key is null)
-        {
-            throw new ArgumentNullException(nameof(key));
-        }
+        ThrowIfKeyNull(key);
 
         if (map is not JsonObject && !IsEmpty(map))
         {
@@ -356,10 +353,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<JsonNode> MergeToMap(JsonNode map, JsonNode key, JsonNode value)
     {
-        if (key is null)
-        {
-            throw new ArgumentNullException(nameof(key));
-        }
+        ThrowIfKeyNull(key);
 
         if (key.GetValueKind() != JsonValueKind.String)
         {
@@ -452,6 +446,8 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<JsonNode> Get(JsonNode input, string key)
     {
+        ThrowIfKeyNull(key);
+        
         if (input is not JsonObject jsonObject)
         {
             return DataResult.CreateError<JsonNode>($"{nameof(Get)} called with not a map: {input}");
@@ -466,6 +462,8 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<JsonNode> Get(JsonNode input, JsonNode key)
     {
+        ThrowIfKeyNull(key);
+        
         if (key.GetValueKind() != JsonValueKind.String)
         {
             return DataResult.CreateError<JsonNode>($"Key is not a string: {key}");
@@ -477,6 +475,8 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override JsonNode Remove(JsonNode input, string key)
     {
+        ThrowIfKeyNull(key);
+        
         if (input is not JsonObject jsonObject)
         {
             return input;
@@ -490,6 +490,8 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override JsonNode Remove(JsonNode input, JsonNode key)
     {
+        ThrowIfKeyNull(key);
+        
         if (key.GetValueKind() != JsonValueKind.String)
         {
             return input;
