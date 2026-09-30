@@ -71,18 +71,12 @@ internal sealed class OptionalFieldCodec<T>(
         }
 
         DataResult<T> result = baseCodec.Parse(ops, value);
-        if (result.TryGetResult(out T r))
-        {
-            return DataResult.CreateSuccess(Optional.Create(r), fieldLifecycle);
-        }
-
-        DataResult.Error<T> error = result.ErrorResult;
-        if (lenient)
-        {
+        if (result.IsError && lenient)
+        {            
             return DefaultResult();
         }
 
-        return error.Map(Optional.Create).SetLifecycle(fieldLifecycle);
+        return result.Map(Optional.Create).SetPartial(result.GetResultOrPartial).SetLifecycle(fieldLifecycle);
     }
 
     private DataResult<Optional<T>> DefaultResult()
