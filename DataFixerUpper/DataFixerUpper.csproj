@@ -10,6 +10,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>XmlDocs.xml</DocumentationFile>
         <Version>2.0.0-alpha</Version>
+        <PackageReleaseNotes>Forward to netstandard2.0, align apis to original DFU</PackageReleaseNotes>
     </PropertyGroup>
 
     <PropertyGroup>
