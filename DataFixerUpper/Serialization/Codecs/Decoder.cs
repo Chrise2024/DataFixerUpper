@@ -87,7 +87,7 @@ public abstract partial class DecoderBase<T> : IDecoder<T>
     /// <inheritdoc/>
     public abstract DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : notnull;
-    
+
     /// <inheritdoc/>
     public IDecoder<T> AsDecoder()
     {

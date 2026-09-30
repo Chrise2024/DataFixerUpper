@@ -56,10 +56,11 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             _ => throw new NotSupportedException($"{nameof(ConvertTo)} not supported for {input.GetValueKind()}")
         };
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<byte> GetByteValue(JsonNode input)
-    {if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
         {
             return DataResult.CreateError<byte>($"{nameof(GetByteValue)} called with not a number: {input}");
         }
@@ -87,7 +88,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         {
             return DataResult.CreateError<short>($"{nameof(GetShortValue)} called with not a number: {input}");
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int16));
@@ -217,7 +218,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return DataResult.CreateError<decimal>($"Input is not a valid number: {input}");
         }
     }
-    
+
     /// <inheritdoc/>
     public override JsonNode CreateNumber(decimal value)
     {
@@ -341,7 +342,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         {
             throw new ArgumentNullException(nameof(key));
         }
-        
+
         if (map is not JsonObject && !IsEmpty(map))
         {
             return DataResult.CreateError($"{nameof(MergeToMap)} called with not a map: {map}", Optional.Create(map));
@@ -359,7 +360,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         {
             throw new ArgumentNullException(nameof(key));
         }
-        
+
         if (key.GetValueKind() != JsonValueKind.String)
         {
             return DataResult.CreateError($"Key is not a string: {key}", Optional.Create(map));

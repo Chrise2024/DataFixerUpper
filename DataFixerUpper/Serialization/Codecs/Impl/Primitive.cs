@@ -61,7 +61,7 @@ public sealed class ByteCodec : PrimitiveCodec<byte>
     {
         return ops.GetByteValue(input);
     }
-    
+
     /// <inheritdoc/>
     protected override TObject Write<TObject>(DynamicOps<TObject> ops, byte value)
     {
@@ -159,8 +159,6 @@ public sealed class DoubleCodec : PrimitiveCodec<double>
     }
 }
 
-
-
 /// <summary>
 /// Codec of <see langword="bool"/>.
 /// </summary>
@@ -212,10 +210,9 @@ public sealed class StringCodec : PrimitiveCodec<string>
         {
             if (s.Length < minLength)
             {
-                
                 return DataResult.CreateError<string>($"String {s} is too short: {s.Length}, expected range [{minLength}-{maxLength}]");
             }
-            
+
             if (s.Length > maxLength)
             {
                 return DataResult.CreateError<string>($"String {s} is too long: {s.Length}, expected range [{minLength}-{maxLength}]");
@@ -275,7 +272,7 @@ public sealed class IntListCodec : PrimitiveCodec<IEnumerable<int>>
     {
         return ops.GetIntList(input);
     }
-    
+
     /// <inheritdoc/>
     protected override TObject Write<TObject>(DynamicOps<TObject> ops, IEnumerable<int> value)
     {
@@ -293,7 +290,7 @@ public sealed class LongListCodec : PrimitiveCodec<IEnumerable<long>>
     {
         return ops.GetLongList(input);
     }
-    
+
     /// <inheritdoc/>
     protected override TObject Write<TObject>(DynamicOps<TObject> ops, IEnumerable<long> value)
     {

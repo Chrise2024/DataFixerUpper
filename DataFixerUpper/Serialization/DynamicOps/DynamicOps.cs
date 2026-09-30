@@ -101,7 +101,7 @@ public abstract class DynamicOps<TObject>
     {
         return CreateNumber(value);
     }
-    
+
     /// <summary>
     /// Reads the given <paramref name="input"/> as an <see langword="int"/>.
     /// </summary>
@@ -204,23 +204,24 @@ public abstract class DynamicOps<TObject>
     public DataResult<Stream> GetStream(TObject input)
     {
         return GetList(input).FlatMap(l =>
-        {
-            ImmutableArray<byte>.Builder builder = ImmutableArray.CreateBuilder<byte>();
-            foreach (TObject obj in l)
             {
-                DataResult<decimal> numberResult = GetNumberValue(obj);
-                if (!numberResult.TryGetResult(out decimal number) || number > byte.MaxValue)
+                ImmutableArray<byte>.Builder builder = ImmutableArray.CreateBuilder<byte>();
+                foreach (TObject obj in l)
                 {
-                    builder.Clear();
-                    return DataResult.CreateError<Stream>($"Some elements are not bytes: {input}");
+                    DataResult<decimal> numberResult = GetNumberValue(obj);
+                    if (!numberResult.TryGetResult(out decimal number) || number > byte.MaxValue)
+                    {
+                        builder.Clear();
+                        return DataResult.CreateError<Stream>($"Some elements are not bytes: {input}");
+                    }
+
+                    builder.Add(decimal.ToByte(number));
                 }
 
-                builder.Add(decimal.ToByte(number));
+                byte[] array = builder.ToArray();
+                return DataResult.CreateSuccess<Stream>(new MemoryStream(array, false));
             }
-
-            byte[] array = builder.ToArray();
-            return DataResult.CreateSuccess<Stream>(new MemoryStream(array, false));
-        });
+        );
     }
 
     /// <summary>
@@ -462,7 +463,7 @@ public abstract class DynamicOps<TObject>
     public virtual DataResult<Action<Action<TObject>>> GetListValues(TObject input)
     {
         return GetList(input).Map(MakeForeach);
-        
+
         static Action<Action<TObject>> MakeForeach(IEnumerable<TObject> enumerable)
         {
             return func =>
@@ -519,8 +520,8 @@ public abstract class DynamicOps<TObject>
     /// <param name="input">The serialized map to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if <paramref name="input"/> is not a map.</returns>
     public abstract DataResult<IEnumerable<KeyValuePair<TObject, TObject>>> GetMapValues(TObject input);
-    
-    
+
+
     /// <summary>
     /// Extracts a Consumer from the given value that iterates over the entries of the serialized map. The returned value logically encapsulates a iteration over the entries in the given map, performing some user-specified action on each entry.
     /// </summary>

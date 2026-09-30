@@ -285,7 +285,7 @@ public sealed class RecordCodecBuilderOperator<TInstance> : Applicative<RecordCo
         return Point(field, Lifecycle.CreateDeprecated(since));
     }
 
-    
+
     /// <inheritdoc/>
     public override IApp<RecordCodecBuilder.Mu<TInstance>, T2> Select<T1, T2>(Func<T1, T2> selector, IApp<RecordCodecBuilder.Mu<TInstance>, T1> target)
     {

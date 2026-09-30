@@ -34,7 +34,7 @@ internal sealed class AlternativeCodec<T, TAlt>(Codec<T> codec, Codec<TAlt> altC
         {
             return result;
         }
-        
+
         if (altResult.HasResultOrPartial)
         {
             return altResult.Map(p => p.MapFirst(converter));

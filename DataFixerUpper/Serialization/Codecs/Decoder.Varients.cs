@@ -131,13 +131,13 @@ public abstract partial class DecoderBase<T>
     {
         return new TerminalImpl<T>(this);
     }
-    
+
     /// <inheritdoc/>
     public IDecoder<T>.IBoxed AsBoxed()
     {
         return new BoxedImpl<T>(this);
     }
-    
+
     /// <inheritdoc/>
     public IDecoder<T>.ISimple AsSimple()
     {

@@ -55,7 +55,7 @@ public abstract class DynamicLike<TObject>
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if this value is not a list or contains elements that are not numbers.</returns>
     public abstract DataResult<IEnumerable<int>> AsIntListOpt();
-    
+
     /// <summary>
     /// Reads this value as a list of <see langword="long"/>.
     /// </summary>

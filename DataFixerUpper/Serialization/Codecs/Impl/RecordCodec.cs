@@ -14,19 +14,19 @@ internal sealed class RecordCodec<T>(RecordCodecBuilder<T, T> builder) : MapCode
 {
     private readonly Func<T, IMapEncoder<T>> _encoderDispatcher = builder.EncoderDispatcher;
     private readonly IMapDecoder<T> _decoder = builder.Decoder;
-    
+
     public override ValueHolder<string> CodecNameHolder => $"RecordCodec[{_decoder}]";
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _decoder.GetKeys(ops);
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return _encoderDispatcher.Apply(input).Encode(input, ops, prefix);
     }
-    
+
     public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _decoder.Decode(ops, input);
@@ -45,17 +45,17 @@ internal sealed class MappedRecordEncoder<TInstance, T1, T2>(
 
     private readonly Func<TInstance, T1> _getter = builder.Getter;
     private readonly IMapEncoder<T1> _encoder = builder.EncoderDispatcher.Apply(i);
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _encoder.GetKeys(ops);
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return _encoder.Encode(_getter.Apply(i), ops, prefix);
     }
-    
+
     public override string ToString()
     {
         return $"{_encoder}[Mapped]";
@@ -67,17 +67,17 @@ internal sealed class DependentRecordDecoder<TElement, TField>(
     IMapDecoder<TField> decoder,
     Func<TField, IMapDecoder<TElement>> dispatcher
 ) : MapDecoderBase<TElement>
-{    
+{
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return encoder.GetKeys(ops);
     }
-    
+
     public override DataResult<TElement> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return decoder.Decode(ops, input).Map(dispatcher).FlatMap(eDecoder => eDecoder.Decode(ops, input));
     }
-    
+
     public override string ToString()
     {
         return $"Dependent[{encoder}]";
@@ -101,13 +101,13 @@ internal sealed class LiftedRecordEncoder<TInstance, T1, T2>(
     private readonly IMapEncoder<Func<T1, T2>> _funcEncoder = func.EncoderDispatcher.Apply(i);
     private readonly IMapEncoder<T1> _encoder = builder.EncoderDispatcher.Apply(i);
     private readonly T1 _fromInstance = builder.Getter.Apply(i);
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcEncoder.GetKeys(ops)
             .Concat(_encoder.GetKeys(ops));
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode(_ => input, ops, prefix);
@@ -123,13 +123,13 @@ internal sealed class LiftedRecordDecoder<TInstance, T1, T2>(
 {
     private readonly IMapDecoder<Func<T1, T2>> _funcDecoder = func.Decoder;
     private readonly IMapDecoder<T1> _decoder = builder.Decoder;
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcDecoder.GetKeys(ops)
             .Concat(_decoder.GetKeys(ops));
     }
-    
+
     public override DataResult<T2> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _decoder.Decode(ops, input).FlatMap(t1 => _funcDecoder.Decode(ops, input).Map(f => f.Apply(t1)));
@@ -157,14 +157,14 @@ internal sealed class RecordEncoder2<TInstance, T1, T2, TR>(
     private readonly IMapEncoder<T2> _encoder2 = f2.EncoderDispatcher.Apply(i);
     private readonly T1 _fromInstance1 = f1.Getter.Apply(i);
     private readonly T2 _fromInstance2 = f2.Getter.Apply(i);
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcEncoder.GetKeys(ops)
             .Concat(_encoder1.GetKeys(ops))
             .Concat(_encoder2.GetKeys(ops));
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _) => input, ops, prefix);
@@ -183,14 +183,14 @@ internal sealed class RecordDecoder2<TInstance, T1, T2, TR>(
     private readonly IMapDecoder<Func<T1, T2, TR>> _funcDecoder = func.Decoder;
     private readonly IMapDecoder<T1> _decoder1 = f1.Decoder;
     private readonly IMapDecoder<T2> _decoder2 = f2.Decoder;
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcDecoder.GetKeys(ops)
             .Concat(_decoder1.GetKeys(ops))
             .Concat(_decoder2.GetKeys(ops));
     }
-    
+
     public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(
@@ -228,7 +228,7 @@ internal sealed class RecordEncoder3<TInstance, T1, T2, T3, TR>(
     private readonly T1 _fromInstance1 = f1.Getter.Apply(i);
     private readonly T2 _fromInstance2 = f2.Getter.Apply(i);
     private readonly T3 _fromInstance3 = f3.Getter.Apply(i);
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcEncoder.GetKeys(ops)
@@ -236,7 +236,7 @@ internal sealed class RecordEncoder3<TInstance, T1, T2, T3, TR>(
             .Concat(_encoder2.GetKeys(ops))
             .Concat(_encoder3.GetKeys(ops));
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _, _) => input, ops, prefix);
@@ -258,7 +258,7 @@ internal sealed class RecordDecoder3<TInstance, T1, T2, T3, TR>(
     private readonly IMapDecoder<T1> _decoder1 = f1.Decoder;
     private readonly IMapDecoder<T2> _decoder2 = f2.Decoder;
     private readonly IMapDecoder<T3> _decoder3 = f3.Decoder;
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcDecoder.GetKeys(ops)
@@ -266,7 +266,7 @@ internal sealed class RecordDecoder3<TInstance, T1, T2, T3, TR>(
             .Concat(_decoder2.GetKeys(ops))
             .Concat(_decoder3.GetKeys(ops));
     }
-    
+
     public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(
@@ -309,7 +309,7 @@ internal sealed class RecordEncoder4<TInstance, T1, T2, T3, T4, TR>(
     private readonly T2 _fromInstance2 = f2.Getter.Apply(i);
     private readonly T3 _fromInstance3 = f3.Getter.Apply(i);
     private readonly T4 _fromInstance4 = f4.Getter.Apply(i);
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcEncoder.GetKeys(ops)
@@ -318,7 +318,7 @@ internal sealed class RecordEncoder4<TInstance, T1, T2, T3, T4, TR>(
             .Concat(_encoder3.GetKeys(ops))
             .Concat(_encoder4.GetKeys(ops));
     }
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _, _, _) => input, ops, prefix);
@@ -343,7 +343,7 @@ internal sealed class RecordDecoder4<TInstance, T1, T2, T3, T4, TR>(
     private readonly IMapDecoder<T2> _decoder2 = f2.Decoder;
     private readonly IMapDecoder<T3> _decoder3 = f3.Decoder;
     private readonly IMapDecoder<T4> _decoder4 = f4.Decoder;
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _funcDecoder.GetKeys(ops)
@@ -352,7 +352,7 @@ internal sealed class RecordDecoder4<TInstance, T1, T2, T3, T4, TR>(
             .Concat(_decoder3.GetKeys(ops))
             .Concat(_decoder4.GetKeys(ops));
     }
-    
+
     public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(

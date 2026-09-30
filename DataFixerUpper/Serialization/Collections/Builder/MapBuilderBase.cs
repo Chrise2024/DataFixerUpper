@@ -58,7 +58,7 @@ public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObj
         Builder = Builder.Map(mapperResult);
         return this;
     }
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(string key, TObject value)
     {
@@ -66,7 +66,7 @@ public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObj
         return this;
     }
 
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(string key, DataResult<TObject> value)
     {

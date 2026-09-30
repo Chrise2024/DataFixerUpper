@@ -73,7 +73,7 @@ public sealed class KeyCompressor<TObject>
         {
             return i;
         }
-        
+
         return Compress(_ops.CreateString(key));
     }
 

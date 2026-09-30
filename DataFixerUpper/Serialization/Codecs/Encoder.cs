@@ -71,7 +71,7 @@ public abstract partial class EncoderBase<T> : IEncoder<T>
     /// <inheritdoc/>
     public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : notnull;
-    
+
     /// <inheritdoc/>
     public virtual IEncoder<T> AsEncoder()
     {

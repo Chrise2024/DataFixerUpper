@@ -32,7 +32,7 @@ public static class CodecExtension
         {
             return encoder.Encode(input, ops, ops.Empty());
         }
-        
+
         /// <summary>
         /// Transforms this <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>. to operate on a different type using the given mapping function.
         /// </summary>
@@ -83,7 +83,7 @@ public static class CodecExtension
         {
             return decoder.Decode(dynamic.Ops, dynamic.Value);
         }
-        
+
         /// <summary>
         /// Completely decodes an object from the given <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> data. Any remaining serialized data is discarded.
         /// </summary>
@@ -95,7 +95,7 @@ public static class CodecExtension
         {
             return decoder.Decode(dynamic.Ops, dynamic.Value).Map(result => result.Item1);
         }
-        
+
         /// <summary>
         /// Transforms this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> to operate on a different type using the given mapping function.
         /// </summary>
@@ -139,7 +139,7 @@ public static class CodecExtension
         {
             return codec.WithLifecycle(Lifecycle.CreateDeprecated(since));
         }
-        
+
         /// <summary>
         /// Transforms this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> into another <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> using the given invertible mapping functions.
         /// </summary>
@@ -348,7 +348,7 @@ public static class MapCodecExtension
         {
             return codec.WithLifecycle(Lifecycle.CreateDeprecated(since));
         }
-        
+
         /// <summary>
         /// Transforms this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> into another <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> using the given partially invertible function.
         /// </summary>

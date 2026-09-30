@@ -78,7 +78,7 @@ public abstract partial class Codec<T>
     {
         return new FieldEncoder<T>(name, this);
     }
-    
+
     IMapDecoder<T> IDecoder<T>.Field(string name)
     {
         return new FieldDecoder<T>(name, this);

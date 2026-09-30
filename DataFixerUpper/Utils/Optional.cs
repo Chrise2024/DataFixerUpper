@@ -13,11 +13,13 @@ public static class Optional
     /// </summary>
     /// <param name="value">Value to wrap.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Utils.Optional`1"/> instance.</returns>
-    public static Optional<T> Create<T>(T value)
+#nullable enable
+    public static Optional<T> Create<T>(T? value)
     {
         return value is null ? Optional<T>.Empty : new Optional<T>(value);
     }
-    
+#nullable disable
+
     // public static Optional<T> Create<T>(T? value) where T : struct
     // {
     //     return value.HasValue ? new Optional<T>(value.Value) : Optional<T>.Empty;
@@ -90,10 +92,10 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
         {
             throw new ArgumentNullException(nameof(exceptionProvider));
         }
-        
+
         return HasValue ? _value : throw exceptionProvider.Get();
     }
-    
+
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or <see langword="default"/>.</summary>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="default"/>.</returns>
     public T GetOrDefault()
@@ -137,7 +139,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
         {
             throw new ArgumentNullException(nameof(selector));
         }
-        
+
         return HasValue ? new Optional<TResult>(selector.Apply(_value)) : Optional<TResult>.Empty;
     }
 

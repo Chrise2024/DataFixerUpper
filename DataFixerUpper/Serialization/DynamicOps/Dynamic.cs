@@ -53,7 +53,7 @@ public static class Dynamic
         {
             return ops2.Empty();
         }
-        
+
         if (typeof(T1) == typeof(T2))
         {
             return Unsafe.As<T1, T2>(ref value);
@@ -202,7 +202,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
         {
             return this;
         }
-        
+
         return Map(v => Ops.Set(v, key, value.Value));
     }
 
@@ -350,13 +350,13 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     {
         return Ops.GetStream(Value);
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IEnumerable<int>> AsIntListOpt()
     {
         return Ops.GetIntList(Value);
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IEnumerable<long>> AsLongListOpt()
     {
@@ -402,7 +402,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
         int hash = Ops.GetHashCode();
 
         hash |= Value.GetHashCode() * 31;
-        
+
         return hash;
     }
 
@@ -418,7 +418,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
         {
             return true;
         }
-        
+
         if (Value is null && other.Value is null)
         {
             return true;

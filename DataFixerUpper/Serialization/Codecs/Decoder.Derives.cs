@@ -27,7 +27,7 @@ public abstract partial class DecoderBase<T>
     {
         return new FieldDecoder<T>(name, this);
     }
-    
+
     /// <inheritdoc/>
     public IDecoder<T> PromptPartial(Consumer<string> onError)
     {

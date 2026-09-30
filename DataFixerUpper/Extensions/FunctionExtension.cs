@@ -22,7 +22,7 @@ public static class FunctionExtension
         {
             return t => after(func(t));
         }
-        
+
         /// <summary>
         /// Invoke before <paramref name="func"/>, return value to invoke <paramref name="func"/>.
         /// </summary>

@@ -10,7 +10,7 @@ public abstract partial class Applicative<TFunctor, TMu>
     /// <param name="function">The container containing the transformation function.</param>
     /// <returns>The lifted function.</returns>
     public abstract Func<IApp<TFunctor, T1>, IApp<TFunctor, T2>> Lift<T1, T2>(IApp<TFunctor, Func<T1, T2>> function);
-    
+
     /// <summary>
     /// Lifts a wrapped transformation function into a function between containers.
     /// </summary>

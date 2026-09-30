@@ -37,13 +37,14 @@ public struct ValueHolder<T>
 {
     private Provider<T> _provider;
     private T _value;
+
     /// <summary>
     /// 0 = not initialized
     /// 1 = initialization in progress
     /// 2 = initialized
     /// </summary>
     private int _state;
-    
+
     /// <summary>
     /// Gets the value, initializing it if necessary.
     /// </summary>
@@ -55,7 +56,7 @@ public struct ValueHolder<T>
     /// <param name="initialValue">Value to wrap.</param>
     public ValueHolder(T initialValue)
     {
-        _value = initialValue ?? throw new ArgumentNullException(nameof(initialValue) ,"Cannot assign null value to ValueHolder.");
+        _value = initialValue ?? throw new ArgumentNullException(nameof(initialValue), "Cannot assign null value to ValueHolder.");
         _state = 2;
     }
 
@@ -65,7 +66,7 @@ public struct ValueHolder<T>
     /// <param name="provider">Provider of value.</param>
     public ValueHolder(Provider<T> provider)
     {
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider) ,"Cannot assign null provider to ValueHolder.");
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider), "Cannot assign null provider to ValueHolder.");
         _state = 0;
     }
 
@@ -82,7 +83,7 @@ public struct ValueHolder<T>
             {
                 throw new InvalidOperationException("Provider is null.");
             }
-            
+
             T value;
 
             try
@@ -119,7 +120,7 @@ public struct ValueHolder<T>
     {
         return new ValueHolder<T>(value);
     }
-    
+
     /// <summary>
     /// Implicitly converts a provider to a <see cref="T:DataFixerUpper.Utils.ValueHolder`1"/>.
     /// </summary>

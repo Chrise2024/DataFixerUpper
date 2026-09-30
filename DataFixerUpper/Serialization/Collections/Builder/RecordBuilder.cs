@@ -17,7 +17,7 @@ public abstract class RecordBuilder<TObject>
     /// Gets the ops used to create the serialized keys and values.
     /// </summary>
     public DynamicOps<TObject> Ops { get; }
-    
+
     /// <summary>
     /// Initializes a new instance with the given <paramref name="ops"/>.
     /// </summary>
@@ -162,7 +162,6 @@ public abstract class RecordBuilderBase<TObject, TBuilder> : RecordBuilder<TObje
     where TObject : notnull
 #pragma warning restore CS1712
 {
-
     /// <summary>
     /// Gets or sets the builder that accumulates the serialized values, creating it with <c>InitBuilder</c> on first access.
     /// </summary>
@@ -174,7 +173,7 @@ public abstract class RecordBuilderBase<TObject, TBuilder> : RecordBuilder<TObje
         }
         set;
     }
-    
+
     /// <inheritdoc/>
     protected RecordBuilderBase(DynamicOps<TObject> ops) : base(ops) { }
 

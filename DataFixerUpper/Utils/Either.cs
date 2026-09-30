@@ -219,7 +219,7 @@ file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 
     public override int GetHashCode()
     {
-        int hash = (int)EitherSide.Left;
+        int hash = (int) EitherSide.Left;
         hash |= (_left.GetHashCode() << 1);
         return hash;
     }
@@ -270,7 +270,7 @@ file sealed record EitherRight<TL, TR> : Either<TL, TR>
 
     public override int GetHashCode()
     {
-        int hash = (int)EitherSide.Right;
+        int hash = (int) EitherSide.Right;
         hash |= (_right.GetHashCode() << 1);
         return hash;
     }

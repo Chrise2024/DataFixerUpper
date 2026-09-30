@@ -161,7 +161,7 @@ public abstract partial class MapCodec<T> : CompressorHolder, IMapEncoder<T>, IM
     )
         where TObject : notnull;
 
-    
+
     /// <inheritdoc/>
     public abstract DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
         where TObject : notnull;

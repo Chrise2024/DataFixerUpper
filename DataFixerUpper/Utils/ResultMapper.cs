@@ -19,14 +19,14 @@ public sealed record CodecOrDefaultMapper<T>(ValueHolder<T> ValueHolder, UnaryOp
     /// </summary>
     /// <param name="valueHolder">Default value.</param>
     public CodecOrDefaultMapper(ValueHolder<T> valueHolder) : this(valueHolder, Functions.Identity) { }
-    
+
     /// <summary>
     /// Construct from default value and error handler.
     /// </summary>
     /// <param name="value">Default value.</param>
     /// <param name="onError">Operation on error message.</param>
     public CodecOrDefaultMapper(T value, UnaryOperation<string> onError) : this(Utils.ValueHolder.Create(value), onError) { }
-    
+
     /// <summary>
     /// Construct from default value.
     /// </summary>
@@ -67,14 +67,14 @@ public sealed record MapCodecOrDefaultMapper<T>(ValueHolder<T> ValueHolder, Unar
     /// </summary>
     /// <param name="valueHolder">Default value.</param>
     public MapCodecOrDefaultMapper(ValueHolder<T> valueHolder) : this(valueHolder, Functions.Identity) { }
-    
+
     /// <summary>
     /// Construct from default value and error handler.
     /// </summary>
     /// <param name="value">Default value.</param>
     /// <param name="onError">Operation on error message.</param>
     public MapCodecOrDefaultMapper(T value, UnaryOperation<string> onError) : this(Utils.ValueHolder.Create(value), onError) { }
-   
+
     /// <summary>
     /// Construct from default value.
     /// </summary>

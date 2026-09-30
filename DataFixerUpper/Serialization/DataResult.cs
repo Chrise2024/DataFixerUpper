@@ -38,7 +38,7 @@ public static class DataResult
     {
         return CreateSuccess(result, Lifecycle.Experimental);
     }
-    
+
     /// <summary>
     /// Creates a successful <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> with the given <paramref name="result"/>.
     /// </summary>
@@ -134,12 +134,12 @@ public static class DataResult
         /// <exception cref="ArgumentNullException">Any argument is null.</exception>
         public Success(T result, Lifecycle lifecycle) : base(lifecycle)
         {
-            Result = result ?? throw new ArgumentNullException(nameof(result), "Result for success cannot be null." );
+            Result = result ?? throw new ArgumentNullException(nameof(result), "Result for success cannot be null.");
         }
-        
+
         /// <inheritdoc/>
         public override bool IsSuccess => true;
-        
+
         /// <summary>
         /// Represents self.
         /// </summary>
@@ -156,7 +156,7 @@ public static class DataResult
         /// Wrapped result.
         /// </summary>
         public T Result { get; }
-        
+
         /// <inheritdoc/>
         public override bool HasResultOrPartial => true;
 
@@ -166,14 +166,14 @@ public static class DataResult
             result = Result;
             return true;
         }
-        
+
         /// <inheritdoc/>
         public override bool TryGetResultOrPartial(out T result)
         {
             result = Result;
             return true;
         }
-        
+
         /// <inheritdoc/>
         public override bool TryGetResultOrPartial(out T result, Consumer<string> onError)
         {
@@ -215,10 +215,10 @@ public static class DataResult
                 return CreateSuccess(func.Apply(Result), combinedLifecycle);
             }
 
-            
+
             Error<Func<T, TResult>> errorResult = mapperResult.ErrorResult;
             Optional<Func<T, TResult>> partialMapper = mapperResult.GetResultOrPartial();
-            
+
             return CreateError(errorResult.MessageHolder, partialMapper.Select(m => m.Apply(Result)), combinedLifecycle);
         }
 
@@ -291,7 +291,7 @@ public static class DataResult
         /// <inheritdoc/>
         [JsonIgnore]
         public override Success<T> SuccessResult => throw new InvalidOperationException("This is not a success.");
-        
+
         /// <summary>
         /// Represents self.
         /// </summary>
@@ -425,7 +425,7 @@ public static class DataResult
         {
             return Partial.GetHashCode() + Lifecycle.GetHashCode() * 31;
         }
-        
+
         /// <inheritdoc/>
         public override string ToString()
         {
@@ -443,28 +443,28 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
 {
     private protected DataResult(Lifecycle lifecycle)
     {
-        Lifecycle = lifecycle ?? throw new ArgumentNullException(nameof(lifecycle), "Lifecycle for DataResult cannot be null." );
+        Lifecycle = lifecycle ?? throw new ArgumentNullException(nameof(lifecycle), "Lifecycle for DataResult cannot be null.");
     }
-    
+
     /// <summary>
     /// Gets the lifecycle of the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
     /// </summary>
     public Lifecycle Lifecycle { get; }
-    
+
     /// <summary>
     /// Gets the success result if the operation was successful.
     /// </summary>
     /// <exception cref="InvalidOperationException">If not a success.</exception>
     [JsonIgnore]
     public abstract DataResult.Success<T> SuccessResult { get; }
-    
+
     /// <summary>
     /// Gets the error result if the operation was not successful.
     /// </summary>
     /// <exception cref="InvalidOperationException">If not an exception.</exception>
     [JsonIgnore]
     public abstract DataResult.Error<T> ErrorResult { get; }
-    
+
     /// <summary>
     /// Gets a value indicating whether the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> has a successful result or a partial result.
     /// </summary>
@@ -502,21 +502,21 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <param name="onError">The action to perform if there is an error.</param>
     /// <returns><see langword="true"/> if <see cref="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
     public abstract bool TryGetResultOrPartial(out T result, Consumer<string> onError);
-    
+
     /// <summary>
     /// If <see cref="M:IsSuccess"/> returns <see langword="true"/> perform the given action on the success result.
     /// </summary>
     /// <param name="ifSuccess">Action to perform.</param>
     /// <returns>Self.</returns>
     public abstract DataResult<T> IfSuccess(Consumer<T> ifSuccess);
-    
+
     /// <summary>
     /// If <see cref="M:IsError"/> returns <see langword="true"/> perform the given action on this <see cref="T:DataFixerUpper.Serialization.DataResult.Error`1"/>.
     /// </summary>
     /// <param name="ifError">Action to perform.</param>
     /// <returns>Self.</returns>
     public abstract DataResult<T> IfError(Consumer<DataResult.Error<T>> ifError);
-    
+
     /// <summary>
     /// Projects value of the current <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
     /// </summary>
@@ -524,7 +524,7 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <typeparam name="TResult">The type of the value returned by <paramref name="mapper"/>.</typeparam>
     /// <returns>The transformed <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</returns>
     public abstract DataResult<TResult> Map<TResult>(Func<T, TResult> mapper);
-    
+
     /// <summary>
     /// Projects value of the current <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
     /// </summary>
@@ -532,7 +532,7 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <typeparam name="TResult">The type of the value returned by inner function of <paramref name="mapperResult"/>.</typeparam>
     /// <returns>The transformed <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</returns>
     public abstract DataResult<TResult> Map<TResult>(DataResult<Func<T, TResult>> mapperResult);
-    
+
     /// <summary>
     /// Projects value of the current <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> and flat the nested <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
     /// </summary>
@@ -540,7 +540,7 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <typeparam name="TResult">The type of the inner value returned by <paramref name="mapper"/>.</typeparam>
     /// <returns>The transformed <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</returns>
     public abstract DataResult<TResult> FlatMap<TResult>(Func<T, DataResult<TResult>> mapper);
-    
+
     /// <summary>
     /// Projects value of the current <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, if not a success returns value via the <see cref="T:DataFixerUpper.Serialization.DataResult.Error`1"/>.
     /// </summary>
@@ -549,28 +549,28 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <typeparam name="TResult">The type of the inner value returned by <paramref name="mapper"/>.</typeparam>
     /// <returns>Transformed value of this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> or transformed from <see cref="T:DataFixerUpper.Serialization.DataResult.Error`1"/>.</returns>
     public abstract TResult MapOrDefault<TResult>(Func<T, TResult> mapper, Func<DataResult.Error<T>, TResult> errorMapper);
-    
+
     /// <summary>
     /// Promotes an error with a partial result to a success. If this is a success, it is returned unchanged.
     /// </summary>
     /// <param name="onError">A callback to run on error. It is passed the error string.</param>
     /// <returns>New success <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</returns>
     public abstract DataResult<T> PromotePartial(Consumer<string> onError);
-    
+
     /// <summary>
     /// Set partial value of this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, or do nothing if not an error.
     /// </summary>
     /// <param name="partial">Partial value to set.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> with given partial value.</returns>
     public abstract DataResult<T> SetPartial(ValueHolder<T> partial);
-    
+
     /// <summary>
     /// Applies the given function to the error message contained in this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, or do nothing if not an error.
     /// </summary>
     /// <param name="mapper">Operation on error message.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> with transformed error message.</returns>
     public abstract DataResult<T> MapError(UnaryOperation<string> mapper);
-    
+
     /// <summary>
     /// Returns a <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> with the same value as this <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, but with the provided lifecycle.
     /// </summary>
@@ -601,7 +601,7 @@ public sealed class DataResultOperator : Applicative<DataResult.Mu, DataResultOp
 
     /// <inheritdoc/>
     public abstract class Mu : Applicative.Mu;
-    
+
     /// <summary>
     /// Unbox boxed <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/>.
     /// </summary>

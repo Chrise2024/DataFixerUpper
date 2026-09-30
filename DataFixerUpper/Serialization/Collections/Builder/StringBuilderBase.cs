@@ -25,7 +25,7 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
     /// <param name="builder">The builder to append the entry to.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
     protected abstract TBuilder Append(string key, TObject value, TBuilder builder);
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(TObject key, TObject value)
     {
@@ -37,7 +37,7 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(TObject key, DataResult<TObject> value)
     {
@@ -49,7 +49,7 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(DataResult<TObject> key, DataResult<TObject> value)
     {
@@ -61,14 +61,14 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(string key, TObject value)
     {
         Builder = Builder.Map(builder => Append(key, value, builder));
         return this;
     }
-    
+
     /// <inheritdoc/>
     public override RecordBuilder<TObject> Add(string key, DataResult<TObject> value)
     {

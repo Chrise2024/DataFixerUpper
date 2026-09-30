@@ -14,7 +14,7 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     /// Experimental instance.
     /// </summary>
     public static Lifecycle Experimental => new ExperimentalImpl();
-    
+
     /// <summary>
     /// Stable instance.
     /// </summary>
@@ -75,14 +75,14 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        return obj is Lifecycle other &&  EqualsCore(other);
+        return obj is Lifecycle other && EqualsCore(other);
     }
 
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        int hash = (int)State;
-        
+        int hash = (int) State;
+
         if (State == Lifecycles.Deprecated)
         {
             hash |= (((Deprecated) this).Since << 2);
@@ -119,7 +119,7 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     {
         return !(left == right);
     }
-    
+
     private bool EqualsCore(Lifecycle other)
     {
         return State == other?.State;

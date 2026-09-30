@@ -66,7 +66,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(b);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToByte(input));
@@ -90,7 +90,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(s);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToInt16(input));
@@ -114,7 +114,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(i);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToInt32(input));
@@ -138,7 +138,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(l);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToInt64(input));
@@ -162,7 +162,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(f);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToSingle(input));
@@ -186,7 +186,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(d);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToDouble(input));
@@ -202,7 +202,7 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         return value;
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<decimal> GetNumberValue(object input)
     {
@@ -210,7 +210,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             return DataResult.CreateSuccess(m);
         }
-        
+
         try
         {
             return DataResult.CreateSuccess(Convert.ToDecimal(input));
@@ -220,25 +220,25 @@ public sealed class DotnetOps : DynamicOps<object>
             return DataResult.CreateError<decimal>($"Input not a number: {input}");
         }
     }
-    
+
     /// <inheritdoc/>
     public override object CreateNumber(decimal value)
     {
         return value;
     }
-    
+
     /// <inheritdoc/>
     public override object CreateStream(Stream stream)
     {
         return stream;
     }
-    
+
     /// <inheritdoc/>
     public override object CreateIntList(IEnumerable<int> numbers)
     {
         return numbers.ToImmutableList();
     }
-    
+
     /// <inheritdoc/>
     public override object CreateLongList(IEnumerable<long> numbers)
     {

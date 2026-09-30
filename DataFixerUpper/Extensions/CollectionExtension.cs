@@ -22,7 +22,7 @@ public static class CollectionExtension
             collection.Add(item);
             return collection;
         }
-        
+
         /// <summary>
         /// Add <paramref name="items"/> to <paramref name="collection"/> and return <paramref name="collection"/>.
         /// </summary>
@@ -34,7 +34,7 @@ public static class CollectionExtension
             {
                 collection.Add(item);
             }
-            
+
             return collection;
         }
     }

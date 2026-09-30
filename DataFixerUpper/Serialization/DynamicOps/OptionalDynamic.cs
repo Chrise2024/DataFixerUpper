@@ -22,12 +22,12 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     where TObject : notnull
 {
     private readonly DataResult<Dynamic<TObject>> _delegate = @delegate;
-    
+
     /// <summary>
     /// Gets the wrapped value, or <see langword="null"/> if the wrapped read failed.
     /// </summary>
     public Optional<Dynamic<TObject>> Result => _delegate.GetResult();
-    
+
     /// <summary>
     /// Gets the result of the read that produced this instance.
     /// </summary>
@@ -36,7 +36,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     {
         return _delegate;
     }
-    
+
     /// <summary>
     /// Projects the wrapped value with the given <paramref name="mapper"/>.
     /// </summary>
@@ -47,7 +47,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     {
         return _delegate.Map(mapper);
     }
-    
+
     /// <summary>
     /// Projects the wrapped value with the given <paramref name="mapper"/>.
     /// </summary>
@@ -67,7 +67,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     {
         return Result.GetOrDefault(this.CreateList());
     }
-    
+
     /// <summary>
     /// Gets the wrapped value, or an empty map if the wrapped read failed.
     /// </summary>
@@ -76,7 +76,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     {
         return Result.GetOrDefault(this.CreateMap());
     }
-    
+
     /// <summary>
     /// Invokes <paramref name="action"/> with the wrapped value.
     /// </summary>
@@ -129,13 +129,13 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     {
         return _delegate.FlatMap(dynamic => dynamic.AsStreamOpt());
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IEnumerable<int>> AsIntListOpt()
     {
         return _delegate.FlatMap(dynamic => dynamic.AsIntListOpt());
     }
-    
+
     /// <inheritdoc/>
     public override DataResult<IEnumerable<long>> AsLongListOpt()
     {

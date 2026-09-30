@@ -33,7 +33,7 @@ public static class Functions
     {
         return new KeyValuePair<TKey, TValue>(key, value);
     }
-    
+
     /// <summary>
     /// Function that always returns its input argument.
     /// </summary>

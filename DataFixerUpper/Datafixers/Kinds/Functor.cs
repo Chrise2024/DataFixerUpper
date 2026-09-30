@@ -22,7 +22,6 @@ public abstract class Functor<TFunctor, TMu> : Kind<TFunctor, TMu>
     where TFunctor : Anchor
     where TMu : Functor.Mu
 {
-    
     /// <summary>
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> into container.
     /// </summary>

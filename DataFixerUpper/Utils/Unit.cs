@@ -9,5 +9,6 @@ public sealed class Unit
     /// Gets the single instance of the <see cref="Unit"/> class.
     /// </summary>
     public static Unit Instance => new();
+
     private Unit() { }
 }

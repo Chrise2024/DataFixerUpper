@@ -16,27 +16,27 @@ public abstract class MapLike<TObject> : IEnumerable<KeyValuePair<TObject, TObje
     /// Empty instance.
     /// </summary>
     public static MapLike<TObject> Empty => new EmptyImpl<TObject>();
-    
+
     /// <summary>
     /// Gets the number of key/value pairs contained in the <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/>.
     /// </summary>
     public abstract int Count { get; }
-    
+
     /// <summary>
     /// Gets the value associated with the specified key.
     /// </summary>
     /// <param name="key">The key of the value to get.</param>
     /// <returns>The value associated with the specified key, or <see langword="null"/> if pecified key is not found.</returns>
-    #nullable enable
+#nullable enable
     public abstract TObject? this[TObject key] { get; }
-    
+
     /// <summary>
     /// Gets the value associated with the specified key.
     /// </summary>
     /// <param name="key">The key of the value to get.</param>
     /// <returns>The value associated with the specified key, or <see langword="null"/> if pecified key is not found.</returns>
     public abstract TObject? this[string key] { get; }
-    #nullable restore
+#nullable restore
 
     /// <inheritdoc/>
     public abstract IEnumerator<KeyValuePair<TObject, TObject>> GetEnumerator();
@@ -69,7 +69,7 @@ public abstract class MapLike<TObject> : IEnumerable<KeyValuePair<TObject, TObje
         {
             return Empty;
         }
-        
+
         return new DictImpl<TObject>(ops, map);
     }
 }

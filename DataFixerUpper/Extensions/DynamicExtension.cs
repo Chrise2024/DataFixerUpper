@@ -420,7 +420,7 @@ public static class DynamicExtension
 
             return ImmutableList<int>.Empty;
         }
-        
+
         /// <summary>
         /// Reads this value as a list of <see langword="long"/>, falling back to an empty list.
         /// </summary>
@@ -518,7 +518,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateByte(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -528,7 +528,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateShort(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -538,7 +538,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateInt(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -548,7 +548,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateLong(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -558,7 +558,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateFloat(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -568,7 +568,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateDouble(number));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
@@ -608,7 +608,7 @@ public static class DynamicExtension
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateIntList(numberList));
         }
-        
+
         /// <summary>
         /// Creates a dynamic containing a list of <see langword="long"/> created from the given <paramref name="numberList"/>.
         /// </summary>

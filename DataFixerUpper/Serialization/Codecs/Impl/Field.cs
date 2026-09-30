@@ -72,7 +72,7 @@ internal sealed class OptionalFieldCodec<T>(
 
         DataResult<T> result = baseCodec.Parse(ops, value);
         if (result.IsError && lenient)
-        {            
+        {
             return DefaultResult();
         }
 

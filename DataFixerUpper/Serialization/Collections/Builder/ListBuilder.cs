@@ -28,7 +28,7 @@ public sealed class ListBuilder<TObject> : ListBuilderBase<TObject>
         {
             _builder = _builder.Map(builder => builder.AddAndReturn(value));
         }
-        
+
         return this;
     }
 

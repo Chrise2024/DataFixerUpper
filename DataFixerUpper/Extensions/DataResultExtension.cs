@@ -34,7 +34,7 @@ public static class DataResultExtension
 
             return Optional<T>.Empty;
         }
-        
+
         /// <summary>
         /// Gets the successful result if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/> or a default value if <see langword="false"/>.
         /// </summary>
@@ -49,7 +49,7 @@ public static class DataResultExtension
 
             return defaultValue;
         }
-        
+
         /// <summary>
         /// Gets the successful result if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/> or a default value if <see langword="false"/>.
         /// </summary>
@@ -64,7 +64,7 @@ public static class DataResultExtension
 
             return defaultValue.Get();
         }
-        
+
         /// <summary>
         /// Gets the successful result if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/> or a default value if <see langword="false"/>.
         /// </summary>

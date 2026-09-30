@@ -57,13 +57,13 @@ public abstract class MapDecoderBase<T> : CompressorHolder, IMapDecoder<T>
     {
         return this;
     }
-    
+
     /// <inheritdoc/>
     public virtual IDecoder<T> AsDecoder()
     {
         return new MapDecoderDecoder<T>(this);
     }
-    
+
     /// <inheritdoc/>
     public IMapDecoder<T> WithLifecycle(Lifecycle lifecycle)
     {

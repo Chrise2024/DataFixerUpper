@@ -231,7 +231,7 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
     /// </summary>
     public abstract ValueHolder<string> CodecNameHolder { get; }
 
-    
+
     /// <inheritdoc/>
     public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : notnull;
@@ -273,13 +273,13 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
     {
         return new TerminalImpl<T>(this);
     }
-    
+
     /// <inheritdoc/>
     public IDecoder<T>.IBoxed AsBoxed()
     {
         return new BoxedImpl<T>(this);
     }
-    
+
     /// <inheritdoc/>
     public IDecoder<T>.ISimple AsSimple()
     {

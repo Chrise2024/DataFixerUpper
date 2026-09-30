@@ -108,8 +108,8 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
                     return GetInvalidLength<(T[], TObject)>(objects.Length);
                 }
 
-                ImmutableList<TObject>.Builder fails =System.Collections.Immutable.ImmutableList.CreateBuilder<TObject>();
-                
+                ImmutableList<TObject>.Builder fails = System.Collections.Immutable.ImmutableList.CreateBuilder<TObject>();
+
                 DataResult<Unit> initResult = DataResult.CreateSuccess(Unit.Instance);
                 T[] resultArray = new T[length];
 
@@ -122,7 +122,7 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
                     {
                         resultArray[i] = result.First;
                     }
-                    
+
                     initResult = initResult.CombineStable(Functions.LiftFirst, elementResult);
                 }
 
