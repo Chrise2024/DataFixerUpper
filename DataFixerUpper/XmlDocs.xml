@@ -576,14 +576,14 @@
         </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.MapCodecExtension.&lt;G&gt;$1CA658B8C3A690872EABE72AC270342F`1.GetCompressedBuilder``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})">
             <summary>
-            Creates a new, empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1"/> that accepts values of the given serialized type.
+            Creates a new, empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1"/> that accepts values of the given serialized type.
             </summary>
             <remarks>
             The returned builder will used compressed keys if and only if the serialized type uses compressed keys.
             </remarks>
             <param name="ops">The ops used to create the encoded fields.</param>
             <typeparam name="TObject">The type of the encoded value.</typeparam>
-            <returns>Empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1"/>.</returns>
+            <returns>Empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1"/>.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.MapCodecExtension.&lt;G&gt;$1CA658B8C3A690872EABE72AC270342F`1.CoMap``1(System.Func{``0,`0})">
             <summary>
@@ -1076,19 +1076,9 @@
             Codec of <see langword="byte"/>.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.ByteList">
-            <summary>
-            Codec of list of <see langword="byte"/>.
-            </summary>
-        </member>
         <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Short">
             <summary>
             Codec of <see langword="short"/>.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.ShortList">
-            <summary>
-            Codec of list of <see langword="short"/>.
             </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Int">
@@ -1116,29 +1106,9 @@
             Codec of <see langword="float"/>.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.FloatList">
-            <summary>
-            Codec of list of <see langword="float"/>.
-            </summary>
-        </member>
         <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Double">
             <summary>
             Codec of <see langword="double"/>.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.DoubleList">
-            <summary>
-            Codec of list of <see langword="double"/>.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Decimal">
-            <summary>
-            Codec of <see langword="decimal"/>.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Codec.DecimalList">
-            <summary>
-            Codec of list of <see langword="decimal"/>.
             </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Bool">
@@ -1198,6 +1168,15 @@
             Gets this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.
             </summary>
             <returns>This <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec`1.AsTerminal">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec`1.AsBoxed">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec`1.AsSimple">
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.Codec`1.ToString">
             <inheritdoc/>
@@ -1458,6 +1437,59 @@
             <param name="validator">The function that validates a value, returning a successful result with the validated value or an error.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that validates values before encoding them and after decoding them.</returns>
         </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Decoder">
+            <summary>
+            Static usage for <see langword="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.Unit``1(``0)">
+            <summary>
+            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that performs no deserialization and always returns the given value.
+            </summary>
+            <remarks>
+             Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0})"/> method always returns the instance and its keys is always empty.
+            </remarks>
+            <param name="value">The value to return from the decoder.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that always returns the given value.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.Unit``1(DataFixerUpper.Utils.Provider{``0})">
+            <summary>
+            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that performs no deserialization and always returns the given value.
+            </summary>
+            <remarks>
+             Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0})"/> method always returns the instance and its keys is always empty.
+            </remarks>
+            <param name="value">The value to return from the decoder.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that always returns the given value.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.Error``1(System.String)">
+            <summary>
+            A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that performs no deserialization. Its <see cref="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)"/> always returns the given error.
+            </summary>
+            <param name="message">The error the returned decoder should produce.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that performs no deserialization.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.FromTerminal``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0}.ITerminal)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ITerminal"/>.
+            </summary>
+            <param name="terminal">The terminal decoder.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.FromBoxed``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0}.IBoxed)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.IBoxed"/>.
+            </summary>
+            <param name="boxed">The boxed decoder.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Decoder.FromSimple``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0}.ISimple)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ISimple"/>.
+            </summary>
+            <param name="simple">The simple decoder.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
+        </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IDecoder`1">
             <summary>
             Deserializes (decodes) objects of a given type from a serialized form.
@@ -1465,6 +1497,9 @@
             <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> deserializes.</typeparam>
             <seealso cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>
             <seealso cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>
+            <summary>
+            Static usage for <see langword="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>
+            </summary>
         </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
             <summary>
@@ -1488,33 +1523,6 @@
             </summary>
             <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Unit(`0)">
-            <summary>
-            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that performs no deserialization and always returns the given value.
-            </summary>
-            <remarks>
-             Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0})"/> method always returns the instance and its keys is always empty.
-            </remarks>
-            <param name="value">The value to return from the decoder.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that always returns the given value.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Unit(DataFixerUpper.Utils.Provider{`0})">
-            <summary>
-            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that performs no deserialization and always returns the given value.
-            </summary>
-            <remarks>
-             Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0})"/> method always returns the instance and its keys is always empty.
-            </remarks>
-            <param name="value">The value to return from the decoder.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that always returns the given value.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Error(System.String)">
-            <summary>
-            A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that performs no deserialization. Its <see cref="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)"/> always returns the given error.
-            </summary>
-            <param name="message">The error the returned decoder should produce.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that performs no deserialization.</returns>
-        </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.Field(System.String)">
             <summary>
             Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that decodes objects in a record under a field with the given name. 
@@ -1534,13 +1542,6 @@
             Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ITerminal"/> from this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.
             </summary>
             <returns>The default implementation returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ITerminal"/>.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.FromTerminal(DataFixerUpper.Serialization.Codecs.IDecoder{`0}.ITerminal)">
-            <summary>
-            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ITerminal"/>.
-            </summary>
-            <param name="terminal">The terminal decoder.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ITerminal">
             <summary>
@@ -1569,13 +1570,6 @@
             </summary>
             <returns>The default implementation returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.IBoxed"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.FromBoxed(DataFixerUpper.Serialization.Codecs.IDecoder{`0}.IBoxed)">
-            <summary>
-            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.IBoxed"/>.
-            </summary>
-            <param name="boxed">The boxed decoder.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
-        </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.IBoxed">
             <summary>
             A simple decoder interface that decodes an object from a <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/>.
@@ -1601,13 +1595,6 @@
             </summary>
             <returns>The default implementation returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ISimple"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.FromSimple(DataFixerUpper.Serialization.Codecs.IDecoder{`0}.ISimple)">
-            <summary>
-            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ISimple"/>.
-            </summary>
-            <param name="simple">The simple decoder.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> from the given terminal decoder.</returns>
-        </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IDecoder`1.ISimple">
             <summary>
             A simple decoder interface that completely decodes an object from a <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/>, discarding any remaining serialized data.
@@ -1626,6 +1613,55 @@
             Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that performs the same actions as this simple decoder.
             </summary>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> that returns the result of <see cref="M:DataFixerUpper.Serialization.Codecs.IDecoder`1.ISimple.Decode``1(DataFixerUpper.Serialization.DynamicOps.Dynamic{``0})"/>.</returns>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.DecoderBase`1">
+            <summary>
+            Simple implementation for <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>
+            </summary>
+            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> deserializes.</typeparam>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.AsDecoder">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.Field(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.PromptPartial(DataFixerUpper.Utils.Consumer{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.AsTerminal">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.AsBoxed">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.DecoderBase`1.AsSimple">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Encoder">
+            <summary>
+            Static usage for <see langword="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Encoder.Empty``1">
+            <summary>
+            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that performs no serialization.
+            Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})"/> returns the prefix unchanged and has an empty keys.
+            </summary>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that performs no serialization.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Encoder.Error``1(System.String)">
+            <summary>
+            A <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> that performs no deserialization. Its <see cref="M:DataFixerUpper.Serialization.Codecs.IEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)"/> always returns the given error.
+            </summary>
+            <param name="message">The error the returned encoder should produce.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> that performs no deserialization.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IEncoder`1">
             <summary>
@@ -1658,20 +1694,6 @@
             </summary>
             <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IEncoder`1.Empty">
-            <summary>
-            A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that performs no serialization.
-            Its <see cref="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})"/> returns the prefix unchanged and has an empty keys.
-            </summary>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that performs no serialization.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IEncoder`1.Error(System.String)">
-            <summary>
-            A <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> that performs no deserialization. Its <see cref="M:DataFixerUpper.Serialization.Codecs.IEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)"/> always returns the given error.
-            </summary>
-            <param name="message">The error the returned encoder should produce.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> that performs no deserialization.</returns>
-        </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.IEncoder`1.Field(System.String)">
             <summary>
             Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that encodes objects in a record under a field with the given name. 
@@ -1679,95 +1701,22 @@
             <param name="name">Field name.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that performs the same encoding as this <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>, but places the serialized value in a record under the given field.</returns>
         </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1">
+        <member name="T:DataFixerUpper.Serialization.Codecs.EncoderBase`1">
             <summary>
-            Deserializes (decodes) a fixed set of record fields from a serialized form.
-            </summary>
-            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> deserializes.</typeparam>
-            <seealso cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>
-            <seealso cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0})">
-            <summary>
-            Decodes a value of type <typeparamref name="T"/> from the fields of the given <paramref name="input"/> map.
-            </summary>
-            <param name="ops">The ops that define the form of <paramref name="input"/>.</param>
-            <param name="input">The map that contains the fields to decode.</param>
-            <typeparam name="TObject">The type of the decoded value.</typeparam>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value, or an error if the value cannot be decoded.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.AsMapDecoder">
-            <summary>
-            Gets this implementation viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.
-            </summary>
-            <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.AsDecoder">
-            <summary>
-            Gets this implementation as an <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.
-            </summary>
-            <returns>Decoder backed by this.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
-            <summary>
-            Returns an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that marks every result of this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> with the given <paramref name="lifecycle"/>.
-            </summary>
-            <param name="lifecycle">The lifecycle to apply to the decoded results.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that applies <paramref name="lifecycle"/> to this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
-        </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1">
-            <summary>
-            Simple implementation for <see cref="M:DataFixerUpper.Serialization.Collections.ICompressable.GetCompressor``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})"/>
-            </summary>
-            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> deserializes.</typeparam>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0})">
-            <inheritdoc/>
-        </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1">
-            <summary>
-            Serializes (encodes) a fixed set of record fields to a serialized form.
+            Simple implementation for <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>
             </summary>
             <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> serializes.</typeparam>
-            <seealso cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>
-            <seealso cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
-            <summary>
-            Encodes the given <paramref name="input"/> into the fields of <paramref name="prefix"/>.
-            </summary>
-            <param name="input">The value to encode.</param>
-            <param name="ops">The ops used to create the encoded fields.</param>
-            <param name="prefix">The record builder that receives the encoded fields.</param>
-            <typeparam name="TObject">The type of the encoded value.</typeparam>
-            <returns>The record builder that contains the encoded fields, carrying any errors that occurred while an individual field was encoded.</returns>
+        <member name="M:DataFixerUpper.Serialization.Codecs.EncoderBase`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.AsMapEncoder">
-            <summary>
-            Gets this implementation viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.
-            </summary>
-            <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.</returns>
+        <member name="M:DataFixerUpper.Serialization.Codecs.EncoderBase`1.AsEncoder">
+            <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.AsEncoder">
-            <summary>
-            Gets this implementation as an <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>.
-            </summary>
-            <returns>Encoder backed by this.</returns>
+        <member name="M:DataFixerUpper.Serialization.Codecs.EncoderBase`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
-            <summary>
-            Returns an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that marks every result of this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> with the given <paramref name="lifecycle"/>.
-            </summary>
-            <param name="lifecycle">The lifecycle to apply to the encoded results.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that applies <paramref name="lifecycle"/> to this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.</returns>
-        </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1">
-            <summary>
-            Simple implementation for <see cref="M:DataFixerUpper.Serialization.Collections.ICompressable.GetCompressor``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})"/>
-            </summary>
-            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> serializes.</typeparam>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
+        <member name="M:DataFixerUpper.Serialization.Codecs.EncoderBase`1.Field(System.String)">
             <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.Impl.CodecMapCodec`1">
@@ -1813,25 +1762,71 @@
         <member name="M:DataFixerUpper.Serialization.Codecs.Impl.PrimitiveCodec`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
             <inheritdoc/>
         </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.NumberCodec`1">
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.ByteCodec">
             <summary>
-            Codec of numbers.
+            Codec of <see langword="byte"/>.
             </summary>
-            <typeparam name="TNumber">Base type of number.</typeparam>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.NumberCodec`1.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.ByteCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.NumberCodec`1.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0)">
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.ByteCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Byte)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.NumberCodec`1.Range(`0,`0)">
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.ShortCodec">
             <summary>
-            Create ranged number codec with given gange.
+            Codec of <see langword="short"/>.
             </summary>
-            <param name="min">Min value of the range.</param>
-            <param name="max">Max value of the range.</param>
-            <returns>Ranged number codec.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.ShortCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.ShortCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Int16)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.IntCodec">
+            <summary>
+            Codec of <see langword="int"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.IntCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.IntCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.LongCodec">
+            <summary>
+            Codec of <see langword="long"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.LongCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.LongCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Int64)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.FloatCodec">
+            <summary>
+            Codec of <see langword="float"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.FloatCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.FloatCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.DoubleCodec">
+            <summary>
+            Codec of <see langword="double"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.DoubleCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.DoubleCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Double)">
+            <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.Impl.BooleanCodec">
             <summary>
@@ -1881,18 +1876,26 @@
         <member name="M:DataFixerUpper.Serialization.Codecs.Impl.StreamCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.IO.Stream)">
             <inheritdoc/>
         </member>
-        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.NumberListValuesCodec`1">
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.IntListCodec">
             <summary>
-            Codec of list of numbers.
+            Codec of list of <see langword="int"/>.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Codecs.Impl.NumberListValuesCodec`1.CodecNameHolder">
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.IntListCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.NumberListValuesCodec`1.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.IntListCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Collections.Generic.IEnumerable{System.Int32})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.NumberListValuesCodec`1.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Collections.Generic.IEnumerable{`0})">
+        <member name="T:DataFixerUpper.Serialization.Codecs.Impl.LongListCodec">
+            <summary>
+            Codec of list of <see langword="int"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.LongListCodec.Read``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Impl.LongListCodec.Write``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Collections.Generic.IEnumerable{System.Int64})">
             <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.Impl.TypeDispatchMapCodec`2">
@@ -2019,10 +2022,10 @@
             Gets the name of the <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.
             </summary>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0})">
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0})">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.AsMapEncoder">
@@ -2090,7 +2093,7 @@
             Transforms the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> produced by the encoding and decoding operations of a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.
             </summary>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.IResultMapper.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.IResultMapper.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
             <summary>
             Transforms the result of a decoding operation.
             </summary>
@@ -2100,7 +2103,7 @@
             <typeparam name="TObject">The type of the encoded value.</typeparam>
             <returns>The transformed result.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.IResultMapper.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.IResultMapper.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
             <summary>
             Transforms the result of an encoding operation.
             </summary>
@@ -2215,6 +2218,115 @@
             </summary>
             <param name="validator">The function that validates a value, returning a successful result with the validated value or an error.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that validates values before encoding them and after decoding them.</returns>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1">
+            <summary>
+            Deserializes (decodes) a fixed set of record fields from a serialized form.
+            </summary>
+            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/> deserializes.</typeparam>
+            <seealso cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>
+            <seealso cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0})">
+            <summary>
+            Decodes a value of type <typeparamref name="T"/> from the fields of the given <paramref name="input"/> map.
+            </summary>
+            <param name="ops">The ops that define the form of <paramref name="input"/>.</param>
+            <param name="input">The map that contains the fields to decode.</param>
+            <typeparam name="TObject">The type of the decoded value.</typeparam>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value, or an error if the value cannot be decoded.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.AsMapDecoder">
+            <summary>
+            Gets this implementation viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.
+            </summary>
+            <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.AsDecoder">
+            <summary>
+            Gets this implementation as an <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.
+            </summary>
+            <returns>Decoder backed by this.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapDecoder`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <summary>
+            Returns an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that marks every result of this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> with the given <paramref name="lifecycle"/>.
+            </summary>
+            <param name="lifecycle">The lifecycle to apply to the decoded results.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that applies <paramref name="lifecycle"/> to this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1">
+            <summary>
+            Simple implementation for <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>
+            </summary>
+            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> deserializes.</typeparam>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1.Decode``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1.AsMapDecoder">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1.AsDecoder">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapDecoderBase`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1">
+            <summary>
+            Serializes (encodes) a fixed set of record fields to a serialized form.
+            </summary>
+            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/> serializes.</typeparam>
+            <seealso cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>
+            <seealso cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
+            <summary>
+            Encodes the given <paramref name="input"/> into the fields of <paramref name="prefix"/>.
+            </summary>
+            <param name="input">The value to encode.</param>
+            <param name="ops">The ops used to create the encoded fields.</param>
+            <param name="prefix">The record builder that receives the encoded fields.</param>
+            <typeparam name="TObject">The type of the encoded value.</typeparam>
+            <returns>The record builder that contains the encoded fields, carrying any errors that occurred while an individual field was encoded.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.AsMapEncoder">
+            <summary>
+            Gets this implementation viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.
+            </summary>
+            <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.AsEncoder">
+            <summary>
+            Gets this implementation as an <see cref="T:DataFixerUpper.Serialization.Codecs.IEncoder`1"/>.
+            </summary>
+            <returns>Encoder backed by this.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.IMapEncoder`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <summary>
+            Returns an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that marks every result of this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> with the given <paramref name="lifecycle"/>.
+            </summary>
+            <param name="lifecycle">The lifecycle to apply to the encoded results.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> that applies <paramref name="lifecycle"/> to this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.</returns>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1">
+            <summary>
+            Simple implementation for <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>
+            </summary>
+            <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/> serializes.</typeparam>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1.Encode``1(`0,DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1.AsMapEncoder">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1.AsEncoder">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapEncoderBase`1.WithLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.DataResultExtension">
             <summary>
@@ -2389,12 +2501,6 @@
             Extensions for creating, reading and writing values with <see cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1"/> and <see cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1"/>.
             </summary>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateStream``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.IO.Stream)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateStream(System.IO.Stream)"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumberList``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Collections.Generic.IEnumerable{``1})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateNumberList``1(System.Collections.Generic.IEnumerable{``0})"/>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateList``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateList"/>
         </member>
@@ -2410,26 +2516,14 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.WithParser``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Codecs.IDecoder{``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.WithParser``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetStream``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetStream(`0)"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetNumberList``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberList``1(`0)"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetNumberValue``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0,``1)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue``1(`0,``0)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetNumberValue``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0,System.Decimal)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Decimal)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ConvertMap``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.DynamicOps.DynamicOps{``1},``0)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.ConvertMap``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ConvertList``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.DynamicOps.DynamicOps{``1},``0)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.ConvertList``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0)"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsStreamOpt``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsStreamOpt"/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsNumberListOpt``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumberListOpt``1"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsListOpt``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{``0},``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsListOpt``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})"/>
@@ -2464,8 +2558,8 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadMap``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``1},System.Func{``1,DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``1}})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``1(DataFixerUpper.Serialization.DataResult{``0},System.Func{``0,DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``0}})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsNumber``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``1)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber``1(``0)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Decimal)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Decimal)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsString``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.String)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsString(System.String)"/>
@@ -2476,8 +2570,11 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsStream``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsStream"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AspNumberList``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AspNumberList``1"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsIntList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsIntList"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsLongList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsLongList"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsList``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{``0},``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})"/>
@@ -2497,8 +2594,26 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateMap``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateMap"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumber``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``1)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber``1(``0)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateByte``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Byte)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateByte(System.Byte)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateShort``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Int16)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateShort(System.Int16)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateInt``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Int32)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateInt(System.Int32)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateLong``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Int64)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateLong(System.Int64)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateFloat``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Single)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateFloat(System.Single)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateDouble``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateDouble(System.Double)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Decimal)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Decimal)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateString``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.String)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateString(System.String)"/>
@@ -2506,23 +2621,11 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateBool``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Boolean)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateBool(System.Boolean)"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumberList``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Collections.Generic.IEnumerable{``1})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumberList``1(System.Collections.Generic.IEnumerable{``0})"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateIntList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateStream(System.IO.Stream)">
-            <summary>
-            Creates a serialized list of bytes from the given <paramref name="stream"/>.
-            </summary>
-            <param name="stream">The stream to read the bytes from.</param>
-            <returns>The serialized list, or an empty list if <paramref name="stream"/> cannot be read.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateNumberList``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Creates a serialized list of numbers from the given <paramref name="numbers"/>.
-            </summary>
-            <param name="numbers">The numbers to serialize.</param>
-            <typeparam name="TNumber">The type of the numbers to serialize.</typeparam>
-            <returns>The serialized list.</returns>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateLongList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Collections.Generic.IEnumerable{System.Int64})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateLongList(System.Collections.Generic.IEnumerable{System.Int64})"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.CreateList">
             <summary>
@@ -2560,29 +2663,13 @@
             <typeparam name="T">The type of the value to decode.</typeparam>
             <returns>A function that produces the decoded value, or an error if the value cannot be decoded.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetStream(`0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Decimal)">
             <summary>
-            Reads the given <paramref name="input"/> as a stream of bytes.
-            </summary>
-            <param name="input">The serialized list of bytes to read.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if <paramref name="input"/> is not a list or contains elements that are not bytes.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberList``1(`0)">
-            <summary>
-            Reads the given <paramref name="input"/> as a list of numbers.
-            </summary>
-            <param name="input">The serialized list to read.</param>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the numbers, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers of type <typeparamref name="TNumber"/>.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue``1(`0,``0)">
-            <summary>
-            Reads the given <paramref name="input"/> as a number, falling back to <paramref name="defaultValue"/>.
+            Reads the given <paramref name="input"/> as a <see langword="decimal"/>, falling back to <paramref name="defaultValue"/>.
             </summary>
             <param name="input">The serialized value to read.</param>
             <param name="defaultValue">The value to return if <paramref name="input"/> is not a number.</param>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>The number, or <paramref name="defaultValue"/> if <paramref name="input"/> is not a number of type <typeparamref name="TNumber"/>.</returns>
+            <returns>The <see langword="decimal"/>, or <paramref name="defaultValue"/> if <paramref name="input"/> is not a number.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.ConvertMap``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0)">
             <summary>
@@ -2601,19 +2688,6 @@
             <param name="input">The serialized list value to convert.</param>
             <typeparam name="TOther">The type the other ops serializes to and deserializes from.</typeparam>
             <returns>The converted list.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsStreamOpt">
-            <summary>
-            Reads this value as a stream of bytes.
-            </summary>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if this value is not a list or contains elements that are not bytes.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumberListOpt``1">
-            <summary>
-            Reads this value as a list of numbers.
-            </summary>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the numbers, or an error if this value is not a list or contains elements that are not numbers of type <typeparamref name="TNumber"/>.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsListOpt``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})">
             <summary>
@@ -2712,13 +2786,12 @@
             <typeparam name="TResult">The type of the accumulated result.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the accumulated result, or an error if this value is not a map or an entry cannot be accumulated.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber``1(``0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Decimal)">
             <summary>
             Reads this value as a number, falling back to <paramref name="defaultValue"/>.
             </summary>
             <param name="defaultValue">The value to return if this value is not a number.</param>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>The number, or <paramref name="defaultValue"/> if this value is not a number of type <typeparamref name="TNumber"/>.</returns>
+            <returns>The number, or <paramref name="defaultValue"/> if this value is not a number.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsString(System.String)">
             <summary>
@@ -2740,12 +2813,17 @@
             </summary>
             <returns>The stream, or <see cref="P:System.IO.Stream.Null"/> if this value is not a list of bytes.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AspNumberList``1">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsIntList">
             <summary>
-            Reads this value as a list of numbers, falling back to an empty list.
+            Reads this value as a list of <see langword="int"/>, falling back to an empty list.
             </summary>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>The numbers, or an empty list if this value is not a list of numbers of type <typeparamref name="TNumber"/>.</returns>
+            <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsLongList">
+            <summary>
+            Reads this value as a list of <see langword="long"/>, falling back to an empty list.
+            </summary>
+            <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})">
             <summary>
@@ -2794,12 +2872,53 @@
             </summary>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the empty map.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber``1(``0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateByte(System.Byte)">
             <summary>
             Creates a dynamic containing the given <paramref name="number"/>.
             </summary>
-            <param name="number">The number to serialize.</param>
-            <typeparam name="TNumber">The type of the number to serialize.</typeparam>
+            <param name="number">The <see langword="byte"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateShort(System.Int16)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="short"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateInt(System.Int32)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="int"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateLong(System.Int64)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="long"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateFloat(System.Single)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="float"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateDouble(System.Double)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="double"/> to serialize.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Decimal)">
+            <summary>
+            Creates a dynamic containing the given <paramref name="number"/>.
+            </summary>
+            <param name="number">The <see langword="decimal"/> to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateString(System.String)">
@@ -2816,12 +2935,18 @@
             <param name="boolValue">The boolean to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created boolean.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumberList``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})">
             <summary>
-            Creates a dynamic containing a list of numbers created from the given <paramref name="numberList"/>.
+            Creates a dynamic containing a list of <see langword="int"/> created from the given <paramref name="numberList"/>.
             </summary>
             <param name="numberList">The numbers to serialize.</param>
-            <typeparam name="TNumber">The type of the numbers to serialize.</typeparam>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created list.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateLongList(System.Collections.Generic.IEnumerable{System.Int64})">
+            <summary>
+            Creates a dynamic containing a list of <see langword="long"/> created from the given <paramref name="numberList"/>.
+            </summary>
+            <param name="numberList">The numbers to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created list.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.DynamicOps.DotnetOps">
@@ -2846,10 +2971,55 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.ConvertTo``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Object)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetNumberValue``1(System.Object)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetByteValue(System.Object)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateNumber``1(``0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateByte(System.Byte)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetShortValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateShort(System.Int16)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetIntValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateInt(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetLongValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateLong(System.Int64)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetFloatValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateFloat(System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetDoubleValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateDouble(System.Double)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetNumberValue(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateNumber(System.Decimal)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateStream(System.IO.Stream)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateLongList(System.Collections.Generic.IEnumerable{System.Int64})">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetStringValue(System.Object)">
@@ -2897,7 +3067,7 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetMapValues(System.Object)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetListValues(System.Object)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetList(System.Object)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetMap(System.Object)">
@@ -3146,7 +3316,7 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Decode``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsNumber``1">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsNumber">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsString">
@@ -3159,6 +3329,15 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsMapEntries">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsStreamOpt">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsIntListOpt">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsLongListOpt">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Convert``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})">
@@ -3215,12 +3394,29 @@
             <typeparam name="TResult">The type of the decoded value.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value together with the remaining input, or an error if this value cannot be decoded.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsNumber``1">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsNumber">
             <summary>
             Reads this value as a number.
             </summary>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if this value is not a number that can be represented by <typeparamref name="TNumber"/>.</returns>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if this value is not a number.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsStreamOpt">
+            <summary>
+            Reads this value as a stream.
+            </summary>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if this value is not a list or contains elements that are not bytes.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsIntListOpt">
+            <summary>
+            Reads this value as a list of <see langword="int"/>.
+            </summary>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if this value is not a list or contains elements that are not numbers.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsLongListOpt">
+            <summary>
+            Reads this value as a list of <see langword="long"/>.
+            </summary>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if this value is not a list or contains elements that are not numbers.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsString">
             <summary>
@@ -3302,21 +3498,110 @@
             <typeparam name="TOther">The type the other ops serializes to and deserializes from.</typeparam>
             <returns>The converted value, or the empty value of <paramref name="otherOp"/> if <paramref name="input"/> is empty.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetNumberValue``1(`0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetByteValue(`0)">
             <summary>
-            Reads the given <paramref name="input"/> as a number.
+            Reads the given <paramref name="input"/> as a <see langword="byte"/>.
             </summary>
             <param name="input">The serialized value to read.</param>
-            <typeparam name="TNumber">The type of number to read.</typeparam>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if <paramref name="input"/> is not a number that can be represented by <typeparamref name="TNumber"/>.</returns>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="byte"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="byte"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateNumber``1(``0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateByte(System.Byte)">
             <summary>
-            Creates a serialized number from the given <paramref name="number"/>.
+            Creates a serialized <see langword="byte"/> from the given <paramref name="value"/>.
             </summary>
-            <param name="number">The number to serialize.</param>
-            <typeparam name="TNumber">The type of the number to serialize.</typeparam>
-            <returns>The serialized number.</returns>
+            <param name="value">The <see langword="byte"/> to serialize.</param>
+            <returns>The serialized <see langword="byte"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetShortValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a <see langword="short"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="short"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="short"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateShort(System.Int16)">
+            <summary>
+            Creates a serialized <see langword="short"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="short"/> to serialize.</param>
+            <returns>The serialized <see langword="short"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetIntValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as an <see langword="int"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="int"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateInt(System.Int32)">
+            <summary>
+            Creates a serialized <see langword="int"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="int"/> to serialize.</param>
+            <returns>The serialized <see langword="int"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetLongValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a <see langword="long"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="long"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateLong(System.Int64)">
+            <summary>
+            Creates a serialized <see langword="long"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="long"/> to serialize.</param>
+            <returns>The serialized <see langword="long"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetFloatValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a <see langword="float"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="float"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="float"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateFloat(System.Single)">
+            <summary>
+            Creates a serialized <see langword="float"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="float"/> to serialize.</param>
+            <returns>The serialized <see langword="float"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetDoubleValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a <see langword="double"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="double"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="double"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateDouble(System.Double)">
+            <summary>
+            Creates a serialized <see langword="double"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="double"/> to serialize.</param>
+            <returns>The serialized <see langword="double"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetNumberValue(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a <see langword="decimal"/>.
+            </summary>
+            <param name="input">The serialized value to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="decimal"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="decimal"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateNumber(System.Decimal)">
+            <summary>
+            Creates a serialized <see langword="decimal"/> from the given <paramref name="value"/>.
+            </summary>
+            <param name="value">The <see langword="decimal"/> to serialize.</param>
+            <returns>The serialized <see langword="decimal"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetStream(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a stream.
+            </summary>
+            <param name="input">The serialized list of bytes to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if <paramref name="input"/> is not a list or contains elements that are not bytes.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetStringValue(`0)">
             <summary>
@@ -3345,6 +3630,27 @@
             </summary>
             <param name="bool">The boolean to serialize.</param>
             <returns>The serialized boolean.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateStream(System.IO.Stream)">
+            <summary>
+            Creates a serialized list of bytes from the given <paramref name="stream"/>.
+            </summary>
+            <param name="stream">The stream to read the bytes from.</param>
+            <returns>The serialized list, or an empty list if <paramref name="stream"/> cannot be read.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            Creates a serialized list of <see langword="int"/> from the given <paramref name="numbers"/>.
+            </summary>
+            <param name="numbers">The <see langword="int"/> list to serialize.</param>
+            <returns>The serialized list.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateLongList(System.Collections.Generic.IEnumerable{System.Int64})">
+            <summary>
+            Creates a serialized list of <see langword="long"/> from the given <paramref name="numbers"/>.
+            </summary>
+            <param name="numbers">The <see langword="long"/> list to serialize.</param>
+            <returns>The serialized list.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateList(System.Collections.Generic.IEnumerable{`0})">
             <summary>
@@ -3382,7 +3688,7 @@
             <summary>
             Creates a new builder that builds a map of this format.
             </summary>
-            <returns>A new <see cref="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1"/> for <typeparamref name="TObject"/> values.</returns>
+            <returns>A new <see cref="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1"/> for <typeparamref name="TObject"/> values.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateListBuilder">
             <summary>
@@ -3452,14 +3758,14 @@
             If <paramref name="map"/> is empty, the result is created with <c>CreateMap</c>. Otherwise, the entries are merged one at a time with <c>MergeToMap</c>.
             </remarks>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetMapValues(`0)">
-            <summary>
-            Reads the entries of the given <paramref name="input"/> map.
-            </summary>
-            <param name="input">The serialized map to read.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if <paramref name="input"/> is not a map.</returns>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetListValues(`0)">
+            <summary>
+            Extracts a consumer from the given value that iterates over the elements of the serialized list. The returned value logically encapsulates an iteration over the elements in the given list, performing some user-specified action on each element.
+            </summary>
+            <param name="input">The serialized list to read.</param>
+            <returns>An iteration over the elements in the input, which may perform some user-specified action on each element.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetList(`0)">
             <summary>
             Reads the elements of the given <paramref name="input"/> list.
             </summary>
@@ -3476,15 +3782,33 @@
             The default implementation builds the map from the entries returned by <c>GetMapValues</c>.
             </remarks>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetList(`0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetMapValues(`0)">
             <summary>
-            Reads the given <paramref name="input"/> as an immutable list.
+            Reads the entries of the given <paramref name="input"/> map.
+            </summary>
+            <param name="input">The serialized map to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if <paramref name="input"/> is not a map.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetMapEntries(`0)">
+            <summary>
+            Extracts a Consumer from the given value that iterates over the entries of the serialized map. The returned value logically encapsulates a iteration over the entries in the given map, performing some user-specified action on each entry.
+            </summary>
+            <param name="input">The serialized map to read.</param>
+            <returns>An iteration over the entries in the input, which may perform some user-specified action on each entry.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetIntList(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a list of <see langword="int"/>.
             </summary>
             <param name="input">The serialized list to read.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the elements of the list, or an error if <paramref name="input"/> is not a list.</returns>
-            <remarks>
-            The default implementation builds the list from the elements returned by <c>GetListValues</c>.
-            </remarks>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetLongList(`0)">
+            <summary>
+            Reads the given <paramref name="input"/> as a list of <see langword="long"/>.
+            </summary>
+            <param name="input">The serialized list to read.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.Get(`0,`0)">
             <summary>
@@ -3609,10 +3933,46 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.ConvertTo``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetNumberValue``1(System.Text.Json.Nodes.JsonNode)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetByteValue(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateNumber``1(``0)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateByte(System.Byte)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetShortValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateShort(System.Int16)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetIntValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateInt(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetLongValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateLong(System.Int64)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetFloatValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateFloat(System.Single)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetDoubleValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateDouble(System.Double)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetNumberValue(System.Text.Json.Nodes.JsonNode)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateNumber(System.Decimal)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetStringValue(System.Text.Json.Nodes.JsonNode)">
@@ -3663,13 +4023,10 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetMapValues(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetListValues(System.Text.Json.Nodes.JsonNode)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetList(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetMap(System.Text.Json.Nodes.JsonNode)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetList(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.Get(System.Text.Json.Nodes.JsonNode,System.String)">
@@ -3693,7 +4050,37 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.Copy(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Byte">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
         <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Decimal">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Double">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Single">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int32">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int64">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int16">
             <summary>
             Defines the source generated JSON serialization contract metadata for a given type.
             </summary>
@@ -3793,7 +4180,7 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.Decode``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsNumber``1">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsNumber">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsString">
@@ -3806,6 +4193,15 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsMapEntries">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsStreamOpt">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsIntListOpt">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsLongListOpt">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.Get(System.String)">
@@ -3864,225 +4260,12 @@
             <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if it could not be built.</returns>
         </member>
-        <member name="T:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1">
-            <summary>
-            Builds a serialized list by adding elements to it.
-            </summary>
-            <typeparam name="TObject">The type of the serialized form.</typeparam>
-            <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1"/>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Ops">
-            <summary>
-            Gets the ops used to create the serialized elements.
-            </summary>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Add(`0)">
-            <summary>
-            Adds <paramref name="value"/> to the list.
-            </summary>
-            <param name="value">The value to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Add(DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds the value of <paramref name="value"/> to the list, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="value">The result containing the value to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Add``1(``0,DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
-            <summary>
-            Adds <paramref name="value"/> encoded with <paramref name="encoder"/> to the list.
-            </summary>
-            <param name="value">The value to encode and add.</param>
-            <param name="encoder">The encoder used to serialize <paramref name="value"/>.</param>
-            <typeparam name="T">The type of the value to encode.</typeparam>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Adds all values of <paramref name="values"/> to the list.
-            </summary>
-            <param name="values">The values to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.AddRange(System.Collections.Generic.IEnumerable{DataFixerUpper.Serialization.DataResult{`0}})">
-            <summary>
-            Adds the values of <paramref name="values"/> to the list, carrying over the errors of each result.
-            </summary>
-            <param name="values">The results containing the values to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.AddRange``1(System.Collections.Generic.IEnumerable{``0},DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
-            <summary>
-            Adds all values of <paramref name="values"/> encoded with <paramref name="encoder"/> to the list.
-            </summary>
-            <param name="values">The values to encode and add.</param>
-            <param name="encoder">The encoder used to serialize the values.</param>
-            <typeparam name="T">The type of the values to encode.</typeparam>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
-            <summary>
-            Carries the errors of <paramref name="result"/> over to this builder.
-            </summary>
-            <param name="result">The result whose errors are carried over.</param>
-            <typeparam name="TOther">The type of the value contained in <paramref name="result"/>.</typeparam>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
-            <summary>
-            Transforms the error message of this builder with the given <paramref name="mapper"/>.
-            </summary>
-            <param name="mapper">The function that transforms the error message.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Build(`0)">
-            <summary>
-            Builds the list, merging it into <paramref name="prefix"/>.
-            </summary>
-            <param name="prefix">The existing list to merge the built list into, which may be empty.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if the elements could not be merged.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1.Build(DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Builds the list, merging it into the value of <paramref name="prefix"/>.
-            </summary>
-            <param name="prefix">The result containing the existing list to merge the built list into.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if the prefix is an error or the elements could not be merged.</returns>
-        </member>
-        <member name="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1">
-            <summary>
-            Builds a serialized map by adding entries to it.
-            </summary>
-            <typeparam name="TObject">The type of the serialized form.</typeparam>
-            <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1"/>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Ops">
-            <summary>
-            Gets the ops used to create the serialized keys and values.
-            </summary>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(`0,`0)">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The value of the entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(System.Collections.Generic.KeyValuePair{`0,`0})">
-            <summary>
-            Adds the given <paramref name="pair"/>.
-            </summary>
-            <param name="pair">The entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.AddRange(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`0}})">
-            <summary>
-            Adds all entries of <paramref name="pairs"/>.
-            </summary>
-            <param name="pairs">The entries to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(`0,DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(DataFixerUpper.Serialization.DataResult{`0},DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps the key of <paramref name="key"/> to the value of <paramref name="value"/>.
-            </summary>
-            <param name="key">The result containing the key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(System.String,`0)">
-            <summary>
-            Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The value of the entry to add.</param>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>CreateString</c>.
-            </remarks>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add(System.String,DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps the given string <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>CreateString</c>.
-            </remarks>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Add``1(System.String,``0,DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
-            <summary>
-            Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/> encoded with <paramref name="encoder"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The value to encode and add.</param>
-            <param name="encoder">The encoder used to serialize <paramref name="value"/>.</param>
-            <typeparam name="T">The type of the value to encode.</typeparam>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>CreateString</c>.
-            </remarks>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
-            <summary>
-            Carries the errors of <paramref name="result"/> over to this builder.
-            </summary>
-            <param name="result">The result whose errors are carried over.</param>
-            <typeparam name="TOther">The type of the value contained in <paramref name="result"/>.</typeparam>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.SetLifecycle(DataFixerUpper.Serialization.Lifecycle)">
-            <summary>
-            Sets the lifecycle of the built value.
-            </summary>
-            <param name="lifecycle">The lifecycle to use.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
-            <summary>
-            Transforms the error message of this builder with the given <paramref name="mapper"/>.
-            </summary>
-            <param name="mapper">The function that transforms the error message.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Build(`0)">
-            <summary>
-            Builds the map, merging it into <paramref name="prefix"/>.
-            </summary>
-            <param name="prefix">The existing map to merge the built map into, which may be empty.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if the entries could not be merged.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1.Build(DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Builds the map, merging it into the value of <paramref name="prefix"/>.
-            </summary>
-            <param name="prefix">The result containing the existing map to merge the built map into.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if the prefix is an error or the entries could not be merged.</returns>
-        </member>
         <member name="T:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1">
             <summary>
             A builder that accumulates elements into a serialized list.
             </summary>
             <typeparam name="TObject">The type of the serialized form.</typeparam>
             <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.IListBuilder`1"/>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Ops">
-            <summary>
-            Gets the ops used to create the serialized elements.
-            </summary>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.#ctor(DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
             <summary>
@@ -4091,20 +4274,85 @@
             <param name="ops">The ops used to create the serialized elements.</param>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Add(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Add(DataFixerUpper.Serialization.DataResult{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Build(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1">
+            <summary>
+            Builds a serialized list by adding elements to it.
+            </summary>
+            <typeparam name="TObject">The type of the serialized form.</typeparam>
+            <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1"/>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Ops">
+            <summary>
+            Gets the ops used to create the serialized elements.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.#ctor(DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
+            <summary>
+            Initializes a new instance with the given <paramref name="ops"/>.
+            </summary>
+            <param name="ops">The ops used to create the serialized keys and values.</param>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Add(`0)">
             <summary>
             Adds <paramref name="value"/> to the list.
             </summary>
             <param name="value">The value to add.</param>
             <returns>This builder.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Add(DataFixerUpper.Serialization.DataResult{`0})">
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Add(DataFixerUpper.Serialization.DataResult{`0})">
             <summary>
             Adds the value of <paramref name="value"/> to the list, carrying over the errors of <paramref name="value"/>.
             </summary>
             <param name="value">The result containing the value to add.</param>
             <returns>This builder.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Add``1(``0,DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
+            <summary>
+            Adds <paramref name="value"/> encoded with <paramref name="encoder"/> to the list.
+            </summary>
+            <param name="value">The value to encode and add.</param>
+            <param name="encoder">The encoder used to serialize <paramref name="value"/>.</param>
+            <typeparam name="T">The type of the value to encode.</typeparam>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds all values of <paramref name="values"/> to the list.
+            </summary>
+            <param name="values">The values to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.AddRange(System.Collections.Generic.IEnumerable{DataFixerUpper.Serialization.DataResult{`0}})">
+            <summary>
+            Adds the values of <paramref name="values"/> to the list, carrying over the errors of each result.
+            </summary>
+            <param name="values">The results containing the values to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.AddRange``1(System.Collections.Generic.IEnumerable{``0},DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
+            <summary>
+            Adds all values of <paramref name="values"/> encoded with <paramref name="encoder"/> to the list.
+            </summary>
+            <param name="values">The values to encode and add.</param>
+            <param name="encoder">The encoder used to serialize the values.</param>
+            <typeparam name="T">The type of the values to encode.</typeparam>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
             <summary>
             Carries the errors of <paramref name="result"/> over to this builder.
             </summary>
@@ -4112,19 +4360,26 @@
             <typeparam name="TOther">The type of the value contained in <paramref name="result"/>.</typeparam>
             <returns>This builder.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
             <summary>
             Transforms the error message of this builder with the given <paramref name="mapper"/>.
             </summary>
             <param name="mapper">The function that transforms the error message.</param>
             <returns>This builder.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilder`1.Build(`0)">
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Build(`0)">
             <summary>
-            Builds the list, merging it into <paramref name="prefix"/>, and resets this builder so that it can be reused.
+            Builds the list, merging it into <paramref name="prefix"/>.
             </summary>
             <param name="prefix">The existing list to merge the built list into, which may be empty.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if the elements could not be merged.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.ListBuilderBase`1.Build(DataFixerUpper.Serialization.DataResult{`0})">
+            <summary>
+            Builds the list, merging it into the value of <paramref name="prefix"/>.
+            </summary>
+            <param name="prefix">The result containing the existing list to merge the built list into.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if the prefix is an error or the elements could not be merged.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1">
             <summary>
@@ -4140,39 +4395,16 @@
             <param name="ops">The ops used to create the serialized keys and values.</param>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1.InitBuilder">
-            <summary>
-            Creates a new builder that accumulates the entries of the map.
-            </summary>
-            <returns>A new builder.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1.BuildResult(System.Collections.Immutable.ImmutableDictionary{`0,`0}.Builder,`0)">
-            <summary>
-            Builds the map accumulated by <paramref name="builder"/>, merging it into <paramref name="prefix"/>.
-            </summary>
-            <param name="builder">The builder that contains the accumulated entries.</param>
-            <param name="prefix">The existing map to merge the built map into, which may be empty.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if it could not be built.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1.Append(`0,`0,System.Collections.Immutable.ImmutableDictionary{`0,`0}.Builder)">
-            <summary>
-            Appends an entry that maps <paramref name="key"/> to <paramref name="value"/> to <paramref name="builder"/>.
-            </summary>
-            <param name="key">The key of the entry to append.</param>
-            <param name="value">The value of the entry to append.</param>
-            <param name="builder">The builder to append the entry to.</param>
-            <returns>The given <paramref name="builder"/>.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1.Append(System.String,`0,System.Collections.Immutable.ImmutableDictionary{`0,`0}.Builder)">
-            <summary>
-            Appends an entry that maps the given string <paramref name="key"/> to <paramref name="value"/> to <paramref name="builder"/>.
-            </summary>
-            <param name="key">The key of the entry to append.</param>
-            <param name="value">The value of the entry to append.</param>
-            <param name="builder">The builder to append the entry to.</param>
-            <returns>The given <paramref name="builder"/>.</returns>
-            <remarks>
-            The key is converted with <c>CreateString</c>.
-            </remarks>
+            <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.Collections.Builder.MapBuilderBase`2">
             <summary>
@@ -4217,32 +4449,140 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilderBase`2.Add(System.String,`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilderBase`2.Add(System.String,DataFixerUpper.Serialization.DataResult{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1">
+            <summary>
+            A base class for builders that accumulate serialized values and build them into a single serialized value.
+            </summary>
+            <typeparam name="TObject">The type of the serialized form.</typeparam>
+        </member>
+        <member name="P:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Ops">
+            <summary>
+            Gets the ops used to create the serialized keys and values.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.#ctor(DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
+            <summary>
+            Initializes a new instance with the given <paramref name="ops"/>.
+            </summary>
+            <param name="ops">The ops used to create the serialized keys and values.</param>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(`0,`0)">
+            <summary>
+            Adds an entry that maps <paramref name="key"/> to <paramref name="value"/>.
+            </summary>
+            <param name="key">The key of the entry to add.</param>
+            <param name="value">The value of the entry to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(System.Collections.Generic.KeyValuePair{`0,`0})">
+            <summary>
+            Adds the given <paramref name="pair"/>.
+            </summary>
+            <param name="pair">The entry to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.AddRange(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`0}})">
+            <summary>
+            Adds all entries of <paramref name="pairs"/>.
+            </summary>
+            <param name="pairs">The entries to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(`0,DataFixerUpper.Serialization.DataResult{`0})">
+            <summary>
+            Adds an entry that maps <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
+            </summary>
+            <param name="key">The key of the entry to add.</param>
+            <param name="value">The result containing the value of the entry to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(DataFixerUpper.Serialization.DataResult{`0},DataFixerUpper.Serialization.DataResult{`0})">
+            <summary>
+            Adds an entry that maps the key of <paramref name="key"/> to the value of <paramref name="value"/>.
+            </summary>
+            <param name="key">The result containing the key of the entry to add.</param>
+            <param name="value">The result containing the value of the entry to add.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(System.String,`0)">
             <summary>
             Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/>.
             </summary>
             <param name="key">The key of the entry to add.</param>
             <param name="value">The value of the entry to add.</param>
             <returns>This builder.</returns>
+            <remarks>
+            The key is converted with <c>CreateString</c>.
+            </remarks>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.MapBuilderBase`2.Add(System.String,DataFixerUpper.Serialization.DataResult{`0})">
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add(System.String,DataFixerUpper.Serialization.DataResult{`0})">
             <summary>
             Adds an entry that maps the given string <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
             </summary>
             <param name="key">The key of the entry to add.</param>
             <param name="value">The result containing the value of the entry to add.</param>
             <returns>This builder.</returns>
+            <remarks>
+            The key is converted with <c>CreateString</c>.
+            </remarks>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Add``1(System.String,``0,DataFixerUpper.Serialization.Codecs.IEncoder{``0})">
+            <summary>
+            Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/> encoded with <paramref name="encoder"/>.
+            </summary>
+            <param name="key">The key of the entry to add.</param>
+            <param name="value">The value to encode and add.</param>
+            <param name="encoder">The encoder used to serialize <paramref name="value"/>.</param>
+            <typeparam name="T">The type of the value to encode.</typeparam>
+            <returns>This builder.</returns>
+            <remarks>
+            The key is converted with <c>CreateString</c>.
+            </remarks>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.WithErrorsFrom``1(DataFixerUpper.Serialization.DataResult{``0})">
+            <summary>
+            Carries the errors of <paramref name="result"/> over to this builder.
+            </summary>
+            <param name="result">The result whose errors are carried over.</param>
+            <typeparam name="TOther">The type of the value contained in <paramref name="result"/>.</typeparam>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.SetLifecycle(DataFixerUpper.Serialization.Lifecycle)">
+            <summary>
+            Sets the lifecycle of the built value.
+            </summary>
+            <param name="lifecycle">The lifecycle to use.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.MapError(DataFixerUpper.Utils.UnaryOperation{System.String})">
+            <summary>
+            Transforms the error message of this builder with the given <paramref name="mapper"/>.
+            </summary>
+            <param name="mapper">The function that transforms the error message.</param>
+            <returns>This builder.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Build(`0)">
+            <summary>
+            Builds the map, merging it into <paramref name="prefix"/>.
+            </summary>
+            <param name="prefix">The existing map to merge the built map into, which may be empty.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if the entries could not be merged.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1.Build(DataFixerUpper.Serialization.DataResult{`0})">
+            <summary>
+            Builds the map, merging it into the value of <paramref name="prefix"/>.
+            </summary>
+            <param name="prefix">The result containing the existing map to merge the built map into.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if the prefix is an error or the entries could not be merged.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2">
-            <summary>
-            A base class for builders that accumulate serialized values and build them into a single serialized value.
-            </summary>
-            <typeparam name="TObject">The type of the serialized form.</typeparam>
+            <inheritdoc/>
             <typeparam name="TBuilder">The type of the builder that accumulates the serialized values.</typeparam>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.Ops">
-            <summary>
-            Gets the ops used to create the serialized keys and values.
-            </summary>
         </member>
         <member name="P:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.Builder">
             <summary>
@@ -4250,10 +4590,7 @@
             </summary>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.#ctor(DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
-            <summary>
-            Initializes a new instance with the given <paramref name="ops"/>.
-            </summary>
-            <param name="ops">The ops used to create the serialized keys and values.</param>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.InitBuilder">
             <summary>
@@ -4268,30 +4605,6 @@
             <param name="builder">The builder that contains the accumulated value.</param>
             <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built value, or an error if it could not be built.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.Add(`0,`0)">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The value of the entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.Add(`0,DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.Add(DataFixerUpper.Serialization.DataResult{`0},DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps the key of <paramref name="key"/> to the value of <paramref name="value"/>.
-            </summary>
-            <param name="key">The result containing the key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.RecordBuilderBase`2.SetLifecycle(DataFixerUpper.Serialization.Lifecycle)">
             <inheritdoc/>
@@ -4332,53 +4645,19 @@
             <returns>The given <paramref name="builder"/>.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.StringBuilderBase`2.Add(`0,`0)">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add, which must be readable as a string.</param>
-            <param name="value">The value of the entry to add.</param>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-            </remarks>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.StringBuilderBase`2.Add(`0,DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add, which must be readable as a string.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-            </remarks>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.StringBuilderBase`2.Add(DataFixerUpper.Serialization.DataResult{`0},DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps the key of <paramref name="key"/> to the value of <paramref name="value"/>.
-            </summary>
-            <param name="key">The result containing the key of the entry to add, which must be readable as a string.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
-            <remarks>
-            The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-            </remarks>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.StringBuilderBase`2.Add(System.String,`0)">
-            <summary>
-            Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The value of the entry to add.</param>
-            <returns>This builder.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Collections.Builder.StringBuilderBase`2.Add(System.String,DataFixerUpper.Serialization.DataResult{`0})">
-            <summary>
-            Adds an entry that maps the given string <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-            </summary>
-            <param name="key">The key of the entry to add.</param>
-            <param name="value">The result containing the value of the entry to add.</param>
-            <returns>This builder.</returns>
+            <inheritdoc/>
         </member>
         <member name="T:DataFixerUpper.Serialization.Collections.CompressorHolder">
             <summary>
@@ -4410,6 +4689,19 @@
             <typeparam name="TObject">The type this class serializes to and deserializes from.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Collections.KeyCompressor`1"/> for this object's keys.</returns>
         </member>
+        <member name="T:DataFixerUpper.Serialization.Collections.Keyable">
+            <summary>
+            Static usage for <see langword="T:DataFixerUpper.Serialization.Collections.IKeyable"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.Keyable.ForStrings``1(DataFixerUpper.Utils.Provider{System.Collections.Generic.IEnumerable{System.String}})">
+            <summary>
+            Returns a <see cref="T:DataFixerUpper.Serialization.Collections.IKeyable"/> that defines the keys supplied by the argument.
+            </summary>
+            <param name="keysProvider">A supplier of keys. A fresh <see cref="T:System.Collections.Generic.IEnumerable`1"/> should be returned on each invocation.</param>
+            <typeparam name="TObject">The type this class serializes to and deserializes from.</typeparam>
+            <returns></returns>
+        </member>
         <member name="T:DataFixerUpper.Serialization.Collections.IKeyable">
             <summary>
             A definer or acceptor of serialized keys.
@@ -4426,14 +4718,6 @@
             <param name="ops">The <see cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1"/> instance used to serialize values.</param>
             <typeparam name="TObject">The type this class serializes to and deserializes from.</typeparam>
             <returns>The set of keys this object defines.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.IKeyable.ForStrings``1(DataFixerUpper.Utils.Provider{System.Collections.Generic.IEnumerable{System.String}})">
-            <summary>
-            Returns a <see cref="T:DataFixerUpper.Serialization.Collections.IKeyable"/> that defines the keys supplied by the argument.
-            </summary>
-            <param name="keysProvider">A supplier of keys. A fresh <see cref="T:System.Collections.Generic.IEnumerable`1"/> should be returned on each invocation.</param>
-            <typeparam name="TObject">The type this class serializes to and deserializes from.</typeparam>
-            <returns></returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Collections.KeyCompressor`1">
             <summary>
@@ -4476,51 +4760,54 @@
             <param name="key">The key.</param>
             <returns>The key index associated with the key, or -1 if the key is invalid.</returns>
         </member>
-        <member name="T:DataFixerUpper.Serialization.Collections.IMapLike`1">
+        <member name="T:DataFixerUpper.Serialization.Collections.MapLike`1">
             <summary>
             An unmodifiable store for serialized key-value pairs. This interface can be used when access to and iteration over serialized key-value pairs.
             </summary>
             <typeparam name="TObject">The type of the serialized form.</typeparam>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.IMapLike`1.Empty">
+        <member name="P:DataFixerUpper.Serialization.Collections.MapLike`1.Empty">
             <summary>
             Empty instance.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.IMapLike`1.Count">
+        <member name="P:DataFixerUpper.Serialization.Collections.MapLike`1.Count">
             <summary>
-            Gets the number of key/value pairs contained in the <see cref="T:DataFixerUpper.Serialization.Collections.IMapLike`1"/>.
+            Gets the number of key/value pairs contained in the <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/>.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.IMapLike`1.Item(`0)">
+        <member name="P:DataFixerUpper.Serialization.Collections.MapLike`1.Item(`0)">
             <summary>
             Gets the value associated with the specified key.
             </summary>
             <param name="key">The key of the value to get.</param>
             <returns>The value associated with the specified key, or <see langword="null"/> if pecified key is not found.</returns>
         </member>
-        <member name="P:DataFixerUpper.Serialization.Collections.IMapLike`1.Item(System.String)">
+        <member name="P:DataFixerUpper.Serialization.Collections.MapLike`1.Item(System.String)">
             <summary>
             Gets the value associated with the specified key.
             </summary>
             <param name="key">The key of the value to get.</param>
             <returns>The value associated with the specified key, or <see langword="null"/> if pecified key is not found.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.IMapLike`1.ForCompressed(System.Collections.Generic.IList{`0},DataFixerUpper.Serialization.Collections.KeyCompressor{`0})">
+        <member name="M:DataFixerUpper.Serialization.Collections.MapLike`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Collections.MapLike`1.ForCompressed(System.Collections.Generic.IList{`0},DataFixerUpper.Serialization.Collections.KeyCompressor{`0})">
             <summary>
-            Create a compressed <see cref="T:DataFixerUpper.Serialization.Collections.IMapLike`1"/>.
+            Create a compressed <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/>.
             </summary>
             <param name="values">Values of compressed map.</param>
             <param name="compressor">Compressor to compress values</param>
-            <returns>Compressed <see cref="T:DataFixerUpper.Serialization.Collections.IMapLike`1"/>.</returns>
+            <returns>Compressed <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.Collections.IMapLike`1.ForMap(System.Collections.Generic.IDictionary{`0,`0},DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
+        <member name="M:DataFixerUpper.Serialization.Collections.MapLike`1.ForMap(System.Collections.Generic.IDictionary{`0,`0},DataFixerUpper.Serialization.DynamicOps.DynamicOps{`0})">
             <summary>
-            Creates a <see cref="T:DataFixerUpper.Serialization.Collections.IMapLike`1"/> containing the entries of the given dictionary.
+            Creates a <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/> containing the entries of the given dictionary.
             </summary>
             <param name="map">The dictionary to wrap.</param>
             <param name="ops">A <see cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1"/> instance defining the serialized form.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.Collections.IMapLike`1"/> containing the entries of the given dictionary.</returns>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Collections.MapLike`1"/> containing the entries of the given dictionary.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.DataResult">
             <summary>
@@ -4642,9 +4929,6 @@
             Wrapped result.
             </summary>
         </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.Lifecycle">
-            <inheritdoc/>
-        </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Success`1.HasResultOrPartial">
             <inheritdoc/>
         </member>
@@ -4687,6 +4971,9 @@
         <member name="M:DataFixerUpper.Serialization.DataResult.Success`1.SetLifecycle(DataFixerUpper.Serialization.Lifecycle)">
             <inheritdoc/>
         </member>
+        <member name="M:DataFixerUpper.Serialization.DataResult.Success`1.GetHashCode">
+            <inheritdoc/>
+        </member>
         <member name="M:DataFixerUpper.Serialization.DataResult.Success`1.ToString">
             <inheritdoc/>
         </member>
@@ -4724,9 +5011,6 @@
             <summary>
             Partial value of result.
             </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.Lifecycle">
-            <inheritdoc/>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult.Error`1.HasResultOrPartial">
             <inheritdoc/>
@@ -4770,6 +5054,12 @@
         <member name="M:DataFixerUpper.Serialization.DataResult.Error`1.SetLifecycle(DataFixerUpper.Serialization.Lifecycle)">
             <inheritdoc/>
         </member>
+        <member name="M:DataFixerUpper.Serialization.DataResult.Error`1.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DataResult.Error`1.ToString">
+            <inheritdoc/>
+        </member>
         <member name="T:DataFixerUpper.Serialization.DataResult`1">
             <summary>
             Represents either a <seealso cref="T:DataFixerUpper.Serialization.DataResult.Success`1">successful operation</seealso>, or a  <seealso cref="T:DataFixerUpper.Serialization.DataResult.Error`1">partial operation</seealso> with an error message and a partial result (if available).
@@ -4786,11 +5076,13 @@
             <summary>
             Gets the success result if the operation was successful.
             </summary>
+            <exception cref="T:System.InvalidOperationException">If not a success.</exception>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult`1.ErrorResult">
             <summary>
             Gets the error result if the operation was not successful.
             </summary>
+            <exception cref="T:System.InvalidOperationException">If not an exception.</exception>
         </member>
         <member name="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial">
             <summary>
@@ -4997,13 +5289,24 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.Lifecycle.op_Addition(DataFixerUpper.Serialization.Lifecycle,DataFixerUpper.Serialization.Lifecycle)">
-            <inheritdoc/>
+            <summary>Adds two values together to compute their sum.</summary>
+            <param name="left">The value to which <paramref name="right" /> is added.</param>
+            <param name="right">The value which is added to <paramref name="left" />.</param>
+            <returns>The sum of <paramref name="left" /> and <paramref name="right" />.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.Lifecycle.op_Equality(DataFixerUpper.Serialization.Lifecycle,DataFixerUpper.Serialization.Lifecycle)">
-            <inheritdoc/>
+            <summary>Compares two values to determine equality.</summary>
+            <param name="left">The value to compare with <paramref name="right" />.</param>
+            <param name="right">The value to compare with <paramref name="left" />.</param>
+            <returns>
+            <see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.Lifecycle.op_Inequality(DataFixerUpper.Serialization.Lifecycle,DataFixerUpper.Serialization.Lifecycle)">
-            <inheritdoc/>
+            <summary>Compares two values to determine inequality.</summary>
+            <param name="left">The value to compare with <paramref name="right" />.</param>
+            <param name="right">The value to compare with <paramref name="left" />.</param>
+            <returns>
+            <see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Lifecycle.Deprecated">
             <summary>
@@ -5342,6 +5645,11 @@
             Consumer receives value and do nothing.
             </summary>
         </member>
+        <member name="M:DataFixerUpper.Utils.Functions.CreatePair``2(``0,``1)">
+            <summary>
+            Function to create <see cref="T:System.Collections.Generic.KeyValuePair`2"/>.
+            </summary>
+        </member>
         <member name="M:DataFixerUpper.Utils.Functions.Identity``1(``0)">
             <summary>
             Function that always returns its input argument.
@@ -5578,10 +5886,18 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Utils.Optional`1.op_Equality(DataFixerUpper.Utils.Optional{`0},DataFixerUpper.Utils.Optional{`0})">
-            <inheritdoc/>
+            <summary>Compares two values to determine equality.</summary>
+            <param name="left">The value to compare with <paramref name="right" />.</param>
+            <param name="right">The value to compare with <paramref name="left" />.</param>
+            <returns>
+            <see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="M:DataFixerUpper.Utils.Optional`1.op_Inequality(DataFixerUpper.Utils.Optional{`0},DataFixerUpper.Utils.Optional{`0})">
-            <inheritdoc/>
+            <summary>Compares two values to determine inequality.</summary>
+            <param name="left">The value to compare with <paramref name="right" />.</param>
+            <param name="right">The value to compare with <paramref name="left" />.</param>
+            <returns>
+            <see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="T:DataFixerUpper.Utils.CodecOrDefaultMapper`1">
             <summary>
@@ -5674,10 +5990,10 @@
             </summary>
             <param name="value">Default value.</param>
         </member>
-        <member name="M:DataFixerUpper.Utils.MapCodecOrDefaultMapper`1.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
+        <member name="M:DataFixerUpper.Utils.MapCodecOrDefaultMapper`1.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Utils.MapCodecOrDefaultMapper`1.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
+        <member name="M:DataFixerUpper.Utils.MapCodecOrDefaultMapper`1.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Utils.MapCodecOrDefaultMapper`1.ToString">
@@ -5722,10 +6038,10 @@
         <member name="P:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.PartialHolder">
             <summary>Partial value.</summary>
         </member>
-        <member name="M:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.IMapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
+        <member name="M:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.Apply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Collections.MapLike{``0},DataFixerUpper.Serialization.DataResult{`0})">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder{``0})">
+        <member name="M:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.CoApply``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0,DataFixerUpper.Serialization.Collections.Builder.RecordBuilder{``0})">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Utils.MapCodecSetPartialMapper`1.ToString">

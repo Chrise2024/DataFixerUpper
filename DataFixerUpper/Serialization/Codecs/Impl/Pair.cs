@@ -11,7 +11,7 @@ internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCode
 {
     public override ValueHolder<string> CodecNameHolder => $"PairCodec[{leftCodec} {rightCodec}]";
 
-    public override DataResult<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return leftCodec.Encode(input.Item1, ops, prefix).FlatMap(firstEncoded =>
@@ -19,7 +19,7 @@ internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCode
         );
     }
 
-    public override DataResult<((T1, T2), TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<((T1, T2), TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return leftCodec.Decode(ops, input).FlatMap(firstDecoded =>
@@ -34,12 +34,12 @@ internal sealed class PairMapCodec<T1, T2>(MapCodec<T1> leftCodec, MapCodec<T2> 
 {
     public override ValueHolder<string> CodecNameHolder => $"PairCodec[{leftCodec} {rightCodec}]";
 
-    public override IRecordBuilder<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return leftCodec.Encode(input.Item1, ops, rightCodec.Encode(input.Item2, ops, prefix));
     }
 
-    public override DataResult<(T1, T2)> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<(T1, T2)> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return leftCodec.Decode(ops, input).FlatMap(firstDecoded => rightCodec.Decode(ops, input).Map(secondDecoded => (firstDecoded, secondDecoded)));
     }

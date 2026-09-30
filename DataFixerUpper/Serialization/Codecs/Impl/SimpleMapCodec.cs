@@ -13,12 +13,12 @@ internal sealed class SimpleMapCodec<T>(IMapEncoder<T> encoder, IMapDecoder<T> d
 
     public SimpleMapCodec(IMapEncoder<T> encoder, IMapDecoder<T> decoder) : this(encoder, decoder, $"MapCodec[{encoder} {decoder}]") { }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return encoder.Encode(input, ops, prefix);
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return decoder.Decode(ops, input);
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using DataFixerUpper.Serialization.Codecs;
 
@@ -34,15 +35,32 @@ public abstract class DynamicLike<TObject>
     /// <param name="decoder">The decoder used to parse this value.</param>
     /// <typeparam name="TResult">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value together with the remaining input, or an error if this value cannot be decoded.</returns>
-    public abstract DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder);
+    public abstract DataResult<(TResult, TObject)> Decode<TResult>(IDecoder<TResult> decoder);
 
     /// <summary>
     /// Reads this value as a number.
     /// </summary>
-    /// <typeparam name="TNumber">The type of number to read.</typeparam>
-    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if this value is not a number that can be represented by <typeparamref name="TNumber"/>.</returns>
-    public abstract DataResult<TNumber> AsNumber<TNumber>()
-        where TNumber : INumber<TNumber>;
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if this value is not a number.</returns>
+    public abstract DataResult<decimal> AsNumber();
+
+    /// <summary>
+    /// Reads this value as a stream.
+    /// </summary>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if this value is not a list or contains elements that are not bytes.</returns>
+    public abstract DataResult<Stream> AsStreamOpt();
+
+
+    /// <summary>
+    /// Reads this value as a list of <see langword="int"/>.
+    /// </summary>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if this value is not a list or contains elements that are not numbers.</returns>
+    public abstract DataResult<IEnumerable<int>> AsIntListOpt();
+    
+    /// <summary>
+    /// Reads this value as a list of <see langword="long"/>.
+    /// </summary>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if this value is not a list or contains elements that are not numbers.</returns>
+    public abstract DataResult<IEnumerable<long>> AsLongListOpt();
 
     /// <summary>
     /// Reads this value as a <see langword="string"/>.

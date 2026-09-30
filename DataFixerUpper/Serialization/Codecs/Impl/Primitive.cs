@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Numerics;
 using System.Text.RegularExpressions;
 using DataFixerUpper.Serialization.DynamicOps;
 using DataFixerUpper.Utils;
@@ -24,7 +23,7 @@ public abstract class PrimitiveCodec<T> : Codec<T>
     /// <param name="input">The value to decode.</param>
     /// <typeparam name="TObject">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value.</returns>
-    protected abstract DataResult<T> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+    protected abstract DataResult<T> Read<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : notnull;
 
     /// <summary>
@@ -38,14 +37,14 @@ public abstract class PrimitiveCodec<T> : Codec<T>
         where TObject : notnull;
 
     /// <inheritdoc/>
-    public override DataResult<TResult> Encode<TResult>(T input, DynamicOps<TResult> ops, TResult? prefix)
+    public override DataResult<TResult> Encode<TResult>(T input, DynamicOps<TResult> ops, TResult prefix)
         where TResult : default
     {
         return ops.MergeToPrimitive(prefix, Write(ops, input));
     }
 
     /// <inheritdoc/>
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return Read(ops, input).Map(value => (value, ops.Empty()));
@@ -53,46 +52,114 @@ public abstract class PrimitiveCodec<T> : Codec<T>
 }
 
 /// <summary>
-/// Codec of numbers.
+/// Codec of <see langword="byte"/>.
 /// </summary>
-/// <typeparam name="TNumber">Base type of number.</typeparam>
-public class NumberCodec<TNumber> : PrimitiveCodec<TNumber>
-    where TNumber : INumber<TNumber>
+public sealed class ByteCodec : PrimitiveCodec<byte>
 {
     /// <inheritdoc/>
-    protected override DataResult<TNumber> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : default
+    protected override DataResult<byte> Read<TObject>(DynamicOps<TObject> ops, TObject input)
     {
-        return ops.GetNumberValue<TNumber>(input);
+        return ops.GetByteValue(input);
+    }
+    
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, byte value)
+    {
+        return ops.CreateByte(value);
+    }
+}
+
+/// <summary>
+/// Codec of <see langword="short"/>.
+/// </summary>
+public sealed class ShortCodec : PrimitiveCodec<short>
+{
+    /// <inheritdoc/>
+    protected override DataResult<short> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetShortValue(input);
     }
 
     /// <inheritdoc/>
-    protected override TObject Write<TObject>(DynamicOps<TObject> ops, TNumber value)
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, short value)
     {
-        return ops.CreateNumber(value);
-    }
-
-    /// <summary>
-    /// Create ranged number codec with given gange.
-    /// </summary>
-    /// <param name="min">Min value of the range.</param>
-    /// <param name="max">Max value of the range.</param>
-    /// <returns>Ranged number codec.</returns>
-    public Codec<TNumber> Range(TNumber min, TNumber max)
-    {
-        return new ValidateCodec<TNumber>(this, ValidateRange);
-        
-        DataResult<TNumber> ValidateRange(TNumber value)
-        {
-            if (value < min || value > max)
-            {
-                return DataResult.CreateError<TNumber>($"Value {value} is out of range [{min}, {max}]");
-            }
-
-            return DataResult.CreateSuccess(value);
-        }
+        return ops.CreateShort(value);
     }
 }
+
+/// <summary>
+/// Codec of <see langword="int"/>.
+/// </summary>
+public sealed class IntCodec : PrimitiveCodec<int>
+{
+    /// <inheritdoc/>
+    protected override DataResult<int> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetIntValue(input);
+    }
+
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, int value)
+    {
+        return ops.CreateInt(value);
+    }
+}
+
+/// <summary>
+/// Codec of <see langword="long"/>.
+/// </summary>
+public sealed class LongCodec : PrimitiveCodec<long>
+{
+    /// <inheritdoc/>
+    protected override DataResult<long> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetLongValue(input);
+    }
+
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, long value)
+    {
+        return ops.CreateLong(value);
+    }
+}
+
+/// <summary>
+/// Codec of <see langword="float"/>.
+/// </summary>
+public sealed class FloatCodec : PrimitiveCodec<float>
+{
+    /// <inheritdoc/>
+    protected override DataResult<float> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetFloatValue(input);
+    }
+
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, float value)
+    {
+        return ops.CreateFloat(value);
+    }
+}
+
+/// <summary>
+/// Codec of <see langword="double"/>.
+/// </summary>
+public sealed class DoubleCodec : PrimitiveCodec<double>
+{
+    /// <inheritdoc/>
+    protected override DataResult<double> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetDoubleValue(input);
+    }
+
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, double value)
+    {
+        return ops.CreateDouble(value);
+    }
+}
+
+
 
 /// <summary>
 /// Codec of <see langword="bool"/>.
@@ -100,7 +167,7 @@ public class NumberCodec<TNumber> : PrimitiveCodec<TNumber>
 public sealed class BooleanCodec : PrimitiveCodec<bool>
 {
     /// <inheritdoc/>
-    protected override DataResult<bool> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+    protected override DataResult<bool> Read<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return ops.GetBoolValue(input);
@@ -119,7 +186,7 @@ public sealed class BooleanCodec : PrimitiveCodec<bool>
 public sealed class StringCodec : PrimitiveCodec<string>
 {
     /// <inheritdoc/>
-    protected override DataResult<string> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+    protected override DataResult<string> Read<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return ops.GetStringValue(input);
@@ -185,7 +252,7 @@ public sealed class StringCodec : PrimitiveCodec<string>
 public sealed class StreamCodec : PrimitiveCodec<Stream>
 {
     /// <inheritdoc/>
-    protected override DataResult<Stream> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+    protected override DataResult<Stream> Read<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return ops.GetStream(input);
@@ -199,24 +266,37 @@ public sealed class StreamCodec : PrimitiveCodec<Stream>
 }
 
 /// <summary>
-/// Codec of list of numbers.
+/// Codec of list of <see langword="int"/>.
 /// </summary>
-public sealed class NumberListValuesCodec<TNumber> : PrimitiveCodec<IEnumerable<TNumber>>
-    where TNumber : INumber<TNumber>
+public sealed class IntListCodec : PrimitiveCodec<IEnumerable<int>>
 {
     /// <inheritdoc/>
-    public override ValueHolder<string> CodecNameHolder => $"{typeof(TNumber)}List";
-
-    /// <inheritdoc/>
-    protected override DataResult<IEnumerable<TNumber>> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : default
+    protected override DataResult<IEnumerable<int>> Read<TObject>(DynamicOps<TObject> ops, TObject input)
     {
-        return ops.GetNumberList<TObject, TNumber>(input);
+        return ops.GetIntList(input);
     }
-
+    
     /// <inheritdoc/>
-    protected override TObject Write<TObject>(DynamicOps<TObject> ops, IEnumerable<TNumber> value)
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, IEnumerable<int> value)
     {
-        return ops.CreateNumberList(value);
+        return ops.CreateIntList(value);
+    }
+}
+
+/// <summary>
+/// Codec of list of <see langword="int"/>.
+/// </summary>
+public sealed class LongListCodec : PrimitiveCodec<IEnumerable<long>>
+{
+    /// <inheritdoc/>
+    protected override DataResult<IEnumerable<long>> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    {
+        return ops.GetLongList(input);
+    }
+    
+    /// <inheritdoc/>
+    protected override TObject Write<TObject>(DynamicOps<TObject> ops, IEnumerable<long> value)
+    {
+        return ops.CreateLongList(value);
     }
 }

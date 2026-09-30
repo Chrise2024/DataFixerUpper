@@ -8,33 +8,33 @@ internal sealed class MapCodecCodec<T>(MapCodec<T> baseCodec) : Codec<T>
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return baseCodec.Encode(input, ops, baseCodec.GetCompressedBuilder(ops)).Build(prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return baseCodec.CompressedDecode(ops, input).Map(r => (r, input));
     }
 }
 
-internal sealed record MapEncoderEncoder<T>(IMapEncoder<T> BaseEncoder) : IEncoder<T>
+internal sealed class MapEncoderEncoder<T>(IMapEncoder<T> baseEncoder) : EncoderBase<T>
 {
-    public DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
-        where TObject : notnull
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+        where TObject : default
     {
-        return BaseEncoder.Encode(input, ops, BaseEncoder.GetCompressedBuilder(ops)).Build(prefix);
+        return baseEncoder.Encode(input, ops, baseEncoder.GetCompressedBuilder(ops)).Build(prefix);
     }
 }
 
-internal sealed record MapDecoderDecoder<T>(IMapDecoder<T> BaseDecoder) : IDecoder<T>
+internal sealed class MapDecoderDecoder<T>(IMapDecoder<T> baseDecoder) : DecoderBase<T>
 {
-    public DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return BaseDecoder.CompressedDecode(ops, input).Map(r => (r, input));
+        return baseDecoder.CompressedDecode(ops, input).Map(r => (r, input));
     }
 }

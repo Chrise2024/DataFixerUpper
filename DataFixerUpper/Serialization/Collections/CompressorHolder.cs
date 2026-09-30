@@ -15,9 +15,7 @@ public abstract class CompressorHolder : ICompressable
     public KeyCompressor<TObject> GetCompressor<TObject>(DynamicOps<TObject> ops)
         where TObject : notnull
     {
-        KeyCompressor<TObject>? compressor = (KeyCompressor<TObject>?) _compressors[ops];
-
-        if (compressor is not null)
+        if (_compressors[ops] is KeyCompressor<TObject> compressor)
         {
             return compressor;
         }

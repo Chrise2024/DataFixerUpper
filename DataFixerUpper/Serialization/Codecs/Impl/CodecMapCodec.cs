@@ -14,7 +14,7 @@ internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
     private const string CompressedValueKey = "value";
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         DataResult<TObject> encoded = baseCodec.EncodeStart(ops, input);
         if (ops.CompressMaps())
@@ -22,18 +22,18 @@ internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
             return prefix.Add(CompressedValueKey, encoded);
         }
 
-        DataResult<IMapLike<TObject>> mapResult = encoded.FlatMap(ops.GetMap);
+        DataResult<MapLike<TObject>> mapResult = encoded.FlatMap(ops.GetMap);
         return mapResult.Map(prefix.AddRange).GetResultOrDefault(prefix.WithErrorsFrom(mapResult));
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         if (!ops.CompressMaps())
         {
             return baseCodec.Parse(ops, ops.CreateMap(input));
         }
 
-        TObject? value = input[CompressedValueKey];
+        TObject value = input[CompressedValueKey];
         return value is null
             ? DataResult.CreateError<T>("Missing value")
             : baseCodec.Parse(ops, value);

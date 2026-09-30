@@ -17,13 +17,13 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
 )
     where TKey : notnull
 {
-    public DataResult<IDictionary<TKey, TValue>> DecodeDictionary<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> map)
+    public DataResult<IDictionary<TKey, TValue>> DecodeDictionary<TObject>(DynamicOps<TObject> ops, MapLike<TObject> map)
         where TObject : notnull
     {
         IDictionary<TKey, TValue> read = Mutable
             ? new Dictionary<TKey, TValue>()
             : ImmutableDictionary.CreateBuilder<TKey, TValue>();
-        ImmutableDictionary<TObject, TObject?>.Builder fails = ImmutableDictionary.CreateBuilder<TObject, TObject?>();
+        ImmutableDictionary<TObject, TObject>.Builder fails = ImmutableDictionary.CreateBuilder<TObject, TObject>();
 
         DataResult<Unit> aggregatedResult = map.Aggregate(
             DataResult.CreateSuccess(Unit.Instance, Lifecycle.Stable),
@@ -31,17 +31,21 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
             {
                 DataResult<TKey> keyResult = KeyCodec.Parse(ops, entry.Key);
                 DataResult<TValue> valueResult = keyResult.FlatMap(k => ValueCodecDispatcher.Apply(k).Parse(ops, entry.Value));
-                DataResult<KeyValuePair<TKey, TValue>> entryResult = keyResult.CombineStable(KeyValuePair.Create, valueResult);
+                DataResult<KeyValuePair<TKey, TValue>> entryResult = keyResult.CombineStable(Functions.CreatePair, valueResult);
 
                 if (entryResult.TryGetResultOrPartial(out KeyValuePair<TKey, TValue> combinedEntry))
                 {
-                    if (!read.TryAdd(combinedEntry.Key, combinedEntry.Value))
+                    if (read.ContainsKey(combinedEntry.Key))
                     {
                         fails.Add(entry);
                         seed = seed.CombineStable(
                             Functions.LiftFirst,
                             DataResult.CreateError<Unit>($"Duplicate entry for key: '{entry.Key}'")
                         );
+                    }
+                    else
+                    {
+                        read.Add(combinedEntry.Key, combinedEntry.Value);
                     }
                 }
 
@@ -60,7 +64,7 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
         return aggregatedResult.Map(_ => result).SetPartial(result).MapError(error => $"{error} missed input {errors}");
     }
 
-    public IRecordBuilder<TObject> EncodeDictionary<TObject>(IDictionary<TKey, TValue> input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public RecordBuilder<TObject> EncodeDictionary<TObject>(IDictionary<TKey, TValue> input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
         where TObject : notnull
     {
         return input.Aggregate(
@@ -87,10 +91,10 @@ internal sealed class SimpleDictionaryCodec<TKey, TValue>(
         return keys.GetKeys(ops);
     }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(
+    public override RecordBuilder<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
         DynamicOps<TObject> ops,
-        IRecordBuilder<TObject> prefix
+        RecordBuilder<TObject> prefix
     )
     {
         return _state.EncodeDictionary(input, ops, prefix);
@@ -98,7 +102,7 @@ internal sealed class SimpleDictionaryCodec<TKey, TValue>(
 
     public override DataResult<IDictionary<TKey, TValue>> Decode<TObject>(
         DynamicOps<TObject> ops,
-        IMapLike<TObject> input
+        MapLike<TObject> input
     )
     {
         return _state.DecodeDictionary(ops, input);
@@ -119,16 +123,16 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
     public override DataResult<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
         DynamicOps<TObject> ops,
-        TObject? prefix
+        TObject prefix
     )
         where TObject : default
     {
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(
+    public override DataResult<(IDictionary<TKey, TValue>, TObject)> Decode<TObject>(
         DynamicOps<TObject> ops,
-        TObject? input
+        TObject input
     )
         where TObject : default
     {
@@ -153,14 +157,14 @@ internal sealed class DispatchedDictionaryCodec<TKey, TValue>(
     public override DataResult<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
         DynamicOps<TObject> ops,
-        TObject? prefix
+        TObject prefix
     )
         where TObject : default
     {
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(IDictionary<TKey, TValue>, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return ops.GetMap(input)

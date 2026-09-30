@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -33,13 +30,13 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     private readonly bool _compressed;
 
     /// <inheritdoc/>
-    public override JsonNode? Empty()
+    public override JsonNode Empty()
     {
         return null;
     }
 
     /// <inheritdoc/>
-    public override TOther? ConvertTo<TOther>(DynamicOps<TOther> otherOp, JsonNode? input)
+    public override TOther ConvertTo<TOther>(DynamicOps<TOther> otherOp, JsonNode input)
         where TOther : default
     {
         if (IsEmpty(input))
@@ -59,36 +56,176 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             _ => throw new NotSupportedException($"{nameof(ConvertTo)} not supported for {input.GetValueKind()}")
         };
     }
-
+    
     /// <inheritdoc/>
-    public override DataResult<TNumber> GetNumberValue<TNumber>(JsonNode? input)
-        where TNumber : default
-    {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+    public override DataResult<byte> GetByteValue(JsonNode input)
+    {if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
         {
-            return DataResult.CreateError<TNumber>($"{nameof(GetNumberValue)} called with not an number: {input}");
+            return DataResult.CreateError<byte>($"{nameof(GetByteValue)} called with not a number: {input}");
         }
 
         try
         {
-            decimal num = jsonValue.Deserialize(JsonOpsContext.Default.Decimal);
-            return DataResult.CreateSuccess(TNumber.CreateSaturating(num));
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Byte));
         }
         catch
         {
-            return DataResult.CreateError<TNumber>($"Cannot parse value of {input}");
+            return DataResult.CreateError<byte>($"Input is not a valid byte: {input}");
         }
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateNumber<TNumber>(TNumber number)
-        where TNumber : default
+    public override JsonNode CreateByte(byte value)
     {
-        return JsonValue.Create(decimal.CreateSaturating(number));
+        return JsonValue.Create(value);
     }
 
     /// <inheritdoc/>
-    public override DataResult<string> GetStringValue(JsonNode? @string)
+    public override DataResult<short> GetShortValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<short>($"{nameof(GetShortValue)} called with not a number: {input}");
+        }
+        
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int16));
+        }
+        catch
+        {
+            return DataResult.CreateError<short>($"Input is not a valid short: {input}");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override JsonNode CreateShort(short value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<int> GetIntValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<int>($"{nameof(GetIntValue)} called with not a number: {input}");
+        }
+
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int32));
+        }
+        catch
+        {
+            return DataResult.CreateError<int>($"Input is not a valid int: {input}");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override JsonNode CreateInt(int value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<long> GetLongValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<long>($"{nameof(GetLongValue)} called with not a number: {input}");
+        }
+
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int64));
+        }
+        catch
+        {
+            return DataResult.CreateError<long>($"Input is not a valid long: {input}");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override JsonNode CreateLong(long value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<float> GetFloatValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<float>($"{nameof(GetFloatValue)} called with not a number: {input}");
+        }
+
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Single));
+        }
+        catch
+        {
+            return DataResult.CreateError<float>($"Input is not a valid float: {input}");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override JsonNode CreateFloat(float value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<double> GetDoubleValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<double>($"{nameof(GetDoubleValue)} called with not a number: {input}");
+        }
+
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Double));
+        }
+        catch
+        {
+            return DataResult.CreateError<double>($"Input is not a valid double: {input}");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override JsonNode CreateDouble(double value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<decimal> GetNumberValue(JsonNode input)
+    {
+        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        {
+            return DataResult.CreateError<decimal>($"{nameof(GetNumberValue)} called with not a number: {input}");
+        }
+
+        try
+        {
+            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Decimal));
+        }
+        catch
+        {
+            return DataResult.CreateError<decimal>($"Input is not a valid number: {input}");
+        }
+    }
+    
+    /// <inheritdoc/>
+    public override JsonNode CreateNumber(decimal value)
+    {
+        return JsonValue.Create(value);
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<string> GetStringValue(JsonNode @string)
     {
         if (@string is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.String)
         {
@@ -105,7 +242,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<bool> GetBoolValue(JsonNode? @bool)
+    public override DataResult<bool> GetBoolValue(JsonNode @bool)
     {
         return @bool?.GetValueKind() switch
         {
@@ -122,48 +259,48 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateList(IEnumerable<JsonNode?> list)
+    public override JsonNode CreateList(IEnumerable<JsonNode> list)
     {
         return list.Select(v => v?.DeepClone()).Aggregate(new JsonArray(), (arr, value) => arr.AddAndReturn(value));
     }
 
     /// <inheritdoc/>
-    public override IListBuilder<JsonNode> CreateListBuilder()
+    public override ListBuilderBase<JsonNode> CreateListBuilder()
     {
-        return new JsonArrayBuilder(this);
+        return new JsonArrayBuilderBase(this);
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateMap(IEnumerable<KeyValuePair<string, JsonNode?>> entries)
+    public override JsonNode CreateMap(IEnumerable<KeyValuePair<string, JsonNode>> entries)
     {
         return new JsonObject(entries.Select(pair => pair.MapValue(v => v?.DeepClone())));
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateMap(IEnumerable<KeyValuePair<JsonNode, JsonNode?>> entries)
+    public override JsonNode CreateMap(IEnumerable<KeyValuePair<JsonNode, JsonNode>> entries)
     {
         JsonObject jsonObject = new();
-        foreach ((JsonNode key, JsonNode? value) in entries)
+        foreach (KeyValuePair<JsonNode, JsonNode> pair in entries)
         {
-            if (key.GetValueKind() != JsonValueKind.String)
+            if (pair.Key.GetValueKind() != JsonValueKind.String)
             {
                 continue;
             }
 
-            jsonObject.Add(key.GetValue<string>(), value?.DeepClone());
+            jsonObject.Add(pair.Key.GetValue<string>(), pair.Value?.DeepClone());
         }
 
         return jsonObject;
     }
 
     /// <inheritdoc/>
-    public override IRecordBuilder<JsonNode> CreateMapBuilder()
+    public override RecordBuilder<JsonNode> CreateMapBuilder()
     {
         return new JsonMapBuilder(this);
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToList(JsonNode? list, JsonNode? other)
+    public override DataResult<JsonNode> MergeToList(JsonNode list, JsonNode other)
     {
         if (list is not JsonArray && !IsEmpty(list))
         {
@@ -180,14 +317,14 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToList(JsonNode? list, IEnumerable<JsonNode?> values)
+    public override DataResult<JsonNode> MergeToList(JsonNode list, IEnumerable<JsonNode> values)
     {
         if (list is not JsonArray && !IsEmpty(list))
         {
             return DataResult.CreateError($"{nameof(MergeToList)} called with not a list: {list}", Optional.Create(list));
         }
 
-        IEnumerable<JsonNode?> pending = values;
+        IEnumerable<JsonNode> pending = values;
         if (!IsEmpty(list))
         {
             pending = pending.Concat(list.AsArray());
@@ -198,8 +335,13 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, string key, JsonNode? value)
+    public override DataResult<JsonNode> MergeToMap(JsonNode map, string key, JsonNode value)
     {
+        if (key is null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+        
         if (map is not JsonObject && !IsEmpty(map))
         {
             return DataResult.CreateError($"{nameof(MergeToMap)} called with not a map: {map}", Optional.Create(map));
@@ -211,8 +353,13 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, JsonNode key, JsonNode? value)
+    public override DataResult<JsonNode> MergeToMap(JsonNode map, JsonNode key, JsonNode value)
     {
+        if (key is null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+        
         if (key.GetValueKind() != JsonValueKind.String)
         {
             return DataResult.CreateError($"Key is not a string: {key}", Optional.Create(map));
@@ -222,7 +369,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<KeyValuePair<string, JsonNode?>> values)
+    public override DataResult<JsonNode> MergeToMap(JsonNode map, IEnumerable<KeyValuePair<string, JsonNode>> values)
     {
         if (map is not JsonObject && !IsEmpty(map))
         {
@@ -241,7 +388,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<KeyValuePair<JsonNode, JsonNode?>> values)
+    public override DataResult<JsonNode> MergeToMap(JsonNode map, IEnumerable<KeyValuePair<JsonNode, JsonNode>> values)
     {
         if (map is not JsonObject && !IsEmpty(map))
         {
@@ -252,15 +399,15 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         JsonObject newObject = IsEmpty(map) ? new JsonObject() : map.DeepClone().AsObject();
         LinkedList<JsonNode> fails = new();
 
-        foreach ((JsonNode key, JsonNode? value) in values)
+        foreach (KeyValuePair<JsonNode, JsonNode> pair in values)
         {
-            if (key.GetValueKind() != JsonValueKind.String)
+            if (pair.Key.GetValueKind() != JsonValueKind.String)
             {
-                fails.AddLast(key);
+                fails.AddLast(pair.Key);
                 continue;
             }
 
-            newObject[key.GetValue<string>()] = value?.DeepClone();
+            newObject[pair.Key.GetValue<string>()] = pair.Value?.DeepClone();
         }
 
         return fails.Count > 0
@@ -269,65 +416,54 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<JsonNode, JsonNode?>>> GetMapValues(JsonNode? input)
+    public override DataResult<IEnumerable<KeyValuePair<JsonNode, JsonNode>>> GetMapValues(JsonNode input)
     {
         if (input is not JsonObject jsonObject)
         {
-            return DataResult.CreateError<IEnumerable<KeyValuePair<JsonNode, JsonNode?>>>($"{nameof(GetMapValues)} called with not a map: {input}");
+            return DataResult.CreateError<IEnumerable<KeyValuePair<JsonNode, JsonNode>>>($"{nameof(GetMapValues)} called with not a map: {input}");
         }
 
         return DataResult.CreateSuccess(jsonObject.Select(pair => pair.MapKey(CreateString)));
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<JsonNode?>> GetListValues(JsonNode? input)
+    public override DataResult<IEnumerable<JsonNode>> GetList(JsonNode input)
     {
         if (input is not JsonArray jsonArray)
         {
-            return DataResult.CreateError<IEnumerable<JsonNode?>>($"{nameof(GetListValues)} called with not a list: {input}");
+            return DataResult.CreateError<IEnumerable<JsonNode>>($"{nameof(GetList)} called with not a list: {input}");
         }
 
-        return DataResult.CreateSuccess<IEnumerable<JsonNode?>>(jsonArray);
+        return DataResult.CreateSuccess<IEnumerable<JsonNode>>(jsonArray);
     }
 
     /// <inheritdoc/>
-    public override DataResult<IMapLike<JsonNode>> GetMap(JsonNode? input)
+    public override DataResult<MapLike<JsonNode>> GetMap(JsonNode input)
     {
         if (input is not JsonObject jsonObject)
         {
-            return DataResult.CreateError<IMapLike<JsonNode>>($"{nameof(GetMap)} called with not a map: {input}");
+            return DataResult.CreateError<MapLike<JsonNode>>($"{nameof(GetMap)} called with not a map: {input}");
         }
 
-        return DataResult.CreateSuccess<IMapLike<JsonNode>>(new JsonMap(jsonObject, this));
+        return DataResult.CreateSuccess<MapLike<JsonNode>>(new JsonMap(jsonObject, this));
     }
 
     /// <inheritdoc/>
-    public override DataResult<ImmutableList<JsonNode?>> GetList(JsonNode? input)
-    {
-        if (input is not JsonArray jsonArray)
-        {
-            return DataResult.CreateError<ImmutableList<JsonNode?>>($"{nameof(GetList)} called with not a list: {input}");
-        }
-
-        return DataResult.CreateSuccess(ImmutableList.CreateRange(jsonArray));
-    }
-
-    /// <inheritdoc/>
-    public override DataResult<JsonNode> Get(JsonNode? input, string key)
+    public override DataResult<JsonNode> Get(JsonNode input, string key)
     {
         if (input is not JsonObject jsonObject)
         {
             return DataResult.CreateError<JsonNode>($"{nameof(Get)} called with not a map: {input}");
         }
 
-        JsonNode? value = jsonObject[key];
+        JsonNode value = jsonObject[key];
         return value is null
             ? DataResult.CreateError<JsonNode>($"No value found for {key}")
             : DataResult.CreateSuccess(value);
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> Get(JsonNode? input, JsonNode key)
+    public override DataResult<JsonNode> Get(JsonNode input, JsonNode key)
     {
         if (key.GetValueKind() != JsonValueKind.String)
         {
@@ -338,7 +474,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override JsonNode? Remove(JsonNode? input, string key)
+    public override JsonNode Remove(JsonNode input, string key)
     {
         if (input is not JsonObject jsonObject)
         {
@@ -351,7 +487,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override JsonNode? Remove(JsonNode? input, JsonNode key)
+    public override JsonNode Remove(JsonNode input, JsonNode key)
     {
         if (key.GetValueKind() != JsonValueKind.String)
         {
@@ -362,7 +498,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override bool IsEmpty([NotNullWhen(false)] JsonNode? input)
+    public override bool IsEmpty(JsonNode input)
     {
         return input is null;
     }
@@ -374,26 +510,21 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override JsonNode? Copy(JsonNode? source)
+    public override JsonNode Copy(JsonNode source)
     {
         return source?.DeepClone();
     }
 
-    private sealed class JsonMap(JsonObject jsonObject, JsonOps ops) : IMapLike<JsonNode>
+    private sealed class JsonMap(JsonObject jsonObject, JsonOps ops) : MapLike<JsonNode>
     {
-        public int Count => jsonObject.Count;
-        public JsonNode? this[JsonNode key] => key.GetValueKind() != JsonValueKind.String ? null : jsonObject[key.GetValue<string>()];
+        public override int Count => jsonObject.Count;
+        public override JsonNode this[JsonNode key] => key.GetValueKind() != JsonValueKind.String ? null : jsonObject[key.GetValue<string>()];
 
-        public JsonNode? this[string key] => jsonObject[key];
+        public override JsonNode this[string key] => jsonObject[key];
 
-        public IEnumerator<KeyValuePair<JsonNode, JsonNode?>> GetEnumerator()
+        public override IEnumerator<KeyValuePair<JsonNode, JsonNode>> GetEnumerator()
         {
             return jsonObject.Select(pair => pair.MapKey(ops.CreateString)).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 
@@ -404,7 +535,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return new JsonObject();
         }
 
-        protected override JsonObject Append(JsonNode key, JsonNode? value, JsonObject builder)
+        protected override JsonObject Append(JsonNode key, JsonNode value, JsonObject builder)
         {
             if (key.GetValueKind() != JsonValueKind.String)
             {
@@ -414,13 +545,13 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return Append(key.GetValue<string>(), value, builder);
         }
 
-        protected override JsonObject Append(string key, JsonNode? value, JsonObject builder)
+        protected override JsonObject Append(string key, JsonNode value, JsonObject builder)
         {
             builder[key] = value?.DeepClone();
             return builder;
         }
 
-        protected override DataResult<JsonNode> BuildResult(JsonObject builder, JsonNode? prefix)
+        protected override DataResult<JsonNode> BuildResult(JsonObject builder, JsonNode prefix)
         {
             if (Ops.IsEmpty(prefix))
             {
@@ -444,38 +575,35 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         }
     }
 
-    private sealed class JsonArrayBuilder(JsonOps ops) : IListBuilder<JsonNode>
+    private sealed class JsonArrayBuilderBase(DynamicOps<JsonNode> ops) : ListBuilderBase<JsonNode>(ops)
     {
-        public DynamicOps<JsonNode> Ops => ops;
         private DataResult<JsonArray> _builder = DataResult.CreateSuccess(new JsonArray(), Lifecycle.Stable);
 
-        public IListBuilder<JsonNode> Add(JsonNode? value)
+        public override ListBuilderBase<JsonNode> Add(JsonNode value)
         {
             _builder = _builder.Map(builder => builder.AddAndReturn(value?.DeepClone()));
             return this;
         }
 
-        public IListBuilder<JsonNode> Add(DataResult<JsonNode> value)
+        public override ListBuilderBase<JsonNode> Add(DataResult<JsonNode> value)
         {
-            #nullable disable
             _builder = _builder.CombineStable(Functions.AddToFirst, value.Map(v => v.DeepClone()));
             return this;
-            #nullable restore
         }
 
-        public IListBuilder<JsonNode> WithErrorsFrom<TOther>(DataResult<TOther> result)
+        public override ListBuilderBase<JsonNode> WithErrorsFrom<TOther>(DataResult<TOther> result)
         {
             _builder = _builder.FlatMap(array => result.Map(_ => array));
             return this;
         }
 
-        public IListBuilder<JsonNode> MapError(UnaryOperation<string> mapper)
+        public override ListBuilderBase<JsonNode> MapError(UnaryOperation<string> mapper)
         {
             _builder = _builder.MapError(mapper);
             return this;
         }
 
-        public DataResult<JsonNode> Build(JsonNode? prefix)
+        public override DataResult<JsonNode> Build(JsonNode prefix)
         {
             DataResult<JsonNode> result = _builder.FlatMap(jsonArray =>
                 {
@@ -501,5 +629,11 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 }
 
+[JsonSerializable(typeof(byte))]
+[JsonSerializable(typeof(short))]
+[JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(long))]
+[JsonSerializable(typeof(float))]
+[JsonSerializable(typeof(double))]
 [JsonSerializable(typeof(decimal))]
 internal partial class JsonOpsContext : JsonSerializerContext;

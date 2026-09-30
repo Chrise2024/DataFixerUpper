@@ -154,16 +154,16 @@ public abstract partial class MapCodec<T> : CompressorHolder, IMapEncoder<T>, IM
     public abstract ValueHolder<string> CodecNameHolder { get; }
 
     /// <inheritdoc/>
-    public abstract IRecordBuilder<TObject> Encode<TObject>(
+    public abstract RecordBuilder<TObject> Encode<TObject>(
         T input,
         DynamicOps<TObject> ops,
-        IRecordBuilder<TObject> prefix
+        RecordBuilder<TObject> prefix
     )
         where TObject : notnull;
 
     
     /// <inheritdoc/>
-    public abstract DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public abstract DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
         where TObject : notnull;
 
     IMapEncoder<T> IMapEncoder<T>.WithLifecycle(Lifecycle lifecycle)
@@ -278,7 +278,7 @@ public abstract partial class MapCodec<T> : CompressorHolder, IMapEncoder<T>, IM
         /// <param name="original">The result produced by the <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>The transformed result.</returns>
-        DataResult<T> Apply<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input, DataResult<T> original)
+        DataResult<T> Apply<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input, DataResult<T> original)
             where TObject : notnull;
 
         /// <summary>
@@ -289,7 +289,7 @@ public abstract partial class MapCodec<T> : CompressorHolder, IMapEncoder<T>, IM
         /// <param name="original">The record builder produced by the <see cref="T:DataFixerUpper.Serialization.Codecs.IMapEncoder`1"/>.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>The transformed record builder.</returns>
-        IRecordBuilder<TObject> CoApply<TObject>(DynamicOps<TObject> ops, T input, IRecordBuilder<TObject> original)
+        RecordBuilder<TObject> CoApply<TObject>(DynamicOps<TObject> ops, T input, RecordBuilder<TObject> original)
             where TObject : notnull;
     }
 }

@@ -13,7 +13,7 @@ internal sealed class FieldEncoder<T>(string name, IEncoder<T> encoder) : MapEnc
         yield return ops.CreateString(name);
     }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return prefix.Add(name, encoder.EncodeStart(ops, input));
     }
@@ -26,9 +26,9 @@ internal sealed class FieldDecoder<T>(string name, IDecoder<T> decoder) : MapDec
         yield return ops.CreateString(name);
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        TObject? value = input[name];
+        TObject value = input[name];
         return value is null
             ? DataResult.CreateError<T>($"No key {name} in {input}")
             : decoder.Parse(ops, value);
@@ -57,21 +57,21 @@ internal sealed class OptionalFieldCodec<T>(
         yield return ops.CreateString(name);
     }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(Optional<T> input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(Optional<T> input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return input.HasValue ? prefix.Add(name, baseCodec.EncodeStart(ops, input.Value)) : prefix;
     }
 
-    public override DataResult<Optional<T>> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<Optional<T>> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        TObject? value = input[name];
+        TObject value = input[name];
         if (value is null)
         {
             return DefaultResult();
         }
 
         DataResult<T> result = baseCodec.Parse(ops, value);
-        if (result.TryGetResult(out T? r))
+        if (result.TryGetResult(out T r))
         {
             return DataResult.CreateSuccess(Optional.Create(r), fieldLifecycle);
         }

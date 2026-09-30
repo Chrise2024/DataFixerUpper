@@ -9,25 +9,25 @@ using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.Codecs.Impl;
 
-internal sealed record CoMappedEncoder<TNew, TOri>(IEncoder<TOri> BaseEncoder, Func<TNew, TOri> Func)
-    : IEncoder<TNew>
+internal sealed class CoMappedEncoder<TNew, TOri>(IEncoder<TOri> baseEncoder, Func<TNew, TOri> func)
+    : EncoderBase<TNew>
 {
-    public DataResult<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, TObject? prefix)
-        where TObject : notnull
+    public override DataResult<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, TObject prefix)
+        where TObject : default
     {
-        return BaseEncoder.Encode(Func.Apply(input), ops, prefix);
+        return baseEncoder.Encode(func.Apply(input), ops, prefix);
     }
 
     public override string ToString()
     {
-        return BaseEncoder + "[CoMapped]";
+        return baseEncoder + "[CoMapped]";
     }
 }
 
 internal sealed class CoMappedMapEncoder<TNew, TOri>(IMapEncoder<TOri> baseEncoder, Func<TNew, TOri> mapper)
     : MapEncoderBase<TNew>
 {
-    public override IRecordBuilder<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return baseEncoder.Encode(mapper.Apply(input), ops, prefix);
     }
@@ -43,28 +43,28 @@ internal sealed class CoMappedMapEncoder<TNew, TOri>(IMapEncoder<TOri> baseEncod
     }
 }
 
-internal sealed record FlatCoMappedEncoder<TNew, TOri>(IEncoder<TOri> BaseEncoder, Func<TNew, DataResult<TOri>> Func)
-    : IEncoder<TNew>
+internal sealed class FlatCoMappedEncoder<TNew, TOri>(IEncoder<TOri> baseEncoder, Func<TNew, DataResult<TOri>> func)
+    : EncoderBase<TNew>
 {
-    public DataResult<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, TObject? prefix)
-        where TObject : notnull
+    public override DataResult<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, TObject prefix)
+        where TObject : default
     {
-        return Func.Apply(input).FlatMap(mapped => BaseEncoder.Encode(mapped, ops, prefix));
+        return func.Apply(input).FlatMap(mapped => baseEncoder.Encode(mapped, ops, prefix));
     }
 
     public override string ToString()
     {
-        return BaseEncoder + "[FlatCoMapped]";
+        return baseEncoder + "[FlatCoMapped]";
     }
 }
 
 internal sealed class FlatCoMappedMapEncoder<TNew, TOri>(IMapEncoder<TOri> baseEncoder, Func<TNew, DataResult<TOri>> mapper)
     : MapEncoderBase<TNew>
 {
-    public override IRecordBuilder<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TNew input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         DataResult<TOri> oriResult = mapper.Apply(input);
-        IRecordBuilder<TObject> resultBuilder = prefix.WithErrorsFrom(oriResult);
+        RecordBuilder<TObject> resultBuilder = prefix.WithErrorsFrom(oriResult);
         return oriResult.Map(r => baseEncoder.Encode(r, ops, resultBuilder)).GetResultOrDefault(resultBuilder);
     }
 
@@ -79,25 +79,25 @@ internal sealed class FlatCoMappedMapEncoder<TNew, TOri>(IMapEncoder<TOri> baseE
     }
 }
 
-internal sealed record MappedDecoder<TOri, TNew>(IDecoder<TOri> BaseDecoder, Func<TOri, TNew> Func)
-    : IDecoder<TNew>
+internal sealed class MappedDecoder<TOri, TNew>(IDecoder<TOri> baseDecoder, Func<TOri, TNew> func)
+    : DecoderBase<TNew>
 {
-    public DataResult<(TNew, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(TNew, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return BaseDecoder.Decode(ops, input).Map(result => result.MapFirst(Func));
+        return baseDecoder.Decode(ops, input).Map(result => result.MapFirst(func));
     }
 
     public override string ToString()
     {
-        return BaseDecoder + "[Mapped]";
+        return baseDecoder + "[Mapped]";
     }
 }
 
 internal sealed class MappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> baseDecoder, Func<TOri, TNew> mapper)
     : MapDecoderBase<TNew>
 {
-    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseDecoder.Decode(ops, input).Map(mapper);
     }
@@ -115,7 +115,7 @@ internal sealed class MappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> baseDecoder
 
 internal sealed class DispatchMappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> baseDecoder, IMapDecoder<Func<TOri, TNew>> dispatcher) : MapDecoderBase<TNew>
 {
-    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseDecoder.Decode(ops, input).FlatMap(ori => dispatcher.Decode(ops, input).Map(dispatcherFunc => dispatcherFunc.Apply(ori)));
     }
@@ -126,39 +126,39 @@ internal sealed class DispatchMappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> bas
     }
 }
 
-internal sealed record FlatMappedDecoder<TOri, TNew>(IDecoder<TOri> BaseDecoder, Func<TOri, DataResult<TNew>> Func)
-    : IDecoder<TNew>
+internal sealed class FlatMappedDecoder<TOri, TNew>(IDecoder<TOri> baseDecoder, Func<TOri, DataResult<TNew>> func)
+    : DecoderBase<TNew>
 {
-    public DataResult<(TNew, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(TNew, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return BaseDecoder.Decode(ops, input).FlatMap(result => Func.Apply(result.First).Map(mapped => (mapped, result.Second)));
+        return baseDecoder.Decode(ops, input).FlatMap(result => func.Apply(result.First).Map(mapped => (mapped, result.Second)));
     }
 
     public override string ToString()
     {
-        return BaseDecoder + "[FlatMapped]";
+        return baseDecoder + "[FlatMapped]";
     }
 }
 
-internal sealed record PromptPartialDecoder<T>(IDecoder<T> BaseDecoder, Consumer<string> OnError) : IDecoder<T>
+internal sealed class PromptPartialDecoder<T>(IDecoder<T> baseDecoder, Consumer<string> onError) : DecoderBase<T>
 {
-    public DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return BaseDecoder.Decode(ops, input).PromotePartial(OnError);
+        return baseDecoder.Decode(ops, input).PromotePartial(onError);
     }
 
     public override string ToString()
     {
-        return BaseDecoder + "[PromotePartial]";
+        return baseDecoder + "[PromotePartial]";
     }
 }
 
 internal sealed class FlatMappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> baseDecoder, Func<TOri, DataResult<TNew>> mapper)
     : MapDecoderBase<TNew>
 {
-    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TNew> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseDecoder.Decode(ops, input).FlatMap(mapper);
     }
@@ -178,13 +178,13 @@ internal sealed class ResultMappedCodec<T>(Codec<T> baseCodec, Codec<T>.IResultM
 {
     public override ValueHolder<string> CodecNameHolder => ValueHolder.Create(() => baseCodec.ToString($"[ResultMapped {mapper}]"));
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return mapper.CoApply(ops, input, baseCodec.Encode(input, ops, prefix));
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return mapper.Apply(ops, input, baseCodec.Decode(ops, input));
@@ -195,12 +195,12 @@ internal sealed class ResultMappedMapCodec<T>(MapCodec<T> baseCodec, MapCodec<T>
 {
     public override ValueHolder<string> CodecNameHolder => ValueHolder.Create(() => baseCodec.ToString($"[ResultMapped {mapper}]"));
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return mapper.CoApply(ops, input, baseCodec.Encode(input, ops, prefix));
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return mapper.Apply(ops, input, baseCodec.Decode(ops, input));
     }

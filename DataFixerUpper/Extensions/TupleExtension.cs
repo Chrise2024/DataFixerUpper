@@ -49,7 +49,7 @@ public static class TupleExtension
         /// <param name="mapper">Transformer.</param>
         public KeyValuePair<TM, TValue> MapKey<TM>(Func<TKey, TM> mapper)
         {
-            return KeyValuePair.Create(mapper.Apply(pair.Key), pair.Value);
+            return new KeyValuePair<TM, TValue>(mapper.Apply(pair.Key), pair.Value);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ public static class TupleExtension
         /// <param name="mapper">Transformer.</param>
         public KeyValuePair<TKey, TM> MapValue<TM>(Func<TValue, TM> mapper)
         {
-            return KeyValuePair.Create(pair.Key, mapper.Apply(pair.Value));
+            return new KeyValuePair<TKey, TM>(pair.Key, mapper.Apply(pair.Value));
         }
     }
 }

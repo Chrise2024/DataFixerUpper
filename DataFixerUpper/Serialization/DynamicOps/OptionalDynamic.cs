@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using DataFixerUpper.Serialization.Codecs;
 using DataFixerUpper.Utils;
 
@@ -88,15 +89,15 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder)
+    public override DataResult<(TResult, TObject)> Decode<TResult>(IDecoder<TResult> decoder)
     {
         return _delegate.FlatMap(dynamic => dynamic.Decode(decoder));
     }
 
     /// <inheritdoc/>
-    public override DataResult<TNumber> AsNumber<TNumber>()
+    public override DataResult<decimal> AsNumber()
     {
-        return _delegate.FlatMap(dynamic => dynamic.AsNumber<TNumber>());
+        return _delegate.FlatMap(dynamic => dynamic.AsNumber());
     }
 
     /// <inheritdoc/>
@@ -121,6 +122,24 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapEntries()
     {
         return _delegate.FlatMap(dynamic => dynamic.AsMapEntries());
+    }
+
+    /// <inheritdoc/>
+    public override DataResult<Stream> AsStreamOpt()
+    {
+        return _delegate.FlatMap(dynamic => dynamic.AsStreamOpt());
+    }
+    
+    /// <inheritdoc/>
+    public override DataResult<IEnumerable<int>> AsIntListOpt()
+    {
+        return _delegate.FlatMap(dynamic => dynamic.AsIntListOpt());
+    }
+    
+    /// <inheritdoc/>
+    public override DataResult<IEnumerable<long>> AsLongListOpt()
+    {
+        return _delegate.FlatMap(dynamic => dynamic.AsLongListOpt());
     }
 
     /// <inheritdoc/>

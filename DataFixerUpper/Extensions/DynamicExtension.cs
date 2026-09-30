@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Codecs;
 using DataFixerUpper.Utils;
@@ -23,44 +22,6 @@ public static class DynamicExtension
         where TObject : notnull
     {
         /// <summary>
-        /// Creates a serialized list of bytes from the given <paramref name="stream"/>.
-        /// </summary>
-        /// <param name="stream">The stream to read the bytes from.</param>
-        /// <returns>The serialized list, or an empty list if <paramref name="stream"/> cannot be read.</returns>
-        public TObject CreateStream(Stream stream)
-        {
-            byte[] buffer = ArrayPool<byte>.Shared.Rent((int) stream.Length);
-            TObject result;
-            try
-            {
-                int n = stream.Read(buffer, 0, (int) stream.Length);
-                result = ops.CreateList(buffer.Take(n).Select(ops.CreateNumber));
-            }
-            catch
-            {
-                result = ops.CreateList(Enumerable.Empty<TObject>());
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Creates a serialized list of numbers from the given <paramref name="numbers"/>.
-        /// </summary>
-        /// <param name="numbers">The numbers to serialize.</param>
-        /// <typeparam name="TNumber">The type of the numbers to serialize.</typeparam>
-        /// <returns>The serialized list.</returns>
-        public TObject CreateNumberList<TNumber>(IEnumerable<TNumber> numbers)
-            where TNumber : INumber<TNumber>
-        {
-            return ops.CreateList(numbers.Select(ops.CreateNumber));
-        }
-
-        /// <summary>
         /// Creates an empty serialized list.
         /// </summary>
         /// <returns>The empty list.</returns>
@@ -75,7 +36,7 @@ public static class DynamicExtension
         /// <returns>The empty map.</returns>
         public TObject CreateMap()
         {
-            return ops.CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject?>>());
+            return ops.CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject>>());
         }
 
         /// <summary>
@@ -95,7 +56,7 @@ public static class DynamicExtension
         /// <param name="decoder">The decoder to use.</param>
         /// <typeparam name="T">The type of the value to decode.</typeparam>
         /// <returns>A function that produces the decoded value together with the remaining input, or an error if the value cannot be decoded.</returns>
-        public Func<TObject, DataResult<(T, TObject?)>> WithDecoder<T>(IDecoder<T> decoder)
+        public Func<TObject, DataResult<(T, TObject)>> WithDecoder<T>(IDecoder<T> decoder)
         {
             return obj => decoder.Decode(ops, obj);
         }
@@ -120,51 +81,14 @@ public static class DynamicExtension
         where TObject : notnull
     {
         /// <summary>
-        /// Reads the given <paramref name="input"/> as a stream of bytes.
-        /// </summary>
-        /// <param name="input">The serialized list of bytes to read.</param>
-        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if <paramref name="input"/> is not a list or contains elements that are not bytes.</returns>
-        public DataResult<Stream> GetStream(TObject? input)
-        {
-            return ops.GetNumberList<TObject, byte>(input).Map(Stream (l) => new MemoryStream(l.ToArray(), false));
-        }
-
-        /// <summary>
-        /// Reads the given <paramref name="input"/> as a list of numbers.
-        /// </summary>
-        /// <param name="input">The serialized list to read.</param>
-        /// <typeparam name="TNumber">The type of number to read.</typeparam>
-        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the numbers, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers of type <typeparamref name="TNumber"/>.</returns>
-        public DataResult<IEnumerable<TNumber>> GetNumberList<TNumber>(TObject? input)
-            where TNumber : INumber<TNumber>
-        {
-            return ops.GetListValues(input).FlatMap(l =>
-                {
-                    ImmutableList<TNumber>.Builder builder = ImmutableList.CreateBuilder<TNumber>();
-                    DataResult<ImmutableList<TNumber>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, obj) =>
-                        {
-                            DataResult<TNumber> result = ops.GetNumberValue<TNumber>(obj);
-                            return seed.CombineStable(Functions.AddToFirst, result);
-                        }
-                    ).Map(IEnumerable<TNumber> (b) => b.ToImmutable());
-                }
-            );
-        }
-
-        /// <summary>
-        /// Reads the given <paramref name="input"/> as a number, falling back to <paramref name="defaultValue"/>.
+        /// Reads the given <paramref name="input"/> as a <see langword="decimal"/>, falling back to <paramref name="defaultValue"/>.
         /// </summary>
         /// <param name="input">The serialized value to read.</param>
         /// <param name="defaultValue">The value to return if <paramref name="input"/> is not a number.</param>
-        /// <typeparam name="TNumber">The type of number to read.</typeparam>
-        /// <returns>The number, or <paramref name="defaultValue"/> if <paramref name="input"/> is not a number of type <typeparamref name="TNumber"/>.</returns>
-        public TNumber GetNumberValue<TNumber>(TObject? input, TNumber defaultValue)
-            where TNumber : INumber<TNumber>
+        /// <returns>The <see langword="decimal"/>, or <paramref name="defaultValue"/> if <paramref name="input"/> is not a number.</returns>
+        public decimal GetNumberValue(TObject input, decimal defaultValue)
         {
-            return ops.GetNumberValue<TNumber>(input).GetResultOrDefault(defaultValue);
+            return ops.GetNumberValue(input).GetResultOrDefault(defaultValue);
         }
     }
 
@@ -185,9 +109,9 @@ public static class DynamicExtension
         public TOther ConvertMap<TOther>(DynamicOps<TOther> otherOp, TObject input)
             where TOther : notnull
         {
-            IEnumerable<KeyValuePair<TOther, TOther?>> entries = ops.GetMapValues(input)
-                .GetResultOrDefault(Enumerable.Empty<KeyValuePair<TObject, TObject?>>())
-                .Select(p => KeyValuePair.Create(ops.ConvertTo(otherOp, p.Key), ops.ConvertTo(otherOp, p.Value)));
+            IEnumerable<KeyValuePair<TOther, TOther>> entries = ops.GetMapValues(input)
+                .GetResultOrDefault(Enumerable.Empty<KeyValuePair<TObject, TObject>>())
+                .Select(p => new KeyValuePair<TOther, TOther>(ops.ConvertTo(otherOp, p.Key), ops.ConvertTo(otherOp, p.Value)));
             return otherOp.CreateMap(entries);
         }
 
@@ -201,7 +125,7 @@ public static class DynamicExtension
         public TOther ConvertList<TOther>(DynamicOps<TOther> otherOp, TObject input)
             where TOther : notnull
         {
-            IEnumerable<TOther?> entries = ops.GetListValues(input)
+            IEnumerable<TOther> entries = ops.GetList(input)
                 .GetResultOrDefault(Enumerable.Empty<TObject>())
                 .Select(e => ops.ConvertTo(otherOp, e));
             return otherOp.CreateList(entries);
@@ -215,39 +139,6 @@ public static class DynamicExtension
     extension<TObject>(DynamicLike<TObject> dynamic)
         where TObject : notnull
     {
-        /// <summary>
-        /// Reads this value as a stream of bytes.
-        /// </summary>
-        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if this value is not a list or contains elements that are not bytes.</returns>
-        public DataResult<Stream> AsStreamOpt()
-        {
-            return dynamic.AsNumberListOpt<TObject, byte>().Map(Stream (l) => new MemoryStream(l.ToArray(), false));
-        }
-
-        /// <summary>
-        /// Reads this value as a list of numbers.
-        /// </summary>
-        /// <typeparam name="TNumber">The type of number to read.</typeparam>
-        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the numbers, or an error if this value is not a list or contains elements that are not numbers of type <typeparamref name="TNumber"/>.</returns>
-        public DataResult<IEnumerable<TNumber>> AsNumberListOpt<TNumber>()
-            where TNumber : INumber<TNumber>
-        {
-            return dynamic.AsListValues().FlatMap(l =>
-                {
-                    ImmutableList<TNumber>.Builder builder = ImmutableList.CreateBuilder<TNumber>();
-                    DataResult<ImmutableList<TNumber>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, d) =>
-                        {
-                            DataResult<TNumber> result = d.AsNumber<TNumber>();
-                            return seed.CombineStable(Functions.AddToFirst, result);
-                        }
-                    ).Map(IEnumerable<TNumber> (b) => b.ToImmutable());
-                }
-            );
-        }
-
         /// <summary>
         /// Reads this value as a list, converting every element with <paramref name="elementDeserializer"/>.
         /// </summary>
@@ -338,12 +229,12 @@ public static class DynamicExtension
                     ImmutableList<TElement>.Builder builder = ImmutableList.CreateBuilder<TElement>();
                     DataResult<ImmutableList<TElement>.Builder> initResult = DataResult.CreateSuccess(builder);
                     return l.Aggregate(
-                            initResult,
-                            (seed, value) =>
-                            {
-                                DataResult<TElement> elementResult = elementDecoder.Apply(value);
-                                return seed.CombineStable(Functions.AddToFirst, elementResult);
-                            }
+                        initResult,
+                        (seed, value) =>
+                        {
+                            DataResult<TElement> elementResult = elementDecoder.Apply(value);
+                            return seed.CombineStable(Functions.AddToFirst, elementResult);
+                        }
                     ).Map(_ => builder.ToImmutable());
                 }
             );
@@ -363,13 +254,13 @@ public static class DynamicExtension
                     ImmutableList<TElement>.Builder builder = ImmutableList.CreateBuilder<TElement>();
                     DataResult<ImmutableList<TElement>.Builder> initResult = DataResult.CreateSuccess(builder);
                     return l.Aggregate(
-                            initResult,
-                            (seed, value) =>
-                            {
-                                DataResult<TElement> elementResult = value.Read(elementDecoder);
-                                return seed.CombineStable(Functions.AddToFirst, elementResult);
-                            }
-                        ).Map(b => b.ToImmutable());
+                        initResult,
+                        (seed, value) =>
+                        {
+                            DataResult<TElement> elementResult = value.Read(elementDecoder);
+                            return seed.CombineStable(Functions.AddToFirst, elementResult);
+                        }
+                    ).Map(b => b.ToImmutable());
                 }
             );
         }
@@ -382,7 +273,7 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type produced by <paramref name="keyDecoder"/>.</typeparam>
         /// <typeparam name="TValue">The type produced by <paramref name="valueDecoder"/>.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the map, or an error if this value is not a map.</returns>
-        public DataResult<ImmutableDictionary<TKey, TValue?>> ReadMap<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDecoder, Func<DynamicLike<TObject>, TValue?> valueDecoder)
+        public DataResult<ImmutableDictionary<TKey, TValue>> ReadMap<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDecoder, Func<DynamicLike<TObject>, TValue> valueDecoder)
             where TKey : notnull
         {
             return dynamic.AsMapEntries().Map(l =>
@@ -406,15 +297,15 @@ public static class DynamicExtension
                     ImmutableDictionary<TKey, TValue>.Builder builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
                     DataResult<ImmutableDictionary<TKey, TValue>.Builder> initResult = DataResult.CreateSuccess(builder);
                     return l.Aggregate(
-                            initResult,
-                            (seed, pair) =>
-                            {
-                                DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key
-                                    .Read(keyDecoder)
-                                    .Combine(KeyValuePair.Create, pair.Value.Read(valueDecoder));
-                                return seed.CombineStable(Functions.AddToFirst, entry);
-                            }
-                        ).Map(b => b.ToImmutable());
+                        initResult,
+                        (seed, pair) =>
+                        {
+                            DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key
+                                .Read(keyDecoder)
+                                .Combine(Functions.CreatePair, pair.Value.Read(valueDecoder));
+                            return seed.CombineStable(Functions.AddToFirst, entry);
+                        }
+                    ).Map(b => b.ToImmutable());
                 }
             );
         }
@@ -435,17 +326,17 @@ public static class DynamicExtension
                     ImmutableDictionary<TKey, TValue>.Builder builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
                     DataResult<ImmutableDictionary<TKey, TValue>.Builder> initResult = DataResult.CreateSuccess(builder);
                     return l.Aggregate(
-                            initResult,
-                            (seed, pair) =>
-                            {
-                                DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key.Read(keyDecoder)
-                                    .FlatMap(key =>
-                                        pair.Value.Read(valueDecoderDispatcher.Apply(key))
-                                            .Map(value => KeyValuePair.Create(key, value))
-                                    );
-                                return seed.Combine(Functions.AddToFirst, entry);
-                            }
-                        ).Map(b => b.ToImmutable());
+                        initResult,
+                        (seed, pair) =>
+                        {
+                            DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key.Read(keyDecoder)
+                                .FlatMap(key =>
+                                    pair.Value.Read(valueDecoderDispatcher.Apply(key))
+                                        .Map(value => new KeyValuePair<TKey, TValue>(key, value))
+                                );
+                            return seed.Combine(Functions.AddToFirst, entry);
+                        }
+                    ).Map(b => b.ToImmutable());
                 }
             );
         }
@@ -481,12 +372,10 @@ public static class DynamicExtension
         /// Reads this value as a number, falling back to <paramref name="defaultValue"/>.
         /// </summary>
         /// <param name="defaultValue">The value to return if this value is not a number.</param>
-        /// <typeparam name="TNumber">The type of number to read.</typeparam>
-        /// <returns>The number, or <paramref name="defaultValue"/> if this value is not a number of type <typeparamref name="TNumber"/>.</returns>
-        public TNumber AsNumber<TNumber>(TNumber defaultValue)
-            where TNumber : INumber<TNumber>
+        /// <returns>The number, or <paramref name="defaultValue"/> if this value is not a number.</returns>
+        public decimal AsNumber(decimal defaultValue)
         {
-            return dynamic.AsNumber<TNumber>().GetResultOrDefault(defaultValue);
+            return dynamic.AsNumber().GetResultOrDefault(defaultValue);
         }
 
         /// <summary>
@@ -519,19 +408,31 @@ public static class DynamicExtension
         }
 
         /// <summary>
-        /// Reads this value as a list of numbers, falling back to an empty list.
+        /// Reads this value as a list of <see langword="int"/>, falling back to an empty list.
         /// </summary>
-        /// <typeparam name="TNumber">The type of number to read.</typeparam>
-        /// <returns>The numbers, or an empty list if this value is not a list of numbers of type <typeparamref name="TNumber"/>.</returns>
-        public ImmutableList<TNumber> AspNumberList<TNumber>()
-            where TNumber : INumber<TNumber>
+        /// <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
+        public ImmutableList<int> AsIntList()
         {
-            if (dynamic.AsNumberListOpt<TObject, TNumber>().TryGetResult(out IEnumerable<TNumber>? numbers))
+            if (dynamic.AsIntListOpt().TryGetResult(out IEnumerable<int> numbers))
             {
                 return numbers.ToImmutableList();
             }
 
-            return ImmutableList<TNumber>.Empty;
+            return ImmutableList<int>.Empty;
+        }
+        
+        /// <summary>
+        /// Reads this value as a list of <see langword="long"/>, falling back to an empty list.
+        /// </summary>
+        /// <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
+        public ImmutableList<long> AsLongList()
+        {
+            if (dynamic.AsLongListOpt().TryGetResult(out IEnumerable<long> numbers))
+            {
+                return numbers.ToImmutableList();
+            }
+
+            return ImmutableList<long>.Empty;
         }
 
         /// <summary>
@@ -596,7 +497,7 @@ public static class DynamicExtension
         /// </remarks>
         public Dynamic<TObject> CreateMap(IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>> entries)
         {
-            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateMap(entries.Where(pair => pair.Key.Value is not null).Select(pair => KeyValuePair.Create(pair.Key.Value!, pair.Value.Value))));
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateMap(entries.Where(pair => pair.Key.Value is not null).Select(pair => new KeyValuePair<TObject, TObject>(pair.Key.Value!, pair.Value.Value))));
         }
 
         /// <summary>
@@ -611,11 +512,69 @@ public static class DynamicExtension
         /// <summary>
         /// Creates a dynamic containing the given <paramref name="number"/>.
         /// </summary>
-        /// <param name="number">The number to serialize.</param>
-        /// <typeparam name="TNumber">The type of the number to serialize.</typeparam>
+        /// <param name="number">The <see langword="byte"/> to serialize.</param>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
-        public Dynamic<TObject> CreateNumber<TNumber>(TNumber number)
-            where TNumber : INumber<TNumber>
+        public Dynamic<TObject> CreateByte(byte number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateByte(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="short"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateShort(short number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateShort(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="int"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateInt(int number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateInt(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="long"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateLong(long number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateLong(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="float"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateFloat(float number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateFloat(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="double"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateDouble(double number)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateDouble(number));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing the given <paramref name="number"/>.
+        /// </summary>
+        /// <param name="number">The <see langword="decimal"/> to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
+        public Dynamic<TObject> CreateNumber(decimal number)
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateNumber(number));
         }
@@ -641,15 +600,23 @@ public static class DynamicExtension
         }
 
         /// <summary>
-        /// Creates a dynamic containing a list of numbers created from the given <paramref name="numberList"/>.
+        /// Creates a dynamic containing a list of <see langword="int"/> created from the given <paramref name="numberList"/>.
         /// </summary>
         /// <param name="numberList">The numbers to serialize.</param>
-        /// <typeparam name="TNumber">The type of the numbers to serialize.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created list.</returns>
-        public Dynamic<TObject> CreateNumberList<TNumber>(IEnumerable<TNumber> numberList)
-            where TNumber : INumber<TNumber>
+        public Dynamic<TObject> CreateIntList(IEnumerable<int> numberList)
         {
-            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateNumberList(numberList));
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateIntList(numberList));
+        }
+        
+        /// <summary>
+        /// Creates a dynamic containing a list of <see langword="long"/> created from the given <paramref name="numberList"/>.
+        /// </summary>
+        /// <param name="numberList">The numbers to serialize.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created list.</returns>
+        public Dynamic<TObject> CreateLongList(IEnumerable<long> numberList)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateLongList(numberList));
         }
     }
 

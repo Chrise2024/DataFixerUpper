@@ -11,7 +11,7 @@ namespace DataFixerUpper.Serialization.Collections.Builder;
 /// <typeparam name="TObject">The type of the serialized form.</typeparam>
 /// <seealso cref="T:DataFixerUpper.Serialization.Collections.KeyCompressor`1"/>
 /// <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.MapBuilderBase`2"/>
-public sealed class CompressedRecordBuilder<TObject> : MapBuilderBase<TObject, TObject?[]>
+public sealed class CompressedRecordBuilder<TObject> : MapBuilderBase<TObject, TObject[]>
     where TObject : notnull
 {
     private readonly KeyCompressor<TObject> _compressor;
@@ -42,7 +42,7 @@ public sealed class CompressedRecordBuilder<TObject> : MapBuilderBase<TObject, T
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The array to store the value in.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected override TObject?[] Append(TObject key, TObject? value, TObject?[] builder)
+    protected override TObject[] Append(TObject key, TObject value, TObject[] builder)
     {
         builder[_compressor.Compress(key)] = value;
         return builder;
@@ -55,7 +55,7 @@ public sealed class CompressedRecordBuilder<TObject> : MapBuilderBase<TObject, T
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The array to store the value in.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected override TObject?[] Append(string key, TObject? value, TObject?[] builder)
+    protected override TObject[] Append(string key, TObject value, TObject[] builder)
     {
         builder[_compressor.Compress(key)] = value;
         return builder;
@@ -67,7 +67,7 @@ public sealed class CompressedRecordBuilder<TObject> : MapBuilderBase<TObject, T
     /// <param name="builder">The array that contains the accumulated values.</param>
     /// <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if it could not be built.</returns>
-    protected override DataResult<TObject> BuildResult(TObject?[] builder, TObject? prefix)
+    protected override DataResult<TObject> BuildResult(TObject[] builder, TObject prefix)
     {
         return Ops.MergeToList(prefix, builder);
     }

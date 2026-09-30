@@ -7,7 +7,7 @@ namespace DataFixerUpper.Serialization.Collections.Builder;
 /// </summary>
 /// <typeparam name="TObject">The type of the serialized form.</typeparam>
 /// <typeparam name="TBuilder">The type of the builder that accumulates the entries of the map.</typeparam>
-public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObject, TBuilder>, IRecordBuilder<TObject>
+public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObject, TBuilder>
     where TObject : notnull
 
 {
@@ -24,18 +24,10 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The builder to append the entry to.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected abstract TBuilder Append(string key, TObject? value, TBuilder builder);
-
-    /// <summary>
-    /// Adds an entry that maps <paramref name="key"/> to <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add, which must be readable as a string.</param>
-    /// <param name="value">The value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    /// <remarks>
-    /// The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-    /// </remarks>
-    public override IRecordBuilder<TObject> Add(TObject key, TObject? value)
+    protected abstract TBuilder Append(string key, TObject value, TBuilder builder);
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(TObject key, TObject value)
     {
         Builder = Ops.GetStringValue(key).FlatMap(s =>
             {
@@ -45,17 +37,9 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-
-    /// <summary>
-    /// Adds an entry that maps <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add, which must be readable as a string.</param>
-    /// <param name="value">The result containing the value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    /// <remarks>
-    /// The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-    /// </remarks>
-    public override IRecordBuilder<TObject> Add(TObject key, DataResult<TObject> value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(TObject key, DataResult<TObject> value)
     {
         Builder = Ops.GetStringValue(key).FlatMap(s =>
             {
@@ -65,17 +49,9 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-
-    /// <summary>
-    /// Adds an entry that maps the key of <paramref name="key"/> to the value of <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The result containing the key of the entry to add, which must be readable as a string.</param>
-    /// <param name="value">The result containing the value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    /// <remarks>
-    /// The key is converted with <c>GetStringValue</c>, so an error is carried over if it is not a string.
-    /// </remarks>
-    public override IRecordBuilder<TObject> Add(DataResult<TObject> key, DataResult<TObject> value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(DataResult<TObject> key, DataResult<TObject> value)
     {
         Builder = key.FlatMap(Ops.GetStringValue).FlatMap(s =>
             {
@@ -85,26 +61,16 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
         );
         return this;
     }
-
-    /// <summary>
-    /// Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add.</param>
-    /// <param name="value">The value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    public IRecordBuilder<TObject> Add(string key, TObject? value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(string key, TObject value)
     {
         Builder = Builder.Map(builder => Append(key, value, builder));
         return this;
     }
-
-    /// <summary>
-    /// Adds an entry that maps the given string <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add.</param>
-    /// <param name="value">The result containing the value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    public IRecordBuilder<TObject> Add(string key, DataResult<TObject> value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(string key, DataResult<TObject> value)
     {
         Builder = Builder.CombineStable((b, v) => Append(key, v, b), value);
         return this;

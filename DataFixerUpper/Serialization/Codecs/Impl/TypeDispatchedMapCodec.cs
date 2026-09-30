@@ -65,13 +65,13 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
 
     public override ValueHolder<string> CodecNameHolder => $"TypeDispatchCodec[{typeof(TType).Name} {typeof(TValue).Name}]";
 
-    public override IRecordBuilder<TObject> Encode<TObject>(TValue input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TValue input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         DataResult<IMapEncoder<TValue>> encoderResult = _encoderDispatcher.Apply(input);
         DataResult<TType> typeResult = _typeSelector.Apply(input);
 
-        IRecordBuilder<TObject> builder = prefix.WithErrorsFrom(encoderResult).WithErrorsFrom(typeResult);
-        if (!encoderResult.TryGetResult(out IMapEncoder<TValue>? valueEncoder) || !typeResult.TryGetResult(out TType? type))
+        RecordBuilder<TObject> builder = prefix.WithErrorsFrom(encoderResult).WithErrorsFrom(typeResult);
+        if (!encoderResult.TryGetResult(out IMapEncoder<TValue> valueEncoder) || !typeResult.TryGetResult(out TType type))
         {
             return builder;
         }
@@ -84,7 +84,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
         return _typeCodec.Encode(type, ops, valueEncoder.Encode(input, ops, builder));
     }
 
-    public override DataResult<TValue> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TValue> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _typeCodec.Decode(ops, input).FlatMap(type =>
             {
@@ -95,7 +95,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
                             return decoder.Decode(ops, input);
                         }
 
-                        TObject? value = input[CompressedValueKey];
+                        TObject value = input[CompressedValueKey];
                         if (value is null)
                         {
                             return DataResult.CreateError<TValue>($"Input does not have a \"value\" entry: {input}");

@@ -93,7 +93,7 @@ public static class RecordCodecBuilder
     /// <returns></returns>
     public static RecordCodecBuilder<TInstance, TField> Point<TInstance, TField>(TField instance)
     {
-        return new RecordCodecBuilder<TInstance, TField>(_ => instance, _ => IEncoder<TField>.Empty(), IDecoder<TField>.Unit(instance));
+        return new RecordCodecBuilder<TInstance, TField>(_ => instance, _ => Encoder.Empty<TField>(), Decoder.Unit(instance));
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public static class RecordCodecBuilder
     /// <returns></returns>
     public static RecordCodecBuilder<TInstance, TField> Point<TInstance, TField>(TField instance, Lifecycle lifecycle)
     {
-        return new RecordCodecBuilder<TInstance, TField>(_ => instance, _ => IEncoder<TField>.Empty().WithLifecycle(lifecycle), IDecoder<TField>.Unit(instance).WithLifecycle(lifecycle));
+        return new RecordCodecBuilder<TInstance, TField>(_ => instance, _ => Encoder.Empty<TField>().WithLifecycle(lifecycle), Decoder.Unit(instance).WithLifecycle(lifecycle));
     }
 
     /// <summary>
@@ -245,9 +245,9 @@ public sealed class RecordCodecBuilderOperator<TInstance> : Applicative<RecordCo
     /// <param name="field">Fixed field of builder.</param>
     /// <typeparam name="TField">Field type.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilder`2"/> instance.</returns>
-    public override RecordCodecBuilder<TInstance, TField> Point<TField>(TField field)
+    public override IApp<RecordCodecBuilder.Mu<TInstance>, TField> Point<TField>(TField field)
     {
-        return new RecordCodecBuilder<TInstance, TField>(_ => field, _ => IEncoder<TField>.Empty(), IDecoder<TField>.Unit(field));
+        return new RecordCodecBuilder<TInstance, TField>(_ => field, _ => Encoder.Empty<TField>(), Decoder.Unit(field));
     }
 
     /// <summary>
@@ -259,7 +259,7 @@ public sealed class RecordCodecBuilderOperator<TInstance> : Applicative<RecordCo
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilder`2"/> instance.</returns>
     public RecordCodecBuilder<TInstance, TField> Point<TField>(TField field, Lifecycle lifecycle)
     {
-        return new RecordCodecBuilder<TInstance, TField>(_ => field, _ => IEncoder<TField>.Empty().WithLifecycle(lifecycle), IDecoder<TField>.Unit(field).WithLifecycle(lifecycle));
+        return new RecordCodecBuilder<TInstance, TField>(_ => field, _ => Encoder.Empty<TField>().WithLifecycle(lifecycle), Decoder.Unit(field).WithLifecycle(lifecycle));
     }
 
     /// <summary>

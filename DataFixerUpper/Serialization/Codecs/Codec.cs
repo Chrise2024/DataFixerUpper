@@ -147,8 +147,8 @@ public static partial class Codec
     /// Encoding fails if <paramref name="toString"/> returns <see langword="null"/>, and decoding fails if <paramref name="fromString"/> returns <see langword="null"/>.
     /// </remarks>
     public static Codec<T> CreateStringResolver<T>(
-        Func<T, string?> toString,
-        Func<string, T?> fromString
+        Func<T, string> toString,
+        Func<string, T> fromString
     )
     {
         return new StringResolverCodec<T>(toString, fromString);
@@ -233,11 +233,11 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
 
     
     /// <inheritdoc/>
-    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : notnull;
 
     /// <inheritdoc/>
-    public abstract DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public abstract DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : notnull;
 
     IEncoder<T> IEncoder<T>.WithLifecycle(Lifecycle lifecycle)
@@ -269,6 +269,24 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
     }
 
     /// <inheritdoc/>
+    public IDecoder<T>.ITerminal AsTerminal()
+    {
+        return new TerminalImpl<T>(this);
+    }
+    
+    /// <inheritdoc/>
+    public IDecoder<T>.IBoxed AsBoxed()
+    {
+        return new BoxedImpl<T>(this);
+    }
+    
+    /// <inheritdoc/>
+    public IDecoder<T>.ISimple AsSimple()
+    {
+        return new SimpleImpl<T>(this);
+    }
+
+    /// <inheritdoc/>
     public sealed override string ToString()
     {
         return CodecNameHolder.Value;
@@ -297,7 +315,7 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
         /// <param name="original">The result produced by the decoder.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>The transformed result.</returns>
-        DataResult<(T, TObject?)> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<(T, TObject?)> original)
+        DataResult<(T, TObject)> Apply<TObject>(DynamicOps<TObject> ops, TObject input, DataResult<(T, TObject)> original)
             where TObject : notnull;
 
         /// <summary>

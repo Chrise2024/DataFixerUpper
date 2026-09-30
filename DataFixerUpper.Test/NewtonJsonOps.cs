@@ -27,19 +27,14 @@ public sealed class NewtonJsonOps : DynamicOps<JToken>
         };
     }
 
-    public override DataResult<TNumber> GetNumberValue<TNumber>(JToken input) where TNumber : default
+    public override DataResult<decimal> GetNumberValue(JToken input)
     {
-        return input.Type switch
-        {
-            JTokenType.Integer => DataResult.CreateSuccess(TNumber.CreateSaturating(input.Value<long>()), Lifecycle.Stable),
-            JTokenType.Float => DataResult.CreateSuccess(TNumber.CreateSaturating(input.Value<decimal>()), Lifecycle.Stable),
-            _ => DataResult.CreateError<TNumber>($"Input is not a number: {input}")
-        };
+        throw new NotImplementedException();
     }
-
-    public override JToken CreateNumber<TNumber>(TNumber number) where TNumber : default
+    
+    public override JToken CreateNumber(decimal value)
     {
-        return TNumber.IsInteger(number) ? new JValue(long.CreateSaturating(number)) : new JValue(decimal.CreateSaturating(number));
+        throw new NotImplementedException();
     }
 
     public override DataResult<string> GetStringValue(JToken @string)
@@ -132,17 +127,12 @@ public sealed class NewtonJsonOps : DynamicOps<JToken>
         throw new NotImplementedException();
     }
 
-    public override DataResult<IEnumerable<JToken>> GetListValues(JToken input)
+    public override DataResult<IEnumerable<JToken>> GetList(JToken input)
     {
         throw new NotImplementedException();
     }
 
-    public override DataResult<IMapLike<JToken>> GetMap(JToken input)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DataResult<ImmutableList<JToken>> GetList(JToken input)
+    public override DataResult<MapLike<JToken>> GetMap(JToken input)
     {
         throw new NotImplementedException();
     }

@@ -12,7 +12,7 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
 {
     public override ValueHolder<string> CodecNameHolder => $"Either[{lCodec} {rCodec}]";
 
-    public override DataResult<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return input.MapGet(
@@ -21,16 +21,16 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
         );
     }
 
-    public override DataResult<(Either<TL, TR>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(Either<TL, TR>, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
-        DataResult<(Either<TL, TR>, TObject?)> lResult = lCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject?)>(result => result.MapFirst(Either.CreateLeft<TL, TR>));
+        DataResult<(Either<TL, TR>, TObject)> lResult = lCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject)>(result => result.MapFirst(Either.CreateLeft<TL, TR>));
         if (lResult.IsSuccess)
         {
             return lResult;
         }
 
-        DataResult<(Either<TL, TR>, TObject?)> rResult = rCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject?)>(result => result.MapFirst(Either.CreateRight<TL, TR>));
+        DataResult<(Either<TL, TR>, TObject)> rResult = rCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject)>(result => result.MapFirst(Either.CreateRight<TL, TR>));
         if (rResult.IsSuccess)
         {
             return rResult;
@@ -46,7 +46,7 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
             return rResult;
         }
 
-        return DataResult.CreateError<(Either<TL, TR>, TObject?)>($"Failed to parse either. First: {lResult.ErrorResult?.Message} Second: {rResult.ErrorResult?.Message}");
+        return DataResult.CreateError<(Either<TL, TR>, TObject)>($"Failed to parse either. First: {lResult.ErrorResult?.Message} Second: {rResult.ErrorResult?.Message}");
     }
 }
 
@@ -54,7 +54,7 @@ internal sealed class EitherMapCodec<TL, TR>(MapCodec<TL> lCodec, MapCodec<TR> r
 {
     public override ValueHolder<string> CodecNameHolder => $"Either[{lCodec} {rCodec}]";
 
-    public override IRecordBuilder<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return input.MapGet(
             l => lCodec.Encode(l, ops, prefix),
@@ -62,7 +62,7 @@ internal sealed class EitherMapCodec<TL, TR>(MapCodec<TL> lCodec, MapCodec<TR> r
         );
     }
 
-    public override DataResult<Either<TL, TR>> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<Either<TL, TR>> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         DataResult<Either<TL, TR>> lResult = lCodec.Decode(ops, input).Map(Either.CreateLeft<TL, TR>);
         if (lResult.IsSuccess)

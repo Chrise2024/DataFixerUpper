@@ -35,8 +35,8 @@ public static class ValueHolder
 /// </summary>
 public struct ValueHolder<T>
 {
-    private Provider<T>? _provider;
-    private T? _value;
+    private Provider<T> _provider;
+    private T _value;
     /// <summary>
     /// 0 = not initialized
     /// 1 = initialization in progress
@@ -55,8 +55,7 @@ public struct ValueHolder<T>
     /// <param name="initialValue">Value to wrap.</param>
     public ValueHolder(T initialValue)
     {
-        ArgumentNullException.ThrowIfNull(initialValue);
-        _value = initialValue;
+        _value = initialValue ?? throw new ArgumentNullException(nameof(initialValue) ,"Cannot assign null value to ValueHolder.");
         _state = 2;
     }
 
@@ -66,8 +65,7 @@ public struct ValueHolder<T>
     /// <param name="provider">Provider of value.</param>
     public ValueHolder(Provider<T> provider)
     {
-        ArgumentNullException.ThrowIfNull(provider);
-        _provider = provider;
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider) ,"Cannot assign null provider to ValueHolder.");
         _state = 0;
     }
 

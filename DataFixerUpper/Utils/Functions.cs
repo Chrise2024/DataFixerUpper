@@ -25,6 +25,14 @@ public static class Functions
     /// Consumer receives value and do nothing.
     /// </summary>
     public static void EmptyConsumer<T>(T value) { }
+
+    /// <summary>
+    /// Function to create <see cref="T:System.Collections.Generic.KeyValuePair`2"/>.
+    /// </summary>
+    public static KeyValuePair<TKey, TValue> CreatePair<TKey, TValue>(TKey key, TValue value)
+    {
+        return new KeyValuePair<TKey, TValue>(key, value);
+    }
     
     /// <summary>
     /// Function that always returns its input argument.

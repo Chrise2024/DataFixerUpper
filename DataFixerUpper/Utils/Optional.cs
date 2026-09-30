@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using DataFixerUpper.Extensions;
 
 namespace DataFixerUpper.Utils;
@@ -14,7 +13,7 @@ public static class Optional
     /// </summary>
     /// <param name="value">Value to wrap.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Utils.Optional`1"/> instance.</returns>
-    public static Optional<T> Create<T>(T? value)
+    public static Optional<T> Create<T>(T value)
     {
         return value is null ? Optional<T>.Empty : new Optional<T>(value);
     }
@@ -45,7 +44,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// </summary>
     public static Optional<T> Empty => new();
 
-    private readonly T? _value;
+    private readonly T _value;
     private readonly bool _hasValue;
 
     /// <summary>
@@ -60,7 +59,6 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has a value; <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has no value.
     /// </returns>
-    [MemberNotNullWhen(true, nameof(_value))]
     public bool HasValue => _hasValue;
 
     internal Optional(T value)
@@ -88,13 +86,17 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <exception cref="Exception">Provided exception if <see cref="P:HasValue"/> is false.</exception>
     public T GetOrThrow(Provider<Exception> exceptionProvider)
     {
-        ArgumentNullException.ThrowIfNull(exceptionProvider);
+        if (exceptionProvider is null)
+        {
+            throw new ArgumentNullException(nameof(exceptionProvider));
+        }
+        
         return HasValue ? _value : throw exceptionProvider.Get();
     }
     
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or <see langword="default"/>.</summary>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="default"/>.</returns>
-    public T? GetOrDefault()
+    public T GetOrDefault()
     {
         return HasValue ? _value : default;
     }
@@ -104,7 +106,6 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(T defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(defaultValue);
         return HasValue ? _value : defaultValue;
     }
 
@@ -113,7 +114,6 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(Provider<T> defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(defaultValue);
         return HasValue ? _value : defaultValue.Get();
     }
 
@@ -122,7 +122,6 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(ValueHolder<T> defaultValue)
     {
-        ArgumentNullException.ThrowIfNull(defaultValue);
         return HasValue ? _value : defaultValue.Value;
     }
 
@@ -134,7 +133,11 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The transformed <see cref="T:DataFixerUpper.Utils.Optional`1"/>.</returns>
     public Optional<TResult> Select<TResult>(Func<T, TResult> selector)
     {
-        ArgumentNullException.ThrowIfNull(selector);
+        if (selector is null)
+        {
+            throw new ArgumentNullException(nameof(selector));
+        }
+        
         return HasValue ? new Optional<TResult>(selector.Apply(_value)) : Optional<TResult>.Empty;
     }
 
@@ -144,10 +147,9 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <param name="action">Action to perform.</param>
     public void IfHasValue(Consumer<T> action)
     {
-        ArgumentNullException.ThrowIfNull(action);
         if (HasValue)
         {
-            action.Accept(_value);
+            action?.Accept(_value);
         }
     }
 
@@ -158,7 +160,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is Optional<T> other && EqualsCore(other);
     }

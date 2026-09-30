@@ -59,6 +59,7 @@ public abstract partial class Codec<T>
         return new ArrayCodec<T>(this, length);
     }
 
+
     /// <summary>
     /// Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that encodes and decodes this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> as the field named <paramref name="name"/> of a map.
     /// </summary>
@@ -71,6 +72,16 @@ public abstract partial class Codec<T>
             AsDecoder().Field(name),
             $"Field[{name}:{ToString()}]"
         );
+    }
+
+    IMapEncoder<T> IEncoder<T>.Field(string name)
+    {
+        return new FieldEncoder<T>(name, this);
+    }
+    
+    IMapDecoder<T> IDecoder<T>.Field(string name)
+    {
+        return new FieldDecoder<T>(name, this);
     }
 
     /// <summary>
@@ -177,6 +188,11 @@ public abstract partial class Codec<T>
     public Codec<T> PromptPartial(Consumer<string> onError)
     {
         return Codec.Create(this, AsDecoder().PromptPartial(onError));
+    }
+
+    IDecoder<T> IDecoder<T>.PromptPartial(Consumer<string> onError)
+    {
+        return new PromptPartialDecoder<T>(this, onError);
     }
 
     /// <summary>

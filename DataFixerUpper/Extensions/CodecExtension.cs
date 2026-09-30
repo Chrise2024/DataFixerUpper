@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using DataFixerUpper.Serialization.Codecs.Impl;
 using DataFixerUpper.Serialization.Collections;
@@ -64,7 +65,7 @@ public static class CodecExtension
         /// <param name="input">The value to decode.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object.</returns>
-        public DataResult<T> Parse<TObject>(DynamicOps<TObject> ops, TObject? input)
+        public DataResult<T> Parse<TObject>(DynamicOps<TObject> ops, TObject input)
             where TObject : notnull
         {
             return decoder.Decode(ops, input).Map(result => result.Item1);
@@ -76,7 +77,7 @@ public static class CodecExtension
         /// <param name="dynamic">The serialized data.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object and the remaining serialized data.</returns>
-        public DataResult<(T, TObject?)> Decode<TObject>(Dynamic<TObject> dynamic)
+        public DataResult<(T, TObject)> Decode<TObject>(Dynamic<TObject> dynamic)
             where TObject : notnull
 
         {
@@ -219,15 +220,15 @@ public static class MapCodecExtension
     extension<T>(IMapEncoder<T> encoder)
     {
         /// <summary>
-        /// Creates a new, empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1"/> that accepts values of the given serialized type.
+        /// Creates a new, empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1"/> that accepts values of the given serialized type.
         /// </summary>
         /// <remarks>
         /// The returned builder will used compressed keys if and only if the serialized type uses compressed keys.
         /// </remarks>
         /// <param name="ops">The ops used to create the encoded fields.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
-        /// <returns>Empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.IRecordBuilder`1"/>.</returns>
-        public IRecordBuilder<TObject> GetCompressedBuilder<TObject>(DynamicOps<TObject> ops)
+        /// <returns>Empty <see cref="T:DataFixerUpper.Serialization.Collections.Builder.RecordBuilder`1"/>.</returns>
+        public RecordBuilder<TObject> GetCompressedBuilder<TObject>(DynamicOps<TObject> ops)
             where TObject : notnull
         {
             if (ops.CompressMaps())
@@ -274,7 +275,7 @@ public static class MapCodecExtension
         /// <param name="input">The serialized value that contains the record data to deserialize.</param>
         /// <typeparam name="TObject">The type of the serialized form.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object, or an error if no object could be decoded.</returns>
-        public DataResult<T> CompressedDecode<TObject>(DynamicOps<TObject> ops, TObject? input)
+        public DataResult<T> CompressedDecode<TObject>(DynamicOps<TObject> ops, TObject input)
             where TObject : notnull
         {
             if (!ops.CompressMaps())
@@ -282,14 +283,14 @@ public static class MapCodecExtension
                 return ops.GetMap(input).FlatMap(map => decoder.Decode(ops, map));
             }
 
-            DataResult<ImmutableList<TObject?>> listResult = ops.GetList(input);
-            if (!listResult.TryGetResult(out ImmutableList<TObject?>? list))
+            DataResult<IEnumerable<TObject>> listResult = ops.GetList(input);
+            if (!listResult.TryGetResult(out IEnumerable<TObject> list))
             {
                 return DataResult.CreateError<T>("Input is not a list");
             }
 
             KeyCompressor<TObject> compressor = decoder.GetCompressor(ops);
-            IMapLike<TObject> map = IMapLike<TObject>.ForCompressed(list, compressor);
+            MapLike<TObject> map = MapLike<TObject>.ForCompressed(list.ToImmutableList(), compressor);
             return decoder.Decode(ops, map);
         }
 

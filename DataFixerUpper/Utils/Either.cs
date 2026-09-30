@@ -58,7 +58,7 @@ public abstract record Either<TL, TR>
     /// Get the left value.
     /// </summary>
     /// <value>Left value.</value>
-    public abstract TL? Left { get; }
+    public abstract TL Left { get; }
 
 
     /// <summary>
@@ -67,14 +67,13 @@ public abstract record Either<TL, TR>
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has left value; <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has right value.
     /// </returns>
-    [MemberNotNullWhen(true, nameof(Left))]
     public abstract bool HasLeft { get; }
 
     /// <summary>
     /// Get the right value.
     /// </summary>
     /// <value>Right value.</value>
-    public abstract TR? Right { get; }
+    public abstract TR Right { get; }
 
     /// <summary>
     /// Gets a value indicating whether the current <see cref="T:DataFixerUpper.Utils.Either`2"/> has right value or not.
@@ -82,7 +81,6 @@ public abstract record Either<TL, TR>
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has right value, <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has left value.
     /// </returns>
-    [MemberNotNullWhen(true, nameof(Right))]
     public abstract bool HasRight { get; }
 
     /// <summary>
@@ -189,14 +187,13 @@ file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 
     public override bool HasLeft => true;
 
-    public override TR? Right => default;
+    public override TR Right => default;
 
     public override bool HasRight => false;
 
     public EitherLeft(TL left)
     {
-        ArgumentNullException.ThrowIfNull(left);
-        _left = left;
+        _left = left ?? throw new ArgumentNullException(nameof(left));
     }
 
     public override Either<TL1, TR1> MapBoth<TL1, TR1>(Func<TL, TL1> lMapper, Func<TR, TR1> rMapper)
@@ -222,10 +219,9 @@ file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 
     public override int GetHashCode()
     {
-        HashCode hash = new();
-        hash.Add(EitherSide.Left);
-        hash.Add(_left);
-        return hash.ToHashCode();
+        int hash = (int)EitherSide.Left;
+        hash |= (_left.GetHashCode() << 1);
+        return hash;
     }
 
     public override string ToString()
@@ -238,7 +234,7 @@ file sealed record EitherRight<TL, TR> : Either<TL, TR>
 {
     private readonly TR _right;
 
-    public override TL? Left => default;
+    public override TL Left => default;
 
     public override bool HasLeft => false;
 
@@ -248,8 +244,7 @@ file sealed record EitherRight<TL, TR> : Either<TL, TR>
 
     public EitherRight(TR right)
     {
-        ArgumentNullException.ThrowIfNull(right);
-        _right = right;
+        _right = right ?? throw new ArgumentNullException(nameof(right));
     }
 
     public override Either<TL1, TR1> MapBoth<TL1, TR1>(Func<TL, TL1> lMapper, Func<TR, TR1> rMapper)
@@ -275,10 +270,9 @@ file sealed record EitherRight<TL, TR> : Either<TL, TR>
 
     public override int GetHashCode()
     {
-        HashCode hash = new();
-        hash.Add(EitherSide.Right);
-        hash.Add(_right);
-        return hash.ToHashCode();
+        int hash = (int)EitherSide.Right;
+        hash |= (_right.GetHashCode() << 1);
+        return hash;
     }
 
     public override string ToString()

@@ -22,12 +22,12 @@ internal sealed class RecordCodec<T>(RecordCodecBuilder<T, T> builder) : MapCode
         return _decoder.GetKeys(ops);
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return _encoderDispatcher.Apply(input).Encode(input, ops, prefix);
     }
     
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _decoder.Decode(ops, input);
     }
@@ -51,7 +51,7 @@ internal sealed class MappedRecordEncoder<TInstance, T1, T2>(
         return _encoder.GetKeys(ops);
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return _encoder.Encode(_getter.Apply(i), ops, prefix);
     }
@@ -73,7 +73,7 @@ internal sealed class DependentRecordDecoder<TElement, TField>(
         return encoder.GetKeys(ops);
     }
     
-    public override DataResult<TElement> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TElement> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return decoder.Decode(ops, input).Map(dispatcher).FlatMap(eDecoder => eDecoder.Decode(ops, input));
     }
@@ -108,7 +108,7 @@ internal sealed class LiftedRecordEncoder<TInstance, T1, T2>(
             .Concat(_encoder.GetKeys(ops));
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode(_ => input, ops, prefix);
         _encoder.Encode(_fromInstance, ops, prefix);
@@ -130,7 +130,7 @@ internal sealed class LiftedRecordDecoder<TInstance, T1, T2>(
             .Concat(_decoder.GetKeys(ops));
     }
     
-    public override DataResult<T2> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T2> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _decoder.Decode(ops, input).FlatMap(t1 => _funcDecoder.Decode(ops, input).Map(f => f.Apply(t1)));
     }
@@ -165,7 +165,7 @@ internal sealed class RecordEncoder2<TInstance, T1, T2, TR>(
             .Concat(_encoder2.GetKeys(ops));
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _) => input, ops, prefix);
         _encoder1.Encode(_fromInstance1, ops, prefix);
@@ -191,7 +191,7 @@ internal sealed class RecordDecoder2<TInstance, T1, T2, TR>(
             .Concat(_decoder2.GetKeys(ops));
     }
     
-    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(
             DataResultOperator.Instance.Combine(
@@ -237,7 +237,7 @@ internal sealed class RecordEncoder3<TInstance, T1, T2, T3, TR>(
             .Concat(_encoder3.GetKeys(ops));
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _, _) => input, ops, prefix);
         _encoder1.Encode(_fromInstance1, ops, prefix);
@@ -267,7 +267,7 @@ internal sealed class RecordDecoder3<TInstance, T1, T2, T3, TR>(
             .Concat(_decoder3.GetKeys(ops));
     }
     
-    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(
             DataResultOperator.Instance.Combine(
@@ -319,7 +319,7 @@ internal sealed class RecordEncoder4<TInstance, T1, T2, T3, T4, TR>(
             .Concat(_encoder4.GetKeys(ops));
     }
     
-    public override IRecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(TR input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         _funcEncoder.Encode((_, _, _, _) => input, ops, prefix);
         _encoder1.Encode(_fromInstance1, ops, prefix);
@@ -353,7 +353,7 @@ internal sealed class RecordDecoder4<TInstance, T1, T2, T3, T4, TR>(
             .Concat(_decoder4.GetKeys(ops));
     }
     
-    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<TR> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return DataResult.Unbox(
             DataResultOperator.Instance.Combine(

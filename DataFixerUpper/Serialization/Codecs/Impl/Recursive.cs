@@ -20,13 +20,13 @@ internal sealed class RecursiveCodec<T> : Codec<T>
         _wrapped = ValueHolder.Create(() => wrapped.Apply(this));
     }
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return _wrapped.Value.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return _wrapped.Value.Decode(ops, input);
@@ -50,12 +50,12 @@ internal sealed class RecursiveMapCodec<T> : MapCodec<T>
         return _wrapped.Value.GetKeys(ops);
     }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return _wrapped.Value.Encode(input, ops, prefix);
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _wrapped.Value.Decode(ops, input);
     }

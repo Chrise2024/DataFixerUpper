@@ -19,45 +19,54 @@ public interface IMapDecoder<T> : ICompressable
     /// <param name="input">The map that contains the fields to decode.</param>
     /// <typeparam name="TObject">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value, or an error if the value cannot be decoded.</returns>
-    DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
         where TObject : notnull;
 
     /// <summary>
     /// Gets this implementation viewed as an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.
     /// </summary>
     /// <returns>This as <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
-    public IMapDecoder<T> AsMapDecoder()
-    {
-        return this;
-    }
+    public IMapDecoder<T> AsMapDecoder();
 
     /// <summary>
     /// Gets this implementation as an <see cref="T:DataFixerUpper.Serialization.Codecs.IDecoder`1"/>.
     /// </summary>
     /// <returns>Decoder backed by this.</returns>
-    public IDecoder<T> AsDecoder()
-    {
-        return new MapDecoderDecoder<T>(this);
-    }
+    public IDecoder<T> AsDecoder();
 
     /// <summary>
     /// Returns an <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that marks every result of this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> with the given <paramref name="lifecycle"/>.
     /// </summary>
     /// <param name="lifecycle">The lifecycle to apply to the decoded results.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> that applies <paramref name="lifecycle"/> to this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>.</returns>
-    public IMapDecoder<T> WithLifecycle(Lifecycle lifecycle)
-    {
-        return new LifecycleMapDecoder<T>(this, lifecycle);
-    }
+    public IMapDecoder<T> WithLifecycle(Lifecycle lifecycle);
 }
 
 /// <summary>
-/// Simple implementation for <see cref="M:DataFixerUpper.Serialization.Collections.ICompressable.GetCompressor``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0})"/>
+/// Simple implementation for <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/>
 /// </summary>
 /// <typeparam name="T">The type this <see cref="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1"/> deserializes.</typeparam>
 public abstract class MapDecoderBase<T> : CompressorHolder, IMapDecoder<T>
 {
     /// <inheritdoc/>
-    public abstract DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public abstract DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
         where TObject : notnull;
+
+    /// <inheritdoc/>
+    public virtual IMapDecoder<T> AsMapDecoder()
+    {
+        return this;
+    }
+    
+    /// <inheritdoc/>
+    public virtual IDecoder<T> AsDecoder()
+    {
+        return new MapDecoderDecoder<T>(this);
+    }
+    
+    /// <inheritdoc/>
+    public IMapDecoder<T> WithLifecycle(Lifecycle lifecycle)
+    {
+        return new LifecycleMapDecoder<T>(this, lifecycle);
+    }
 }

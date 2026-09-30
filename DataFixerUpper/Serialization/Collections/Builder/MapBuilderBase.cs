@@ -10,7 +10,7 @@ namespace DataFixerUpper.Serialization.Collections.Builder;
 /// <typeparam name="TBuilder">The type of the builder that accumulates the entries of the map.</typeparam>
 /// <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.MapBuilder`1"/>
 /// <seealso cref="T:DataFixerUpper.Serialization.Collections.Builder.CompressedRecordBuilder`1"/>
-public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObject, TBuilder>, IRecordBuilder<TObject>
+public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObject, TBuilder>
     where TObject : notnull
 {
     /// <summary>
@@ -26,7 +26,7 @@ public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObj
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The builder to append the entry to.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected abstract TBuilder Append(TObject key, TObject? value, TBuilder builder);
+    protected abstract TBuilder Append(TObject key, TObject value, TBuilder builder);
 
     /// <summary>
     /// Appends an entry that maps the given string <paramref name="key"/> to <paramref name="value"/> to <paramref name="builder"/>.
@@ -35,49 +35,40 @@ public abstract class MapBuilderBase<TObject, TBuilder> : RecordBuilderBase<TObj
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The builder to append the entry to.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected abstract TBuilder Append(string key, TObject? value, TBuilder builder);
+    protected abstract TBuilder Append(string key, TObject value, TBuilder builder);
 
     /// <inheritdoc/>
-    public override IRecordBuilder<TObject> Add(TObject key, TObject? value)
+    public override RecordBuilder<TObject> Add(TObject key, TObject value)
     {
         Builder = Builder.Map(builder => Append(key, value, builder));
         return this;
     }
 
     /// <inheritdoc/>
-    public override IRecordBuilder<TObject> Add(TObject key, DataResult<TObject> value)
+    public override RecordBuilder<TObject> Add(TObject key, DataResult<TObject> value)
     {
         Builder = Builder.Combine((b, v) => Append(key, v, b), value);
         return this;
     }
 
     /// <inheritdoc/>
-    public override IRecordBuilder<TObject> Add(DataResult<TObject> key, DataResult<TObject> value)
+    public override RecordBuilder<TObject> Add(DataResult<TObject> key, DataResult<TObject> value)
     {
         DataResult<Func<TBuilder, TBuilder>> mapperResult = key.CombineStable(Func<TBuilder, TBuilder> (k, v) => builder => Append(k, v, builder), value);
         Builder = Builder.Map(mapperResult);
         return this;
     }
-
-    /// <summary>
-    /// Adds an entry that maps the given string <paramref name="key"/> to <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add.</param>
-    /// <param name="value">The value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    public IRecordBuilder<TObject> Add(string key, TObject? value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(string key, TObject value)
     {
         Builder = Builder.Map(builder => Append(key, value, builder));
         return this;
     }
 
-    /// <summary>
-    /// Adds an entry that maps the given string <paramref name="key"/> to the value of <paramref name="value"/>, carrying over the errors of <paramref name="value"/>.
-    /// </summary>
-    /// <param name="key">The key of the entry to add.</param>
-    /// <param name="value">The result containing the value of the entry to add.</param>
-    /// <returns>This builder.</returns>
-    public IRecordBuilder<TObject> Add(string key, DataResult<TObject> value)
+    
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(string key, DataResult<TObject> value)
     {
         Builder = Builder.Combine((b, v) => Append(key, v, b), value);
         return this;

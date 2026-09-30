@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>14</LangVersion>
         <RootNamespace>DataFixerUpper</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
-        <IsTrimmable>true</IsTrimmable>
-        <Nullable>enable</Nullable>
+        <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
+        <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
+        <Nullable>disable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>XmlDocs.xml</DocumentationFile>
     </PropertyGroup>
@@ -24,6 +24,11 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="10.0.12"/>
+        <PackageReference Include="System.Collections.Immutable" Version="10.0.12"/>
+    </ItemGroup>
 
     <ItemGroup>
         <None Include="XmlDocs.xml"/>

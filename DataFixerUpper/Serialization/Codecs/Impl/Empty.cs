@@ -12,7 +12,7 @@ internal sealed class EmptyMapEncoder<T> : MapEncoderBase<T>
         return Enumerable.Empty<TObject>();
     }
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return prefix;
     }
@@ -23,30 +23,30 @@ internal sealed class EmptyMapEncoder<T> : MapEncoderBase<T>
     }
 }
 
-internal sealed record ErrorEncoder<T>(string Message) : IEncoder<T>
+internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
 {
-    public DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
-        where TObject : notnull
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+        where TObject : default
     {
-        return DataResult.CreateError<TObject>($"{Message} {input}");
+        return DataResult.CreateError<TObject>($"{message} {input}");
     }
 
     public override string ToString()
     {
-        return $"ErrorEncoder[{Message}]";
+        return $"ErrorEncoder[{message}]";
     }
 }
 
-internal sealed record ErrorDecoder<T>(string Message) : IDecoder<T>
+internal sealed class ErrorDecoder<T>(string message) : DecoderBase<T>
 {
-    public DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return DataResult.CreateError<(T, TObject?)>(Message);
+        return DataResult.CreateError<(T, TObject)>(message);
     }
 
     public override string ToString()
     {
-        return $"ErrorDecoder[{Message}]";
+        return $"ErrorDecoder[{message}]";
     }
 }

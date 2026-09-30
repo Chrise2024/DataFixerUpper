@@ -6,21 +6,21 @@ using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.Codecs.Impl;
 
-internal sealed record LifecycleEncoder<T>(IEncoder<T> BaseEncoder, Lifecycle Lifecycle) : IEncoder<T>
+internal sealed class LifecycleEncoder<T>(IEncoder<T> baseEncoder, Lifecycle lifecycle) : EncoderBase<T>
 {
-    public DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
-        where TObject : notnull
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+        where TObject : default
     {
-        return BaseEncoder.Encode(input, ops, prefix).SetLifecycle(Lifecycle);
+        return baseEncoder.Encode(input, ops, prefix).SetLifecycle(lifecycle);
     }
 }
 
-internal sealed record LifecycleDecoder<T>(IDecoder<T> BaseDecoder, Lifecycle Lifecycle) : IDecoder<T>
+internal sealed class LifecycleDecoder<T>(IDecoder<T> baseDecoder, Lifecycle lifecycle) : DecoderBase<T>
 {
-    public DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
-        where TObject : notnull
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        where TObject : default
     {
-        return BaseDecoder.Decode(ops, input).SetLifecycle(Lifecycle);
+        return baseDecoder.Decode(ops, input).SetLifecycle(lifecycle);
     }
 }
 
@@ -29,13 +29,13 @@ internal sealed class LifecycleCodec<T>(Codec<T> baseCodec, Lifecycle lifecycle)
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
     {
         return baseCodec.Encode(input, ops, prefix).SetLifecycle(lifecycle);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
         where TObject : default
     {
         return baseCodec.Decode(ops, input).SetLifecycle(lifecycle);
@@ -44,7 +44,7 @@ internal sealed class LifecycleCodec<T>(Codec<T> baseCodec, Lifecycle lifecycle)
 
 internal sealed class LifecycleMapEncoder<T>(IMapEncoder<T> baseEncoder, Lifecycle lifecycle) : MapEncoderBase<T>
 {
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return baseEncoder.Encode(input, ops, prefix).SetLifecycle(lifecycle);
     }
@@ -57,7 +57,7 @@ internal sealed class LifecycleMapEncoder<T>(IMapEncoder<T> baseEncoder, Lifecyc
 
 internal sealed class LifecycleMapDecoder<T>(IMapDecoder<T> baseDecoder, Lifecycle lifecycle) : MapDecoderBase<T>
 {
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseDecoder.Decode(ops, input).SetLifecycle(lifecycle);
     }
@@ -73,12 +73,12 @@ internal sealed class LifecycleMapCodec<T>(MapCodec<T> baseCodec, Lifecycle life
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override IRecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, IRecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         return baseCodec.Encode(input, ops, prefix).SetLifecycle(lifecycle);
     }
 
-    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, IMapLike<TObject> input)
+    public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseCodec.Decode(ops, input).SetLifecycle(lifecycle);
     }
