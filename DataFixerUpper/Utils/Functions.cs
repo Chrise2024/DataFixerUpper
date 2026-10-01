@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace DataFixerUpper.Utils;
 
-#nullable disable
-
 /// <summary>
 /// Function utils.
 /// </summary>
@@ -218,6 +216,11 @@ public delegate T Provider<out T>();
 /// Represents an operation that accepts a single input argument and returns no result.
 /// </summary>
 public delegate void Consumer<in T>(T value);
+
+/// <summary>
+/// Represents an operation that accepts two input arguments and returns no result.
+/// </summary>
+public delegate void BiConsumer<in T1, in T2>(T1 value1, T2 value2);
 
 /// <summary>
 /// Represents an operation on a single operand that produces a result of the same type as its operand.

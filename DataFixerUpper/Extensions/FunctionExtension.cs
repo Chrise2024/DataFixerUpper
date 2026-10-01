@@ -75,6 +75,17 @@ public static class FunctionExtension
             consumer(value);
         }
     }
+    
+    extension<T1, T2>(BiConsumer<T1, T2> consumer)
+    {
+        /// <summary>
+        /// Perform operation on <paramref name="value1"/> and <paramref name="value2"/>.
+        /// </summary>
+        public void Accept(T1 value1, T2 value2)
+        {
+            consumer(value1, value2);
+        }
+    }
 
     extension<T>(UnaryOperation<T> operation)
     {

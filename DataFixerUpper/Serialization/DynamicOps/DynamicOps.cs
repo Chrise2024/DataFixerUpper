@@ -462,17 +462,17 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list to read.</param>
     /// <returns>An iteration over the elements in the input, which may perform some user-specified action on each element.</returns>
-    public virtual DataResult<Action<Action<TObject>>> GetListValues(TObject input)
+    public virtual DataResult<Consumer<Consumer<TObject>>> GetListValues(TObject input)
     {
         return GetList(input).Map(MakeForeach);
 
-        static Action<Action<TObject>> MakeForeach(IEnumerable<TObject> enumerable)
+        static Consumer<Consumer<TObject>> MakeForeach(IEnumerable<TObject> enumerable)
         {
             return func =>
             {
                 foreach (TObject obj in enumerable)
                 {
-                    func(obj);
+                    func.Accept(obj);
                 }
             };
         }
@@ -529,17 +529,17 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized map to read.</param>
     /// <returns>An iteration over the entries in the input, which may perform some user-specified action on each entry.</returns>
-    public virtual DataResult<Action<Action<TObject, TObject>>> GetMapEntries(TObject input)
+    public virtual DataResult<Consumer<BiConsumer<TObject, TObject>>> GetMapEntries(TObject input)
     {
         return GetMapValues(input).Map(MakeForeach);
 
-        static Action<Action<TObject, TObject>> MakeForeach(IEnumerable<KeyValuePair<TObject, TObject>> keyValuePairs)
+        static Consumer<BiConsumer<TObject, TObject>> MakeForeach(IEnumerable<KeyValuePair<TObject, TObject>> keyValuePairs)
         {
             return func =>
             {
                 foreach (KeyValuePair<TObject, TObject> pair in keyValuePairs)
                 {
-                    func(pair.Key, pair.Value);
+                    func.Accept(pair.Key, pair.Value);
                 }
             };
         }
