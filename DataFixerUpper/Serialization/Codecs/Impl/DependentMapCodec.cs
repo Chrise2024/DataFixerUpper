@@ -17,7 +17,7 @@ internal class DependentMapCodec<TInstance, TElement>(
 ) : MapCodec<TInstance>
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.NewNameForTransform($"Dependent[{initialInstance}]");
-    
+
     public override RecordBuilder<TObject> Encode<TObject>(TInstance input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
         baseCodec.Encode(input, ops, prefix);
@@ -25,7 +25,7 @@ internal class DependentMapCodec<TInstance, TElement>(
         ec.Encode(e, ops, prefix);
         return prefix.SetLifecycle(Lifecycle.Experimental);
     }
-    
+
     public override DataResult<TInstance> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return baseCodec.Decode(ops, input).FlatMap(i =>
@@ -36,7 +36,7 @@ internal class DependentMapCodec<TInstance, TElement>(
             }
         );
     }
-    
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return baseCodec.GetKeys(ops).Concat(initialInstance.GetKeys(ops));

@@ -180,7 +180,7 @@ public static partial class Codec
     {
         return new RecursiveCodec<T>($"Lazy[{typeof(T)}]", _ => provider.Get());
     }
-    
+
     /// <summary>
     /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for an immutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
     /// </summary>
@@ -195,7 +195,7 @@ public static partial class Codec
     {
         return new ListCodec<T>(elementCodec, minSize, maxSize);
     }
-    
+
     /// <summary>
     /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a mutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
     /// </summary>
@@ -267,7 +267,7 @@ public static partial class Codec
     {
         return new RangedCodec<int>(Int, minInclusive, maxInclusive);
     }
-    
+
     /// <summary>
     /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
     /// </summary>
@@ -278,7 +278,7 @@ public static partial class Codec
     {
         return new RangedCodec<float>(Float, minInclusive, maxInclusive);
     }
-    
+
     /// <summary>
     /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
     /// </summary>

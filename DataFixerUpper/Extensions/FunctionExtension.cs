@@ -75,7 +75,7 @@ public static class FunctionExtension
             consumer(value);
         }
     }
-    
+
     extension<T1, T2>(BiConsumer<T1, T2> consumer)
     {
         /// <summary>
