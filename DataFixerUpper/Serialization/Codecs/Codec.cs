@@ -214,6 +214,39 @@ public static partial class Codec
     {
         return new DispatchedDictionaryCodec<TKey, TValue>(keyCodec, dispatcher, mutable);
     }
+
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+    /// </summary>
+    /// <param name="minInclusive">Min value of range.</param>
+    /// <param name="maxInclusive">Max value of range.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
+    public static Codec<int> CreateIntRange(int minInclusive, int maxInclusive)
+    {
+        return new RangedCodec<int>(Int, minInclusive, maxInclusive);
+    }
+    
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+    /// </summary>
+    /// <param name="minInclusive">Min value of range.</param>
+    /// <param name="maxInclusive">Max value of range.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
+    public static Codec<float> CreateFloatRange(float minInclusive, float maxInclusive)
+    {
+        return new RangedCodec<float>(Float, minInclusive, maxInclusive);
+    }
+    
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+    /// </summary>
+    /// <param name="minInclusive">Min value of range.</param>
+    /// <param name="maxInclusive">Max value of range.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
+    public static Codec<double> CreateDoubleRange(double minInclusive, double maxInclusive)
+    {
+        return new RangedCodec<double>(Double, minInclusive, maxInclusive);
+    }
 }
 
 /// <summary>
