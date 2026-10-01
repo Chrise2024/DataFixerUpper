@@ -145,4 +145,17 @@ public abstract partial class MapCodec<T>
     {
         return new ValidateMapCodec<T>(this, validator);
     }
+
+    /// <summary>
+    /// Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>  where the encoding and decoding of the given fields depends on the values of the fields decoded using this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.
+    /// </summary>
+    /// <param name="initialInstance">A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that specifies the set of dependent fields.</param>
+    /// <param name="splitter">A function that takes an object and extracts both a set of fields and the codecs associated with those fields, for that particular object.</param>
+    /// <param name="combiner">A function that combines an object and a set of decoded fields.</param>
+    /// <typeparam name="TElement">The type representing the collection of dependent fields.</typeparam>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that delegates the given fields to some other codecs based on the values of fields decoded using this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.</returns>
+    public MapCodec<T> Dependent<TElement>(MapCodec<TElement> initialInstance, Func<T, (TElement, MapCodec<TElement>)> splitter, Func<T, TElement, T> combiner)
+    {
+        return new DependentMapCodec<T, TElement>(this, initialInstance, splitter, combiner);
+    }
 }
