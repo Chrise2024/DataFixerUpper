@@ -155,7 +155,7 @@ public static class CodecExtension
             return Codec.Create(
                 codec.CoMap(fromMapper),
                 codec.Map(toMapper),
-                ValueHolder.Create(() => codec.ToString("XMapped"))
+                codec.NewNameForTransform("XMapped")
             );
         }
 
@@ -170,7 +170,7 @@ public static class CodecExtension
         {
             return Codec.Create(
                 codec.CoMap(fromMapper), codec.FlatMap(toMapper),
-                ValueHolder.Create(() => codec.ToString("CoMapFlatMapped"))
+                codec.NewNameForTransform("CoMapFlatMapped")
             );
         }
 
@@ -185,7 +185,7 @@ public static class CodecExtension
         {
             return Codec.Create(
                 codec.FlatCoMap(fromMapper), codec.Map(toMapper),
-                ValueHolder.Create(() => codec.ToString("FlatCoMapMapped"))
+                codec.NewNameForTransform("FlatCoMapMapped")
             );
         }
 
@@ -203,8 +203,13 @@ public static class CodecExtension
         {
             return Codec.Create(
                 codec.FlatCoMap(fromMapper), codec.FlatMap(toMapper),
-                ValueHolder.Create(() => codec.ToString("XMapped"))
+                codec.NewNameForTransform("XMapped")
             );
+        }
+
+        internal ValueHolder<string> NewNameForTransform(string transform)
+        {
+            return ValueHolder.Create(() => codec.ToString(transform));
         }
     }
 }
@@ -364,7 +369,7 @@ public static class MapCodecExtension
             return MapCodec.Create(
                 codec.CoMap(fromMapper),
                 codec.Map(toMapper),
-                ValueHolder.Create(() => codec.ToString("XMapped"))
+                codec.NewNameForTransform("XMapped")
             );
         }
 
@@ -382,8 +387,13 @@ public static class MapCodecExtension
         {
             return MapCodec.Create(
                 codec.FlatCoMap(fromMapper), codec.FlatMap(toMapper),
-                ValueHolder.Create(() => codec.ToString("FlatXMapped"))
+                codec.NewNameForTransform("FlatXMapped")
             );
+        }
+
+        internal ValueHolder<string> NewNameForTransform(string transform)
+        {
+            return ValueHolder.Create(() => codec.ToString(transform));
         }
     }
 }

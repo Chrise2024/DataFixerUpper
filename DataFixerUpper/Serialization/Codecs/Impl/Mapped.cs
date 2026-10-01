@@ -176,7 +176,7 @@ internal sealed class FlatMappedMapDecoder<TOri, TNew>(IMapDecoder<TOri> baseDec
 
 internal sealed class ResultMappedCodec<T>(Codec<T> baseCodec, Codec<T>.IResultMapper mapper) : Codec<T>
 {
-    public override ValueHolder<string> CodecNameHolder => ValueHolder.Create(() => baseCodec.ToString($"[ResultMapped {mapper}]"));
+    public override ValueHolder<string> CodecNameHolder => baseCodec.NewNameForTransform($"[ResultMapped {mapper}]");
 
     public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
         where TObject : default
