@@ -1037,6 +1037,38 @@
             <paramref name="wrapped"/> is applied lazily, so it may refer to the returned a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> while it is being built.
             </remarks>
         </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateLazyInitialized``1(DataFixerUpper.Utils.Provider{DataFixerUpper.Serialization.Codecs.Codec{``0}})">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that initialize lazily.
+            </summary>
+            <param name="provider">Factory of <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.</param>
+            <typeparam name="T">The type of the value handled by the <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.</typeparam>
+            <returns>A lazy initialized <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that build while need.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateImmutableList``1(DataFixerUpper.Serialization.Codecs.Codec{``0},System.Int32,System.Int32)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for an immutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
+            </summary>
+            <param name="elementCodec">The <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that handles the elements of list.</param>
+            <param name="minSize">The minimum number of elements the list may contain.</param>
+            <param name="maxSize">The maximum number of elements the list may contain.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for an immutable list.</returns>
+            <remarks>
+            Encoding and decoding fail if the size of the list is outside the range defined by <paramref name="minSize"/> and <paramref name="maxSize"/>.
+            </remarks>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateList``1(DataFixerUpper.Serialization.Codecs.Codec{``0},System.Int32,System.Int32)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a mutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
+            </summary>
+            <param name="elementCodec">The <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that handles the elements of list.</param>
+            <param name="minSize">The minimum number of elements the list may contain.</param>
+            <param name="maxSize">The maximum number of elements the list may contain.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a mutable list.</returns>
+            <remarks>
+            Encoding and decoding fail if the size of the list is outside the range defined by <paramref name="minSize"/> and <paramref name="maxSize"/>. Unlike <c>ImmutableList</c>, the decoded list is mutable.
+            </remarks>
+        </member>
         <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateSimpleDictionary``2(DataFixerUpper.Serialization.Codecs.Codec{``0},DataFixerUpper.Serialization.Codecs.Codec{``1},DataFixerUpper.Serialization.Collections.IKeyable,System.Boolean)">
             <summary>
             Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> for a map with a fixed set of keys.
@@ -1070,6 +1102,30 @@
             <typeparam name="TKey">The type of the keys of the map.</typeparam>
             <typeparam name="TValue">The type of the values of the map.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a map of key-value pairs, where the <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of each value is selected by <paramref name="dispatcher"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateIntRange(System.Int32,System.Int32)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+            </summary>
+            <param name="minInclusive">Min value of range.</param>
+            <param name="maxInclusive">Max value of range.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateFloatRange(System.Single,System.Single)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+            </summary>
+            <param name="minInclusive">Min value of range.</param>
+            <param name="maxInclusive">Max value of range.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.Codec.CreateDoubleRange(System.Double,System.Double)">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for <see langword="int"/> with range.
+            </summary>
+            <param name="minInclusive">Min value of range.</param>
+            <param name="maxInclusive">Max value of range.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> of ranged <see langword="int"/>.</returns>
         </member>
         <member name="P:DataFixerUpper.Serialization.Codecs.Codec.Byte">
             <summary>
@@ -2218,6 +2274,23 @@
             </summary>
             <param name="validator">The function that validates a value, returning a successful result with the validated value or an error.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that validates values before encoding them and after decoding them.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Dependent``1(DataFixerUpper.Serialization.Codecs.MapCodec{``0},System.Func{`0,System.ValueTuple{``0,DataFixerUpper.Serialization.Codecs.MapCodec{``0}}},System.Func{`0,``0,`0})">
+            <summary>
+            Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>  where the encoding and decoding of the given fields depends on the values of the fields decoded using this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.
+            </summary>
+            <param name="initialInstance">A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that specifies the set of dependent fields.</param>
+            <param name="splitter">A function that takes an object and extracts both a set of fields and the codecs associated with those fields, for that particular object.</param>
+            <param name="combiner">A function that combines an object and a set of decoded fields.</param>
+            <typeparam name="TElement">The type representing the collection of dependent fields.</typeparam>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that delegates the given fields to some other codecs based on the values of fields decoded using this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.Codecs.MapCodec`1.Field(System.String)">
+            <summary>
+            Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that encodes and decodes this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> as the field named <paramref name="name"/> of a map.
+            </summary>
+            <param name="name">The name of the field.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> for the named field.</returns>
         </member>
         <member name="T:DataFixerUpper.Serialization.Codecs.IMapDecoder`1">
             <summary>
@@ -5361,6 +5434,9 @@
         <member name="M:DataFixerUpper.Extensions.FunctionExtension.Accept``1(DataFixerUpper.Utils.Consumer{``0},``0)">
             <inheritdoc cref="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$58173EE31F9545503FE99F95FC64639E`1.Accept(`0)"/>
         </member>
+        <member name="M:DataFixerUpper.Extensions.FunctionExtension.Accept``2(DataFixerUpper.Utils.BiConsumer{``0,``1},``0,``1)">
+            <inheritdoc cref="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$F8145969F34990CB04B61177ABAF8C51`2.Accept(`0,`1)"/>
+        </member>
         <member name="M:DataFixerUpper.Extensions.FunctionExtension.Apply``1(DataFixerUpper.Utils.UnaryOperation{``0},``0)">
             <inheritdoc cref="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$0B52922A034EBE46E92BD544426C52F4`1.Apply(`0)"/>
         </member>
@@ -5415,6 +5491,11 @@
         <member name="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$58173EE31F9545503FE99F95FC64639E`1.Accept(`0)">
             <summary>
             Perform operation on <paramref name="value"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$F8145969F34990CB04B61177ABAF8C51`2.Accept(`0,`1)">
+            <summary>
+            Perform operation on <paramref name="value1"/> and <paramref name="value2"/>.
             </summary>
         </member>
         <member name="M:DataFixerUpper.Extensions.FunctionExtension.&lt;G&gt;$0B52922A034EBE46E92BD544426C52F4`1.Apply(`0)">
@@ -5788,6 +5869,11 @@
         <member name="T:DataFixerUpper.Utils.Consumer`1">
             <summary>
             Represents an operation that accepts a single input argument and returns no result.
+            </summary>
+        </member>
+        <member name="T:DataFixerUpper.Utils.BiConsumer`2">
+            <summary>
+            Represents an operation that accepts two input arguments and returns no result.
             </summary>
         </member>
         <member name="T:DataFixerUpper.Utils.UnaryOperation`1">

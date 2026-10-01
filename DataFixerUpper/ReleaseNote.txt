@@ -3,3 +3,6 @@ Based on net8.0
 
 - v2.0.0-alpha
 Forward to netstandard2.0, align apis to original DFU
+
+- v2.0.0-beta
+implement apis(MapCodec.Dependent, Codec.XXXRange, Codec.Lazy)
