@@ -158,4 +158,14 @@ public abstract partial class MapCodec<T>
     {
         return new DependentMapCodec<T, TElement>(this, initialInstance, splitter, combiner);
     }
+    
+    /// <summary>
+    /// Returns a <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that encodes and decodes this <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> as the field named <paramref name="name"/> of a map.
+    /// </summary>
+    /// <param name="name">The name of the field.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> for the named field.</returns>
+    public MapCodec<T> Field(string name)
+    {
+        return AsCodec().Field(name);
+    }
 }
