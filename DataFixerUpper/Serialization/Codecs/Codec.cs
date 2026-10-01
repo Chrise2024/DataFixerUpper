@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Codecs.Impl;
 using DataFixerUpper.Serialization.Collections;
 using DataFixerUpper.Serialization.DynamicOps;
@@ -167,6 +168,47 @@ public static partial class Codec
     public static Codec<T> CreateRecursive<T>(string name, Func<Codec<T>, Codec<T>> wrapped)
     {
         return new RecursiveCodec<T>(name, wrapped);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that initialize lazily.
+    /// </summary>
+    /// <param name="provider">Factory of <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.</param>
+    /// <typeparam name="T">The type of the value handled by the <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.</typeparam>
+    /// <returns>A lazy initialized <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that build while need.</returns>
+    public static Codec<T> CreateLazyInitialized<T>(Provider<Codec<T>> provider)
+    {
+        return new RecursiveCodec<T>($"Lazy[{typeof(T)}]", _ => provider.Get());
+    }
+    
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for an immutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
+    /// </summary>
+    /// <param name="elementCodec">The <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that handles the elements of list.</param>
+    /// <param name="minSize">The minimum number of elements the list may contain.</param>
+    /// <param name="maxSize">The maximum number of elements the list may contain.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for an immutable list.</returns>
+    /// <remarks>
+    /// Encoding and decoding fail if the size of the list is outside the range defined by <paramref name="minSize"/> and <paramref name="maxSize"/>.
+    /// </remarks>
+    public static Codec<IList<T>> CreateImmutableList<T>(Codec<T> elementCodec, int minSize = 0, int maxSize = int.MaxValue)
+    {
+        return new ListCodec<T>(elementCodec, minSize, maxSize);
+    }
+    
+    /// <summary>
+    /// Creates a <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a mutable list of the values handled by this <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>.
+    /// </summary>
+    /// <param name="elementCodec">The <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that handles the elements of list.</param>
+    /// <param name="minSize">The minimum number of elements the list may contain.</param>
+    /// <param name="maxSize">The maximum number of elements the list may contain.</param>
+    /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> for a mutable list.</returns>
+    /// <remarks>
+    /// Encoding and decoding fail if the size of the list is outside the range defined by <paramref name="minSize"/> and <paramref name="maxSize"/>. Unlike <c>ImmutableList</c>, the decoded list is mutable.
+    /// </remarks>
+    public static Codec<IList<T>> CreateList<T>(Codec<T> elementCodec, int minSize = 0, int maxSize = int.MaxValue)
+    {
+        return new ListCodec<T>(elementCodec, minSize, maxSize, true);
     }
 
     /// <summary>
