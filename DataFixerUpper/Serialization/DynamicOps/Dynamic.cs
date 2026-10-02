@@ -334,13 +334,13 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<Dynamic<TObject>>> AsListValues()
+    public override DataResult<IEnumerable<Dynamic<TObject>>> AsListOpt()
     {
         return Ops.GetList(Value).Map(list => list.Select(item => new Dynamic<TObject>(Ops, item)));
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapEntries()
+    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
     {
         return Ops.GetMapValues(Value).Map(map => map.Select(entry => new KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>(new Dynamic<TObject>(Ops, entry.Key), new Dynamic<TObject>(Ops, entry.Value))));
     }

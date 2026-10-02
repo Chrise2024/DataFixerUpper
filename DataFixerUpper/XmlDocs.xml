@@ -211,7 +211,7 @@
             <typeparam name="TFunctor">The container type.</typeparam>
             <typeparam name="TMu">The witness type of this functor.</typeparam>
         </member>
-        <member name="M:DataFixerUpper.Datafixers.Kinds.Functor`2.Unbox(DataFixerUpper.Datafixers.Kinds.IApp{`1,`0})">
+        <member name="M:DataFixerUpper.Datafixers.Kinds.Functor`2.Unbox``1(DataFixerUpper.Datafixers.Kinds.IApp{`1,`0})">
             <summary>
             Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> into container.
             </summary>
@@ -356,6 +356,130 @@
             Aggregates values into a product.
             </summary>
             <remarks>See: <see cref="M:DataFixerUpper.Datafixers.Kinds.Kind`2.Group``1(DataFixerUpper.Datafixers.Kinds.IApp{`0,``0})"/>.</remarks>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.ListBox">
+            <summary>
+            Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>
+            </summary>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.ListBox.Mu">
+            <summary>
+            The witness type base of <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>.
+            </summary>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBox.Unbox``1(DataFixerUpper.Datafixers.Kinds.IApp{DataFixerUpper.Datafixers.Kinds.ListBox.Mu,``0})">
+            <summary>
+            Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
+            </summary>
+            <param name="box">Boxed <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>.</param>
+            <typeparam name="T">Wrapped type of <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>.</typeparam>
+            <returns>Unboxed <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBox.Create``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Creates a <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/> from list.
+            </summary>
+            <param name="value">List to wrap.</param>
+            <typeparam name="T">The type of elements in the list.</typeparam>
+            <returns>A <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/> wraps the list.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBox.Traverse``4(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Func{``2,DataFixerUpper.Datafixers.Kinds.IApp{``0,``3}},System.Collections.Generic.IList{``2})">
+            <summary>
+            Applies an operation to each element of input, then returns a container holding a list of the outputs.
+            </summary>
+            <param name="applicative">An instance of the <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> type class which defines the behavior of <typeparamref name="TFunctor"/>.</param>
+            <param name="selector">The function to apply.</param>
+            <param name="input">The input container.</param>
+            <typeparam name="TFunctor">The container type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>.</typeparam>
+            <typeparam name="TMu">The witness type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> functor.</typeparam>
+            <typeparam name="TSource">The input type.</typeparam>
+            <typeparam name="TResult">The output type.</typeparam>
+            <returns>A container of the output values.</returns>
+            <seealso cref="M:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Traverse``4(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Func{``2,DataFixerUpper.Datafixers.Kinds.IApp{``0,``3}},DataFixerUpper.Datafixers.Kinds.IApp{DataFixerUpper.Datafixers.Kinds.ListBox.Mu,``2})"/>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBox.Flip``3(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Collections.Generic.IList{DataFixerUpper.Datafixers.Kinds.IApp{``0,``2}})">
+            <summary>
+            Transforms a list of some container to a container of lists.
+            </summary>
+            <param name="applicative">An instance of the <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> type class which defines the behavior of <typeparamref name="TFunctor"/>.</param>
+            <param name="input">The input container.</param>
+            <typeparam name="TFunctor">The container type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>.</typeparam>
+            <typeparam name="TMu">The witness type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> functor.</typeparam>
+            <typeparam name="T">The contained type.</typeparam>
+            <returns>A container of list.</returns>
+            <seealso cref="M:DataFixerUpper.Datafixers.Kinds.Traversable`2.Flip``3(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},DataFixerUpper.Datafixers.Kinds.IApp{`0,DataFixerUpper.Datafixers.Kinds.IApp{``0,``2}})"/>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.ListBox`1">
+            <summary>
+            Wrapper of a <see cref="T:System.Collections.Generic.IList`1"/>
+            </summary>
+            <typeparam name="T">The type of elements in the list.</typeparam>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.ListBoxOperator">
+            <summary>
+            Operator for <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBox`1"/>.
+            </summary>
+        </member>
+        <member name="P:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Instance">
+            <summary>
+            Instance of <see cref="T:DataFixerUpper.Datafixers.Kinds.ListBoxOperator"/>.
+            </summary>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Mu">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Select``2(System.Func{``0,``1},DataFixerUpper.Datafixers.Kinds.IApp{DataFixerUpper.Datafixers.Kinds.ListBox.Mu,``0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Traverse``4(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Func{``2,DataFixerUpper.Datafixers.Kinds.IApp{``0,``3}},DataFixerUpper.Datafixers.Kinds.IApp{DataFixerUpper.Datafixers.Kinds.ListBox.Mu,``2})">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.Traversable">
+            <summary>
+            Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.Traversable`2"/>
+            </summary>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.Traversable.Mu">
+            <summary>
+            The witness type base of this traversable functor.
+            </summary>
+        </member>
+        <member name="T:DataFixerUpper.Datafixers.Kinds.Traversable`2">
+            <summary>
+            The traversable type class for some container type takes in an effectful transformation and produces an equivalent effectful transformation on the container type.
+            </summary>
+            <typeparam name="TFunctor">The container type.</typeparam>
+            <typeparam name="TMu">The witness type of this applicative functor.</typeparam>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.Traversable`2.Unbox(DataFixerUpper.Datafixers.Kinds.IApp{`1,`0})">
+            <summary>
+            Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
+            </summary>
+            <returns>Unboxed container.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.Traversable`2.Traverse``4(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Func{``2,DataFixerUpper.Datafixers.Kinds.IApp{``0,``3}},DataFixerUpper.Datafixers.Kinds.IApp{`0,``2})">
+            <summary>
+            Applies a function that produces an <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> effect to each value contained within <paramref name="input"/>, then builds a container with an equivalent structure containing the (unboxed) results.
+            </summary>
+            <param name="applicative">An instance of the <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> type class which defines the behavior of <typeparamref name="TFunctor1"/>.</param>
+            <param name="selector">The function to apply.</param>
+            <param name="input">The input container.</param>
+            <typeparam name="TFunctor1">The container type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>.</typeparam>
+            <typeparam name="TMu1">The witness type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> functor.</typeparam>
+            <typeparam name="TSource">The input type.</typeparam>
+            <typeparam name="TResult">The output type.</typeparam>
+            <returns>A container holding the results of applying function to each element, if the function was successful for every element.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Datafixers.Kinds.Traversable`2.Flip``3(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},DataFixerUpper.Datafixers.Kinds.IApp{`0,DataFixerUpper.Datafixers.Kinds.IApp{``0,``2}})">
+            <summary>
+            Swaps the order of this container with a nested container in input.
+            </summary>
+            <param name="applicative">An instance of the <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> type class which defines the behavior of <typeparamref name="TFunctor1"/>.</param>
+            <param name="input">The input container.</param>
+            <typeparam name="TFunctor1">The container type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>.</typeparam>
+            <typeparam name="TMu1">The witness type of <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/> functor.</typeparam>
+            <typeparam name="T">The contained type.</typeparam>
+            <returns>The nested contained value with the containers swapped.</returns>
         </member>
         <member name="T:DataFixerUpper.Datafixers.Products">
             <summary>
@@ -2649,8 +2773,14 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsLongList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsLongList"/>
         </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList"/>
+        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsList``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{``0},``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsMap``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsMap"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsMap``3(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``1},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``2})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``1})"/>
@@ -2685,14 +2815,14 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateDouble``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateDouble(System.Double)"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Double)"/>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateString``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.String)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateString(System.String)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateBool``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Boolean)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateBool(System.Boolean)"/>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateStream``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.IO.Stream)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateStream(System.IO.Stream)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateIntList``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Collections.Generic.IEnumerable{System.Int32})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})"/>
@@ -2898,6 +3028,12 @@
             </summary>
             <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
         </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList">
+            <summary>
+            Reads this value as a list and falling back to an empty list.
+            </summary>
+            <returns>The list, or an empty list if this value is not a list.</returns>
+        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsList``1(System.Func{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},``0})">
             <summary>
             Reads this value as a list, converting every element with <paramref name="elementDecoder"/> and falling back to an empty list.
@@ -2905,6 +3041,12 @@
             <param name="elementDecoder">The function that converts an element.</param>
             <typeparam name="TElement">The type produced by <paramref name="elementDecoder"/>.</typeparam>
             <returns>The list, or an empty list if this value is not a list.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsMap">
+            <summary>
+            Reads this value as a map and value with the given functions and falling back to an empty map.
+            </summary>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if this value is not a map.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``1})">
             <summary>
@@ -2987,13 +3129,6 @@
             <param name="number">The <see langword="double"/> to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Double)">
-            <summary>
-            Creates a dynamic containing the given <paramref name="number"/>.
-            </summary>
-            <param name="number">The <see langword="decimal"/> to serialize.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateString(System.String)">
             <summary>
             Creates a dynamic containing the given <paramref name="stringValue"/>.
@@ -3007,6 +3142,13 @@
             </summary>
             <param name="boolValue">The boolean to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created boolean.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateStream(System.IO.Stream)">
+            <summary>
+            Creates a dynamic containing a list of <see langword="byte"/> created from the given <paramref name="stream"/>.
+            </summary>
+            <param name="stream">The stream to read the bytes from.</param>
+            <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created stream.</returns>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateIntList(System.Collections.Generic.IEnumerable{System.Int32})">
             <summary>
@@ -3392,10 +3534,10 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsBool">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsListValues">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsListOpt">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsMapEntries">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsMapOpt">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.AsStreamOpt">
@@ -3497,13 +3639,13 @@
             </summary>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the boolean, or an error if this value is not a boolean.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsListValues">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsListOpt">
             <summary>
             Reads this value as a list.
             </summary>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the elements of the list, or an error if this value is not a list.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsMapEntries">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1.AsMapOpt">
             <summary>
             Reads this value as a map.
             </summary>
@@ -4095,37 +4237,7 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.Copy(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Byte">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Decimal">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
         <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Double">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Single">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int32">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int64">
-            <summary>
-            Defines the source generated JSON serialization contract metadata for a given type.
-            </summary>
-        </member>
-        <member name="P:DataFixerUpper.Serialization.DynamicOps.JsonOpsContext.Int16">
             <summary>
             Defines the source generated JSON serialization contract metadata for a given type.
             </summary>
@@ -4234,10 +4346,10 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsBool">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsListValues">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsListOpt">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsMapEntries">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsMapOpt">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1.AsStreamOpt">

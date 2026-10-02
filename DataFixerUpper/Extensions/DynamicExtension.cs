@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using DataFixerUpper.Datafixers.Kinds;
 using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Codecs;
-using DataFixerUpper.Utils;
 
 // ReSharper disable once CheckNamespace
 namespace DataFixerUpper.Serialization.DynamicOps;
@@ -144,9 +144,9 @@ public static class DynamicExtension
         /// <param name="elementDeserializer">The function that converts an element.</param>
         /// <typeparam name="T">The type produced by <paramref name="elementDeserializer"/>.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the list, or an error if this value is not a list.</returns>
-        public DataResult<ImmutableList<T>> AsListOpt<T>(Func<Dynamic<TObject>, T> elementDeserializer)
+        public DataResult<IEnumerable<T>> AsListOpt<T>(Func<Dynamic<TObject>, T> elementDeserializer)
         {
-            return dynamic.AsListValues().Map(l => l.Select(elementDeserializer).ToImmutableList());
+            return dynamic.AsListOpt().Map(l => l.Select(elementDeserializer));
         }
 
         /// <summary>
@@ -157,11 +157,11 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type produced by <paramref name="keyDeserializer"/>.</typeparam>
         /// <typeparam name="TValue">The type produced by <paramref name="valueDeserializer"/>.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the map, or an error if this value is not a map.</returns>
-        public DataResult<ImmutableDictionary<TKey, TValue>> AsMapOpt<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDeserializer, Func<DynamicLike<TObject>, TValue> valueDeserializer)
+        public DataResult<IEnumerable<KeyValuePair<TKey, TValue>>> AsMapOpt<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDeserializer, Func<DynamicLike<TObject>, TValue> valueDeserializer)
             where TKey : notnull
         {
-            return dynamic.AsMapEntries().Map(l =>
-                l.ToImmutableDictionary(pair => keyDeserializer.Apply(pair.Key), pair => valueDeserializer.Apply(pair.Value))
+            return dynamic.AsMapOpt().Map(l =>
+                l.Select(pair => new KeyValuePair<TKey, TValue>(keyDeserializer.Apply(pair.Key), valueDeserializer.Apply(pair.Value)))
             );
         }
     }
@@ -219,24 +219,13 @@ public static class DynamicExtension
         /// <param name="elementDecoder">The function that decodes an element.</param>
         /// <typeparam name="TElement">The type of the decoded elements.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded elements, or an error if this value is not a list or an element cannot be decoded.</returns>
-        public DataResult<ImmutableList<TElement>> ReadList<TElement>(
+        public DataResult<IList<TElement>> ReadList<TElement>(
             Func<Dynamic<TObject>, DataResult<TElement>> elementDecoder
         )
         {
-            return dynamic.AsListValues().FlatMap(l =>
-                {
-                    ImmutableList<TElement>.Builder builder = ImmutableList.CreateBuilder<TElement>();
-                    DataResult<ImmutableList<TElement>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, value) =>
-                        {
-                            DataResult<TElement> elementResult = elementDecoder.Apply(value);
-                            return seed.CombineStable(Functions.AddToFirst, elementResult);
-                        }
-                    ).Map(_ => builder.ToImmutable());
-                }
-            );
+            return dynamic.AsListOpt()
+                .Map(l => l.Select(elementDecoder).Select(IApp<DataResult.Mu, TElement> (d) => d).ToImmutableList())
+                .FlatMap(l => DataResult.Unbox(ListBox.Flip(DataResultOperator.Instance, l)));
         }
 
         /// <summary>
@@ -246,22 +235,11 @@ public static class DynamicExtension
         /// <param name="elementDecoder">The decoder used to decode an element.</param>
         /// <typeparam name="TElement">The type of the decoded elements.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded elements, or an error if this value is not a list or an element cannot be decoded.</returns>
-        public DataResult<ImmutableList<TElement>> ReadList<TElement>(IDecoder<TElement> elementDecoder)
+        public DataResult<IList<TElement>> ReadList<TElement>(IDecoder<TElement> elementDecoder)
         {
-            return dynamic.AsListValues().FlatMap(l =>
-                {
-                    ImmutableList<TElement>.Builder builder = ImmutableList.CreateBuilder<TElement>();
-                    DataResult<ImmutableList<TElement>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, value) =>
-                        {
-                            DataResult<TElement> elementResult = value.Read(elementDecoder);
-                            return seed.CombineStable(Functions.AddToFirst, elementResult);
-                        }
-                    ).Map(b => b.ToImmutable());
-                }
-            );
+            return dynamic.AsListOpt()
+                .Map(l => l.Select(IApp<DataResult.Mu, TElement> (e) => e.Read(elementDecoder)).ToImmutableList())
+                .FlatMap(l => DataResult.Unbox(ListBox.Flip(DataResultOperator.Instance, l)));
         }
 
         /// <summary>
@@ -272,12 +250,12 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type produced by <paramref name="keyDecoder"/>.</typeparam>
         /// <typeparam name="TValue">The type produced by <paramref name="valueDecoder"/>.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the map, or an error if this value is not a map.</returns>
-        public DataResult<ImmutableDictionary<TKey, TValue>> ReadMap<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDecoder, Func<DynamicLike<TObject>, TValue> valueDecoder)
+        public DataResult<IList<KeyValuePair<TKey, TValue>>> ReadMap<TKey, TValue>(Func<DynamicLike<TObject>, DataResult<TKey>> keyDecoder, Func<DynamicLike<TObject>, DataResult<TValue>> valueDecoder)
             where TKey : notnull
         {
-            return dynamic.AsMapEntries().Map(l =>
-                l.ToImmutableDictionary(pair => keyDecoder.Apply(pair.Key), pair => valueDecoder.Apply(pair.Value))
-            );
+            return dynamic.AsMapOpt()
+                .Map(l => l.Select(IApp<DataResult.Mu, KeyValuePair<TKey, TValue>> (p) => keyDecoder.Apply(p.Key).FlatMap(k => valueDecoder.Apply(p.Value).Map(v => new KeyValuePair<TKey, TValue>(k, v)))).ToImmutableList())
+                .FlatMap(l => DataResult.Unbox(ListBox.Flip(DataResultOperator.Instance, l)));
         }
 
         /// <summary>
@@ -288,25 +266,12 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type of the decoded keys.</typeparam>
         /// <typeparam name="TValue">The type of the decoded values.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded entries, or an error if this value is not a map or an entry cannot be decoded.</returns>
-        public DataResult<ImmutableDictionary<TKey, TValue>> ReadMap<TKey, TValue>(IDecoder<TKey> keyDecoder, IDecoder<TValue> valueDecoder)
+        public DataResult<IList<KeyValuePair<TKey, TValue>>> ReadMap<TKey, TValue>(IDecoder<TKey> keyDecoder, IDecoder<TValue> valueDecoder)
             where TKey : notnull
         {
-            return dynamic.AsMapEntries().FlatMap(l =>
-                {
-                    ImmutableDictionary<TKey, TValue>.Builder builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
-                    DataResult<ImmutableDictionary<TKey, TValue>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, pair) =>
-                        {
-                            DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key
-                                .Read(keyDecoder)
-                                .Combine(Functions.CreatePair, pair.Value.Read(valueDecoder));
-                            return seed.CombineStable(Functions.AddToFirst, entry);
-                        }
-                    ).Map(b => b.ToImmutable());
-                }
-            );
+            return dynamic.AsMapOpt()
+                .Map(l => l.Select(IApp<DataResult.Mu, KeyValuePair<TKey, TValue>> (p) => p.Key.Read(keyDecoder).FlatMap(k => p.Value.Read(valueDecoder).Map(v => new KeyValuePair<TKey, TValue>(k, v)))).ToImmutableList())
+                .FlatMap(l => DataResult.Unbox(ListBox.Flip(DataResultOperator.Instance, l)));
         }
 
         /// <summary>
@@ -317,43 +282,29 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type of the decoded keys.</typeparam>
         /// <typeparam name="TValue">The type of the decoded values.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded entries, or an error if this value is not a map or an entry cannot be decoded.</returns>
-        public DataResult<ImmutableDictionary<TKey, TValue>> ReadMap<TKey, TValue>(IDecoder<TKey> keyDecoder, Func<TKey, IDecoder<TValue>> valueDecoderDispatcher)
+        public DataResult<IList<KeyValuePair<TKey, TValue>>> ReadMap<TKey, TValue>(IDecoder<TKey> keyDecoder, Func<TKey, IDecoder<TValue>> valueDecoderDispatcher)
             where TKey : notnull
         {
-            return dynamic.AsMapEntries().FlatMap(l =>
-                {
-                    ImmutableDictionary<TKey, TValue>.Builder builder = ImmutableDictionary.CreateBuilder<TKey, TValue>();
-                    DataResult<ImmutableDictionary<TKey, TValue>.Builder> initResult = DataResult.CreateSuccess(builder);
-                    return l.Aggregate(
-                        initResult,
-                        (seed, pair) =>
-                        {
-                            DataResult<KeyValuePair<TKey, TValue>> entry = pair.Key.Read(keyDecoder)
-                                .FlatMap(key =>
-                                    pair.Value.Read(valueDecoderDispatcher.Apply(key))
-                                        .Map(value => new KeyValuePair<TKey, TValue>(key, value))
-                                );
-                            return seed.Combine(Functions.AddToFirst, entry);
-                        }
-                    ).Map(b => b.ToImmutable());
-                }
-            );
+            return dynamic.AsMapOpt()
+                .Map(l => l.Select(IApp<DataResult.Mu, KeyValuePair<TKey, TValue>> (p) => p.Key.Read(keyDecoder).FlatMap(k => p.Value.Read(valueDecoderDispatcher.Apply(k)).Map(v => new KeyValuePair<TKey, TValue>(k, v)))).ToImmutableList())
+                .FlatMap(l => DataResult.Unbox(ListBox.Flip(DataResultOperator.Instance, l)));
         }
 
         /// <summary>
-        /// Reads this value as a map, accumulating every entry into <paramref name="empty"/> with <paramref name="func"/>.
+        /// Reads this value as a map, accumulating every entry into <paramref name="empty"/> with <paramref name="combiner"/>.
         /// </summary>
         /// <param name="empty">The result to start accumulating from.</param>
-        /// <param name="func">The function that adds an entry to the accumulated result.</param>
+        /// <param name="combiner">The function that adds an entry to the accumulated result.</param>
         /// <typeparam name="TResult">The type of the accumulated result.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the accumulated result, or an error if this value is not a map or an entry cannot be accumulated.</returns>
-        public DataResult<TResult> ReadMap<TResult>(DataResult<TResult> empty, Func<TResult, DynamicLike<TObject>, DynamicLike<TObject>, DataResult<TResult>> func)
+        public DataResult<TResult> ReadMap<TResult>(DataResult<TResult> empty, Func<TResult, DynamicLike<TObject>, DynamicLike<TObject>, DataResult<TResult>> combiner)
         {
-            return dynamic.AsMapEntries().FlatMap(l =>
+            // sync & ordered
+            return dynamic.AsMapOpt().FlatMap(l =>
                 {
                     return l.Aggregate(
                         empty,
-                        (seed, pair) => seed.FlatMap(s => func.Apply(s, pair.Key, pair.Value))
+                        (seed, pair) => seed.FlatMap(s => combiner.Apply(s, pair.Key, pair.Value))
                     );
                 }
             );
@@ -410,28 +361,27 @@ public static class DynamicExtension
         /// Reads this value as a list of <see langword="int"/>, falling back to an empty list.
         /// </summary>
         /// <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
-        public ImmutableList<int> AsIntList()
+        public IEnumerable<int> AsIntList()
         {
-            if (dynamic.AsIntListOpt().TryGetResult(out IEnumerable<int> numbers))
-            {
-                return numbers.ToImmutableList();
-            }
-
-            return ImmutableList<int>.Empty;
+            return dynamic.AsIntListOpt().GetResultOrDefault(Enumerable.Empty<int>());
         }
 
         /// <summary>
         /// Reads this value as a list of <see langword="long"/>, falling back to an empty list.
         /// </summary>
         /// <returns>The numbers, or an empty list if this value is not a list of numbers.</returns>
-        public ImmutableList<long> AsLongList()
+        public IEnumerable<long> AsLongList()
         {
-            if (dynamic.AsLongListOpt().TryGetResult(out IEnumerable<long> numbers))
-            {
-                return numbers.ToImmutableList();
-            }
+            return dynamic.AsLongListOpt().GetResultOrDefault(Enumerable.Empty<long>());
+        }
 
-            return ImmutableList<long>.Empty;
+        /// <summary>
+        /// Reads this value as a list and falling back to an empty list.
+        /// </summary>
+        /// <returns>The list, or an empty list if this value is not a list.</returns>
+        public IEnumerable<Dynamic<TObject>> AsList()
+        {
+            return dynamic.AsListOpt().GetResultOrDefault(Enumerable.Empty<Dynamic<TObject>>());
         }
 
         /// <summary>
@@ -440,9 +390,18 @@ public static class DynamicExtension
         /// <param name="elementDecoder">The function that converts an element.</param>
         /// <typeparam name="TElement">The type produced by <paramref name="elementDecoder"/>.</typeparam>
         /// <returns>The list, or an empty list if this value is not a list.</returns>
-        public ImmutableList<TElement> AsList<TElement>(Func<Dynamic<TObject>, TElement> elementDecoder)
+        public IEnumerable<TElement> AsList<TElement>(Func<Dynamic<TObject>, TElement> elementDecoder)
         {
-            return dynamic.AsListOpt(elementDecoder).GetResultOrDefault(ImmutableList<TElement>.Empty);
+            return dynamic.AsListOpt(elementDecoder).GetResultOrDefault(Enumerable.Empty<TElement>());
+        }
+
+        /// <summary>
+        /// Reads this value as a map and value with the given functions and falling back to an empty map.
+        /// </summary>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if this value is not a map.</returns>
+        public IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>> AsMap()
+        {
+            return dynamic.AsMapOpt().GetResultOrDefault(Enumerable.Empty<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>());
         }
 
         /// <summary>
@@ -453,10 +412,10 @@ public static class DynamicExtension
         /// <typeparam name="TKey">The type produced by <paramref name="keyDecoder"/>.</typeparam>
         /// <typeparam name="TValue">The type produced by <paramref name="valueDecoder"/>.</typeparam>
         /// <returns>The map, or an empty map if this value is not a map.</returns>
-        public ImmutableDictionary<TKey, TValue> AsMap<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDecoder, Func<DynamicLike<TObject>, TValue> valueDecoder)
+        public IEnumerable<KeyValuePair<TKey, TValue>> AsMap<TKey, TValue>(Func<DynamicLike<TObject>, TKey> keyDecoder, Func<DynamicLike<TObject>, TValue> valueDecoder)
             where TKey : notnull
         {
-            return dynamic.AsMapOpt(keyDecoder, valueDecoder).GetResultOrDefault(ImmutableDictionary<TKey, TValue>.Empty);
+            return dynamic.AsMapOpt(keyDecoder, valueDecoder).GetResultOrDefault(Enumerable.Empty<KeyValuePair<TKey, TValue>>());
         }
     }
 
@@ -569,16 +528,6 @@ public static class DynamicExtension
         }
 
         /// <summary>
-        /// Creates a dynamic containing the given <paramref name="number"/>.
-        /// </summary>
-        /// <param name="number">The <see langword="decimal"/> to serialize.</param>
-        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
-        public Dynamic<TObject> CreateNumber(double number)
-        {
-            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateDouble(number));
-        }
-
-        /// <summary>
         /// Creates a dynamic containing the given <paramref name="stringValue"/>.
         /// </summary>
         /// <param name="stringValue">The string to serialize.</param>
@@ -596,6 +545,16 @@ public static class DynamicExtension
         public Dynamic<TObject> CreateBool(bool boolValue)
         {
             return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateBoolValue(boolValue));
+        }
+
+        /// <summary>
+        /// Creates a dynamic containing a list of <see langword="byte"/> created from the given <paramref name="stream"/>.
+        /// </summary>
+        /// <param name="stream">The stream to read the bytes from.</param>
+        /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created stream.</returns>
+        public Dynamic<TObject> CreateStream(Stream stream)
+        {
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateStream(stream));
         }
 
         /// <summary>
