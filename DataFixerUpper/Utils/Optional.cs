@@ -78,7 +78,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <exception cref="InvalidOperationException">If <see cref="P:HasValue"/> is false.</exception>
     public T GetOrThrow()
     {
-        return HasValue ? _value : throw new InvalidOperationException("No value present");
+        return _hasValue ? _value : throw new InvalidOperationException("No value present");
     }
 
     /// <summary>
@@ -93,14 +93,14 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
             throw new ArgumentNullException(nameof(exceptionProvider));
         }
 
-        return HasValue ? _value : throw exceptionProvider.Get();
+        return _hasValue ? _value : throw exceptionProvider.Get();
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or <see langword="default"/>.</summary>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="default"/>.</returns>
     public T GetOrDefault()
     {
-        return HasValue ? _value : default;
+        return _hasValue ? _value : default;
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -108,7 +108,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(T defaultValue)
     {
-        return HasValue ? _value : defaultValue;
+        return _hasValue ? _value : defaultValue;
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -116,7 +116,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(Provider<T> defaultValue)
     {
-        return HasValue ? _value : defaultValue.Get();
+        return _hasValue ? _value : defaultValue.Get();
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -124,7 +124,18 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(ValueHolder<T> defaultValue)
     {
-        return HasValue ? _value : defaultValue.Value;
+        return _hasValue ? _value : defaultValue.Value;
+    }
+
+    /// <summary>
+    /// Tries to get the current value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object and returns a value that indicates if has value.
+    /// </summary>
+    /// <param name="result">When this method returns, the result of <see cref="T:DataFixerUpper.Utils.Optional`1"/>, if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
+    /// <returns><see langword="true" /> if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
+    public bool TryGet(out T result)
+    {
+        result = _value;
+        return _hasValue;
     }
 
     /// <summary>
