@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using DataFixerUpper.Extensions;
 
 namespace DataFixerUpper.Datafixers.Kinds;
@@ -27,9 +28,10 @@ public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public new static Applicative<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
+    public static Applicative<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
     {
-        return (Applicative<TFunctor, TMu>) proofBox;
+        return Unsafe.As<Applicative<TFunctor, TMu>>(proofBox);
+        // return (Applicative<TFunctor, TMu>) proofBox;
     }
 
     /// <summary>

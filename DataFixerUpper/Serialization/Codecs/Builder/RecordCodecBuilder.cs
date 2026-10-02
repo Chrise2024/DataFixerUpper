@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using DataFixerUpper.Datafixers.Kinds;
 using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Codecs.Impl;
@@ -53,7 +54,8 @@ public static class RecordCodecBuilder
     /// <returns>Unboxed <see cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilder`2"/>.</returns>
     public static RecordCodecBuilder<TInstance, TField> Unbox<TInstance, TField>(IApp<Mu<TInstance>, TField> box)
     {
-        return (RecordCodecBuilder<TInstance, TField>) box;
+        return Unsafe.As<RecordCodecBuilder<TInstance, TField>>(box);
+        // return (RecordCodecBuilder<TInstance, TField>) box;
     }
 
     /// <summary>

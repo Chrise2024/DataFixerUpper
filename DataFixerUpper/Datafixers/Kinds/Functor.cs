@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace DataFixerUpper.Datafixers.Kinds;
 
@@ -26,9 +27,10 @@ public abstract class Functor<TFunctor, TMu> : Kind<TFunctor, TMu>
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> into container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public static Functor<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
+    public static Functor<TFunctor, TMu> Unbox<T>(IApp<TMu, TFunctor> proofBox)
     {
-        return (Functor<TFunctor, TMu>) proofBox;
+        return Unsafe.As<Functor<TFunctor, TMu>>(proofBox);
+        // return (Functor<TFunctor, TMu>) proofBox;
     }
 
     /// <summary>

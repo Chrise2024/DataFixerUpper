@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using DataFixerUpper.Datafixers.Kinds;
 using DataFixerUpper.Extensions;
@@ -24,7 +25,8 @@ public static class DataResult
     /// <returns>Unboxed <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</returns>
     public static DataResult<T> Unbox<T>(IApp<Mu, T> box)
     {
-        return (DataResult<T>) box;
+        return Unsafe.As<DataResult<T>>(box);
+        // return (DataResult<T>) box;
     }
 
     /// <summary>

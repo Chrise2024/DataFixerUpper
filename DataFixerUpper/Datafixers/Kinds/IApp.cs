@@ -7,7 +7,7 @@ namespace DataFixerUpper.Datafixers.Kinds;
 /// </summary>
 /// <typeparam name="TAnchor">The type witness representing the type constructor. This is often a nested Mu empty class.</typeparam>
 /// <typeparam name="T">The type applied to the type constructor.</typeparam>
-public interface IApp<TAnchor, T>
+public interface IApp<TAnchor, out T>
     where TAnchor : Anchor;
 
 [Obsolete("Not implemented")]

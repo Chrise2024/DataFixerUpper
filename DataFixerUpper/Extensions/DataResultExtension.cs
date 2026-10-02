@@ -16,7 +16,7 @@ public static class DataResultExtension
 
     private static DataResult<TResult> Unbox<TResult>(IApp<DataResult.Mu, TResult> box)
     {
-        return DataResultOperator.Unbox(box);
+        return DataResult.Unbox(box);
     }
 
     extension<T>(DataResult<T> dataResult)
