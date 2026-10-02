@@ -10,6 +10,7 @@ using System.Runtime.Intrinsics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using DataFixerUpper.Datafixers.Kinds;
 using DataFixerUpper.Serialization;
 using DataFixerUpper.Serialization.Codecs;
 using DataFixerUpper.Serialization.Codecs.Builder;
@@ -31,22 +32,11 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        long l = long.MinValue;
-        int i = ConvertUtil.ToInt(l);
-        Console.WriteLine(ConvertUtil.ToByte(l));
-    }
-
-    static int Add(int a, int b)
-    {
-        return a + b;
-    }
-
-    static T? F<T>(T? v) where T : notnull
-    {
-        Console.WriteLine(typeof(Optional<T>).FullName);
-        Console.WriteLine(typeof(T).FullName);
-        Console.WriteLine(v is null);
-        return v;
+        string jsonString = "[1,2,3,4,5]";
+        JsonNode json = JsonNode.Parse(jsonString)!;
+        Codec<IList<int>> intListCodec = Codec.Int.List(0, 100);
+        DataResult<IList<int>> result = intListCodec.Parse(JsonOps.Instance, json);
+        result.IfSuccess(l => Console.WriteLine(l.Sum()));
     }
 }
 
