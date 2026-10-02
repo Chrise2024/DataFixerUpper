@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Numerics;
 using DataFixerUpper.Serialization.Codecs;
 
 namespace DataFixerUpper.Serialization.DynamicOps;
@@ -49,7 +48,6 @@ public abstract class DynamicLike<TObject>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if this value is not a list or contains elements that are not bytes.</returns>
     public abstract DataResult<Stream> AsStreamOpt();
 
-
     /// <summary>
     /// Reads this value as a list of <see langword="int"/>.
     /// </summary>
@@ -78,13 +76,13 @@ public abstract class DynamicLike<TObject>
     /// Reads this value as a list.
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the elements of the list, or an error if this value is not a list.</returns>
-    public abstract DataResult<IEnumerable<Dynamic<TObject>>> AsListValues();
+    public abstract DataResult<IEnumerable<Dynamic<TObject>>> AsListOpt();
 
     /// <summary>
     /// Reads this value as a map.
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if this value is not a map.</returns>
-    public abstract DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapEntries();
+    public abstract DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt();
 
     /// <summary>
     /// Reads the entry stored under the given <paramref name="key"/>.

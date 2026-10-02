@@ -113,15 +113,15 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<Dynamic<TObject>>> AsListValues()
+    public override DataResult<IEnumerable<Dynamic<TObject>>> AsListOpt()
     {
-        return _delegate.FlatMap(dynamic => dynamic.AsListValues());
+        return _delegate.FlatMap(dynamic => dynamic.AsListOpt());
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapEntries()
+    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
     {
-        return _delegate.FlatMap(dynamic => dynamic.AsMapEntries());
+        return _delegate.FlatMap(dynamic => dynamic.AsMapOpt());
     }
 
     /// <inheritdoc/>
