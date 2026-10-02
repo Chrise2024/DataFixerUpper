@@ -2743,8 +2743,8 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadList``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.Codecs.IDecoder{``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadList``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadMap``3(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``1},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},``2})">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``1})"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadMap``3(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``1}},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``2}})">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``0}},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``1}})"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadMap``3(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.Codecs.IDecoder{``1},DataFixerUpper.Serialization.Codecs.IDecoder{``2})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``2(DataFixerUpper.Serialization.Codecs.IDecoder{``0},DataFixerUpper.Serialization.Codecs.IDecoder{``1})"/>
@@ -2950,7 +2950,7 @@
             <typeparam name="TElement">The type of the decoded elements.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded elements, or an error if this value is not a list or an element cannot be decoded.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``0},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},``1})">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``2(System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``0}},System.Func{DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``1}})">
             <summary>
             Reads this value as a map, converting every key and value with the given functions.
             </summary>
@@ -2982,10 +2982,10 @@
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``1(DataFixerUpper.Serialization.DataResult{``0},System.Func{``0,DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``0}})">
             <summary>
-            Reads this value as a map, accumulating every entry into <paramref name="empty"/> with <paramref name="func"/>.
+            Reads this value as a map, accumulating every entry into <paramref name="empty"/> with <paramref name="combiner"/>.
             </summary>
             <param name="empty">The result to start accumulating from.</param>
-            <param name="func">The function that adds an entry to the accumulated result.</param>
+            <param name="combiner">The function that adds an entry to the accumulated result.</param>
             <typeparam name="TResult">The type of the accumulated result.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the accumulated result, or an error if this value is not a map or an entry cannot be accumulated.</returns>
         </member>
@@ -3408,7 +3408,7 @@
             <param name="mapper">The function that produces the new value.</param>
             <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the result of <paramref name="mapper"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Combine(DataFixerUpper.Serialization.DynamicOps.Dynamic{`0})">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Merge(DataFixerUpper.Serialization.DynamicOps.Dynamic{`0})">
             <summary>
             Returns the result of merging the value of this <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> and the value of <paramref name="other"/> into a list.
             </summary>
@@ -3418,7 +3418,7 @@
             The values are merged with <c>MergeToList</c>.
             </remarks>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Combine(DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},DataFixerUpper.Serialization.DynamicOps.Dynamic{`0})">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.Merge(DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},DataFixerUpper.Serialization.DynamicOps.Dynamic{`0})">
             <summary>
             Returns the result of merging <paramref name="key"/> and <paramref name="value"/> into the map of this <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/>.
             </summary>
@@ -3436,7 +3436,7 @@
             </summary>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if the value is not a map.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.UpdateMapValues(System.Func{System.Collections.Generic.KeyValuePair{`0,`0},System.Collections.Generic.KeyValuePair{`0,`0}})">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.Dynamic`1.UpdateMapValues(System.Func{System.Collections.Generic.KeyValuePair{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},DataFixerUpper.Serialization.DynamicOps.Dynamic{`0}},System.Collections.Generic.KeyValuePair{DataFixerUpper.Serialization.DynamicOps.Dynamic{`0},DataFixerUpper.Serialization.DynamicOps.Dynamic{`0}}})">
             <summary>
             Returns a copy of this <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> with every entry of its map transformed by <paramref name="updater"/>.
             </summary>
@@ -6028,6 +6028,13 @@
             <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
             <param name="defaultValue">A value to return if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.</param>
             <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
+        </member>
+        <member name="M:DataFixerUpper.Utils.Optional`1.TryGet(`0@)">
+            <summary>
+            Tries to get the current value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object and returns a value that indicates if has value.
+            </summary>
+            <param name="result">When this method returns, the result of <see cref="T:DataFixerUpper.Utils.Optional`1"/>, if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
+            <returns><see langword="true" /> if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
         </member>
         <member name="M:DataFixerUpper.Utils.Optional`1.Select``1(System.Func{`0,``0})">
             <summary>
