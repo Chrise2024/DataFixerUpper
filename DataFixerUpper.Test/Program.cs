@@ -31,8 +31,9 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        var o = Codec.Int.EncodeStart(DotnetOps.Instance, 111);
-        var t = Codec.Int.Decode(DotnetOps.Instance, 114);
+        long l = long.MinValue;
+        int i = ConvertUtil.ToInt(l);
+        Console.WriteLine(ConvertUtil.ToByte(l));
     }
 
     static int Add(int a, int b)

@@ -75,7 +75,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return DataResult.CreateError<byte>($"{nameof(GetByteValue)} called with not a number: {input}");
         }
 
-        return DataResult.CreateSuccess((byte) d);
+        return DataResult.CreateSuccess(ConvertUtil.ToByte(d));
     }
 
     /// <inheritdoc/>
@@ -86,7 +86,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return DataResult.CreateError<short>($"{nameof(GetShortValue)} called with not a number: {input}");
         }
 
-        return DataResult.CreateSuccess((short) d);
+        return DataResult.CreateSuccess(ConvertUtil.ToShort(d));
     }
 
     /// <inheritdoc/>
@@ -97,7 +97,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return DataResult.CreateError<int>($"{nameof(GetIntValue)} called with not a number: {input}");
         }
 
-        return DataResult.CreateSuccess((int) d);
+        return DataResult.CreateSuccess(ConvertUtil.ToInt(d));
     }
 
     /// <inheritdoc/>
@@ -125,7 +125,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return DataResult.CreateError<float>($"{nameof(GetFloatValue)} called with not a number: {input}");
         }
 
-        return DataResult.CreateSuccess((float) d);
+        return DataResult.CreateSuccess(ConvertUtil.ToFloat(d));
     }
 
     /// <inheritdoc/>
@@ -584,11 +584,5 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 }
 
-[JsonSerializable(typeof(byte))]
-[JsonSerializable(typeof(short))]
-[JsonSerializable(typeof(int))]
-[JsonSerializable(typeof(long))]
-[JsonSerializable(typeof(float))]
 [JsonSerializable(typeof(double))]
-[JsonSerializable(typeof(decimal))]
 internal partial class JsonOpsContext : JsonSerializerContext;
