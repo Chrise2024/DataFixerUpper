@@ -18,8 +18,8 @@ public sealed class NewtonJsonOps : DynamicOps<JToken>
         {
             JTokenType.Null => otherOp.Empty(),
             JTokenType.Boolean => otherOp.CreateBoolValue(input.Value<bool>()),
-            JTokenType.Integer => otherOp.CreateNumber(input.Value<long>()),
-            JTokenType.Float => otherOp.CreateNumber(input.Value<decimal>()),
+            JTokenType.Integer => otherOp.CreateLong(input.Value<long>()),
+            JTokenType.Float => otherOp.CreateDouble(input.Value<double>()),
             JTokenType.String => otherOp.CreateString(input.Value<string>()),
             JTokenType.Array => otherOp.CreateList(input.Select(i => ConvertTo(otherOp, i))),
             JTokenType.Object => otherOp.CreateMap(input.Children<JProperty>().Select(p => new KeyValuePair<string, TOther>(p.Name, ConvertTo(otherOp, p.Value)))),
@@ -27,14 +27,24 @@ public sealed class NewtonJsonOps : DynamicOps<JToken>
         };
     }
 
-    public override DataResult<decimal> GetNumberValue(JToken input)
+    public override DataResult<long> GetLongValue(JToken input)
     {
         throw new NotImplementedException();
     }
     
-    public override JToken CreateNumber(decimal value)
+    public override JToken CreateLong(long value)
+    {
+        return value;
+    }
+    
+    public override DataResult<double> GetDoubleValue(JToken input)
     {
         throw new NotImplementedException();
+    }
+    
+    public override JToken CreateDouble(double value)
+    {
+        return value;
     }
 
     public override DataResult<string> GetStringValue(JToken @string)

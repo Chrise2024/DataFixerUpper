@@ -49,7 +49,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             JsonValueKind.Object => this.ConvertMap(otherOp, input),
             JsonValueKind.Array => this.ConvertList(otherOp, input),
             JsonValueKind.String => otherOp.CreateString(input.GetValue<string>()),
-            JsonValueKind.Number => otherOp.CreateNumber(input.GetValue<decimal>()),
+            JsonValueKind.Number => ConvertJsonNumber(otherOp, input),
             JsonValueKind.True => otherOp.CreateBoolValue(true),
             JsonValueKind.False => otherOp.CreateBoolValue(false),
             JsonValueKind.Null => otherOp.Empty(),
@@ -57,94 +57,58 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         };
     }
 
+    private static TOther ConvertJsonNumber<TOther>(DynamicOps<TOther> otherOp, JsonNode input)
+    {
+        if (TryGetDoubleFromValue(input.AsValue(), out double number))
+        {
+            return otherOp.CreateDouble(number);
+        }
+
+        return otherOp.CreateLong(0);
+    }
+
     /// <inheritdoc/>
     public override DataResult<byte> GetByteValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<byte>($"{nameof(GetByteValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Byte));
-        }
-        catch
-        {
-            return DataResult.CreateError<byte>($"Input is not a valid byte: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override JsonNode CreateByte(byte value)
-    {
-        return JsonValue.Create(value);
+        return DataResult.CreateSuccess((byte) d);
     }
 
     /// <inheritdoc/>
     public override DataResult<short> GetShortValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<short>($"{nameof(GetShortValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int16));
-        }
-        catch
-        {
-            return DataResult.CreateError<short>($"Input is not a valid short: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override JsonNode CreateShort(short value)
-    {
-        return JsonValue.Create(value);
+        return DataResult.CreateSuccess((short) d);
     }
 
     /// <inheritdoc/>
     public override DataResult<int> GetIntValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<int>($"{nameof(GetIntValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int32));
-        }
-        catch
-        {
-            return DataResult.CreateError<int>($"Input is not a valid int: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override JsonNode CreateInt(int value)
-    {
-        return JsonValue.Create(value);
+        return DataResult.CreateSuccess((int) d);
     }
 
     /// <inheritdoc/>
     public override DataResult<long> GetLongValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<long>($"{nameof(GetLongValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Int64));
-        }
-        catch
-        {
-            return DataResult.CreateError<long>($"Input is not a valid long: {input}");
-        }
+        return DataResult.CreateSuccess((long) d);
     }
 
     /// <inheritdoc/>
@@ -156,71 +120,27 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<float> GetFloatValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<float>($"{nameof(GetFloatValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Single));
-        }
-        catch
-        {
-            return DataResult.CreateError<float>($"Input is not a valid float: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override JsonNode CreateFloat(float value)
-    {
-        return JsonValue.Create(value);
+        return DataResult.CreateSuccess((float) d);
     }
 
     /// <inheritdoc/>
     public override DataResult<double> GetDoubleValue(JsonNode input)
     {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
+        if (input is not JsonValue jsonValue || !TryGetDoubleFromValue(jsonValue, out double d))
         {
             return DataResult.CreateError<double>($"{nameof(GetDoubleValue)} called with not a number: {input}");
         }
 
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Double));
-        }
-        catch
-        {
-            return DataResult.CreateError<double>($"Input is not a valid double: {input}");
-        }
+        return DataResult.CreateSuccess(d);
     }
 
     /// <inheritdoc/>
     public override JsonNode CreateDouble(double value)
-    {
-        return JsonValue.Create(value);
-    }
-
-    /// <inheritdoc/>
-    public override DataResult<decimal> GetNumberValue(JsonNode input)
-    {
-        if (input is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.Number)
-        {
-            return DataResult.CreateError<decimal>($"{nameof(GetNumberValue)} called with not a number: {input}");
-        }
-
-        try
-        {
-            return DataResult.CreateSuccess(jsonValue.Deserialize(JsonOpsContext.Default.Decimal));
-        }
-        catch
-        {
-            return DataResult.CreateError<decimal>($"Input is not a valid number: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override JsonNode CreateNumber(decimal value)
     {
         return JsonValue.Create(value);
     }
@@ -516,6 +436,38 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     public override JsonNode Copy(JsonNode source)
     {
         return source?.DeepClone();
+    }
+
+    private static bool TryGetDoubleFromValue(JsonValue value, out double result)
+    {
+        if (value.GetValueKind() != JsonValueKind.Number)
+        {
+            result = 0;
+            return false;
+        }
+
+        if (value.TryGetValue(out double d))
+        {
+            result = d;
+            return true;
+        }
+
+        if (value.TryGetValue(out IConvertible c))
+        {
+            result = c.ToDouble(null);
+            return true;
+        }
+
+        try
+        {
+            result = value.Deserialize(JsonOpsContext.Default.Double);
+            return true;
+        }
+        catch
+        {
+            result = 0;
+            return false;
+        }
     }
 
     private sealed class JsonMap(JsonObject jsonObject, JsonOps ops) : MapLike<JsonNode>

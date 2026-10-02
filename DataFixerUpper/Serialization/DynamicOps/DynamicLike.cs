@@ -41,7 +41,7 @@ public abstract class DynamicLike<TObject>
     /// Reads this value as a number.
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the number, or an error if this value is not a number.</returns>
-    public abstract DataResult<decimal> AsNumber();
+    public abstract DataResult<double> AsNumber();
 
     /// <summary>
     /// Reads this value as a stream.

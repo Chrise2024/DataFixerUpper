@@ -316,9 +316,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     }
 
     /// <inheritdoc/>
-    public override DataResult<decimal> AsNumber()
+    public override DataResult<double> AsNumber()
     {
-        return Ops.GetNumberValue(Value);
+        return Ops.GetDoubleValue(Value);
     }
 
     /// <inheritdoc/>

@@ -54,7 +54,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             string str => otherOp.CreateString(str),
             bool bl => otherOp.CreateBoolValue(bl),
-            byte b => otherOp.CreateNumber(b),
+            byte b => otherOp.CreateByte(b),
             _ => input.GetType().IsPrimitive ? ConvertNumber(otherOp, input) : ConvertManaged(otherOp, input)
         };
     }
@@ -199,30 +199,6 @@ public sealed class DotnetOps : DynamicOps<object>
 
     /// <inheritdoc/>
     public override object CreateDouble(double value)
-    {
-        return value;
-    }
-
-    /// <inheritdoc/>
-    public override DataResult<decimal> GetNumberValue(object input)
-    {
-        if (input is decimal m)
-        {
-            return DataResult.CreateSuccess(m);
-        }
-
-        try
-        {
-            return DataResult.CreateSuccess(Convert.ToDecimal(input));
-        }
-        catch
-        {
-            return DataResult.CreateError<decimal>($"Input not a number: {input}");
-        }
-    }
-
-    /// <inheritdoc/>
-    public override object CreateNumber(decimal value)
     {
         return value;
     }
@@ -501,7 +477,7 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         if (input is IConvertible c)
         {
-            return otherOp.CreateNumber(c.ToDecimal(null));
+            return otherOp.CreateDouble(c.ToDouble(null));
         }
 
         throw new NotSupportedException($"Unsupported primitive type: {input.GetType()}");

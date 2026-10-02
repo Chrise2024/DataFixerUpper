@@ -95,7 +95,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<decimal> AsNumber()
+    public override DataResult<double> AsNumber()
     {
         return _delegate.FlatMap(dynamic => dynamic.AsNumber());
     }

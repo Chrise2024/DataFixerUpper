@@ -68,7 +68,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="byte"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="byte"/>.</returns>
     public virtual DataResult<byte> GetByteValue(TObject input)
     {
-        return GetNumberValue(input).Map(ConvertUtil.ToByte);
+        return GetLongValue(input).Map(ConvertUtil.ToByte);
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The serialized <see langword="byte"/>.</returns>
     public virtual TObject CreateByte(byte value)
     {
-        return CreateNumber(value);
+        return CreateLong(value);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="short"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="short"/>.</returns>
     public virtual DataResult<short> GetShortValue(TObject input)
     {
-        return GetNumberValue(input).Map(ConvertUtil.ToShort);
+        return GetLongValue(input).Map(ConvertUtil.ToShort);
     }
 
 
@@ -99,7 +99,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The serialized <see langword="short"/>.</returns>
     public virtual TObject CreateShort(short value)
     {
-        return CreateNumber(value);
+        return CreateLong(value);
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="int"/>.</returns>
     public virtual DataResult<int> GetIntValue(TObject input)
     {
-        return GetNumberValue(input).Map(ConvertUtil.ToInt);
+        return GetLongValue(input).Map(ConvertUtil.ToInt);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The serialized <see langword="int"/>.</returns>
     public virtual TObject CreateInt(int value)
     {
-        return CreateNumber(value);
+        return CreateLong(value);
     }
 
     /// <summary>
@@ -127,20 +127,14 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="long"/>.</returns>
-    public virtual DataResult<long> GetLongValue(TObject input)
-    {
-        return GetNumberValue(input).Map(ConvertUtil.ToLong);
-    }
+    public abstract DataResult<long> GetLongValue(TObject input);
 
     /// <summary>
     /// Creates a serialized <see langword="long"/> from the given <paramref name="value"/>.
     /// </summary>
     /// <param name="value">The <see langword="long"/> to serialize.</param>
     /// <returns>The serialized <see langword="long"/>.</returns>
-    public virtual TObject CreateLong(long value)
-    {
-        return CreateNumber(value);
-    }
+    public abstract TObject CreateLong(long value);
 
     /// <summary>
     /// Reads the given <paramref name="input"/> as a <see langword="float"/>.
@@ -149,7 +143,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="float"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="float"/>.</returns>
     public virtual DataResult<float> GetFloatValue(TObject input)
     {
-        return GetNumberValue(input).Map(ConvertUtil.ToFloat);
+        return GetDoubleValue(input).Map(ConvertUtil.ToFloat);
     }
 
     /// <summary>
@@ -159,7 +153,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The serialized <see langword="float"/>.</returns>
     public virtual TObject CreateFloat(float value)
     {
-        return CreateNumber(ConvertUtil.ToDecimal(value));
+        return CreateDouble(value);
     }
 
     /// <summary>
@@ -167,34 +161,14 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="double"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="double"/>.</returns>
-    public virtual DataResult<double> GetDoubleValue(TObject input)
-    {
-        return GetNumberValue(input).Map(ConvertUtil.ToDouble);
-    }
+    public abstract DataResult<double> GetDoubleValue(TObject input);
 
     /// <summary>
     /// Creates a serialized <see langword="double"/> from the given <paramref name="value"/>.
     /// </summary>
     /// <param name="value">The <see langword="double"/> to serialize.</param>
     /// <returns>The serialized <see langword="double"/>.</returns>
-    public virtual TObject CreateDouble(double value)
-    {
-        return CreateNumber(ConvertUtil.ToDecimal(value));
-    }
-
-    /// <summary>
-    /// Reads the given <paramref name="input"/> as a <see langword="decimal"/>.
-    /// </summary>
-    /// <param name="input">The serialized value to read.</param>
-    /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="decimal"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="decimal"/>.</returns>
-    public abstract DataResult<decimal> GetNumberValue(TObject input);
-
-    /// <summary>
-    /// Creates a serialized <see langword="decimal"/> from the given <paramref name="value"/>.
-    /// </summary>
-    /// <param name="value">The <see langword="decimal"/> to serialize.</param>
-    /// <returns>The serialized <see langword="decimal"/>.</returns>
-    public abstract TObject CreateNumber(decimal value);
+    public abstract TObject CreateDouble(double value);
 
     /// <summary>
     /// Reads the given <paramref name="input"/> as a stream.
@@ -208,8 +182,8 @@ public abstract class DynamicOps<TObject>
                 ImmutableArray<byte>.Builder builder = ImmutableArray.CreateBuilder<byte>();
                 foreach (TObject obj in l)
                 {
-                    DataResult<decimal> numberResult = GetNumberValue(obj);
-                    if (!numberResult.TryGetResult(out decimal number) || number > byte.MaxValue)
+                    DataResult<long> numberResult = GetLongValue(obj);
+                    if (!numberResult.TryGetResult(out long number) || number > byte.MaxValue)
                     {
                         builder.Clear();
                         return DataResult.CreateError<Stream>($"Some elements are not bytes: {input}");
@@ -558,11 +532,7 @@ public abstract class DynamicOps<TObject>
                 DataResult<ImmutableList<int>.Builder> initResult = DataResult.CreateSuccess(builder);
                 return l.Aggregate(
                     initResult,
-                    (seed, obj) =>
-                    {
-                        DataResult<int> result = GetNumberValue(obj).Map(decimal.ToInt32);
-                        return seed.CombineStable(Functions.AddToFirst, result);
-                    }
+                    (seed, obj) => seed.CombineStable(Functions.AddToFirst, GetIntValue(obj))
                 ).Map(IEnumerable<int> (b) => b.ToImmutable());
             }
         );
@@ -581,11 +551,7 @@ public abstract class DynamicOps<TObject>
                 DataResult<ImmutableList<long>.Builder> initResult = DataResult.CreateSuccess(builder);
                 return l.Aggregate(
                     initResult,
-                    (seed, obj) =>
-                    {
-                        DataResult<long> result = GetNumberValue(obj).Map(decimal.ToInt64);
-                        return seed.CombineStable(Functions.AddToFirst, result);
-                    }
+                    (seed, obj) => seed.CombineStable(Functions.AddToFirst, GetLongValue(obj))
                 ).Map(IEnumerable<long> (b) => b.ToImmutable());
             }
         );

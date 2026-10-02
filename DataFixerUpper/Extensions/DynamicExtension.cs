@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -86,9 +85,9 @@ public static class DynamicExtension
         /// <param name="input">The serialized value to read.</param>
         /// <param name="defaultValue">The value to return if <paramref name="input"/> is not a number.</param>
         /// <returns>The <see langword="decimal"/>, or <paramref name="defaultValue"/> if <paramref name="input"/> is not a number.</returns>
-        public decimal GetNumberValue(TObject input, decimal defaultValue)
+        public double GetNumberValue(TObject input, double defaultValue)
         {
-            return ops.GetNumberValue(input).GetResultOrDefault(defaultValue);
+            return ops.GetDoubleValue(input).GetResultOrDefault(defaultValue);
         }
     }
 
@@ -373,7 +372,7 @@ public static class DynamicExtension
         /// </summary>
         /// <param name="defaultValue">The value to return if this value is not a number.</param>
         /// <returns>The number, or <paramref name="defaultValue"/> if this value is not a number.</returns>
-        public decimal AsNumber(decimal defaultValue)
+        public double AsNumber(double defaultValue)
         {
             return dynamic.AsNumber().GetResultOrDefault(defaultValue);
         }
@@ -574,9 +573,9 @@ public static class DynamicExtension
         /// </summary>
         /// <param name="number">The <see langword="decimal"/> to serialize.</param>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
-        public Dynamic<TObject> CreateNumber(decimal number)
+        public Dynamic<TObject> CreateNumber(double number)
         {
-            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateNumber(number));
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateDouble(number));
         }
 
         /// <summary>

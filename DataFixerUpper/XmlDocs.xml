@@ -2589,8 +2589,8 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.WithParser``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.Codecs.IDecoder{``1})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.WithParser``1(DataFixerUpper.Serialization.Codecs.IDecoder{``0})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetNumberValue``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0,System.Decimal)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Decimal)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.GetNumberValue``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},``0,System.Double)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Double)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ConvertMap``2(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},DataFixerUpper.Serialization.DynamicOps.DynamicOps{``1},``0)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.ConvertMap``1(DataFixerUpper.Serialization.DynamicOps.DynamicOps{``0},`0)"/>
@@ -2631,8 +2631,8 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.ReadMap``2(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``1},System.Func{``1,DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},DataFixerUpper.Serialization.DataResult{``1}})">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.ReadMap``1(DataFixerUpper.Serialization.DataResult{``0},System.Func{``0,DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DynamicOps.DynamicLike{`0},DataFixerUpper.Serialization.DataResult{``0}})"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Decimal)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Decimal)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Double)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.AsString``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.String)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsString(System.String)"/>
@@ -2685,8 +2685,8 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateDouble``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateDouble(System.Double)"/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Decimal)">
-            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Decimal)"/>
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateNumber``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.Double)">
+            <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Double)"/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.CreateString``1(DataFixerUpper.Serialization.DynamicOps.DynamicLike{``0},System.String)">
             <inheritdoc cref="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateString(System.String)"/>
@@ -2736,7 +2736,7 @@
             <typeparam name="T">The type of the value to decode.</typeparam>
             <returns>A function that produces the decoded value, or an error if the value cannot be decoded.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Decimal)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$67BB51B23962D0D2C3F17A0E908CEF0E`1.GetNumberValue(`0,System.Double)">
             <summary>
             Reads the given <paramref name="input"/> as a <see langword="decimal"/>, falling back to <paramref name="defaultValue"/>.
             </summary>
@@ -2859,7 +2859,7 @@
             <typeparam name="TResult">The type of the accumulated result.</typeparam>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the accumulated result, or an error if this value is not a map or an entry cannot be accumulated.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Decimal)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.AsNumber(System.Double)">
             <summary>
             Reads this value as a number, falling back to <paramref name="defaultValue"/>.
             </summary>
@@ -2987,7 +2987,7 @@
             <param name="number">The <see langword="double"/> to serialize.</param>
             <returns>A <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the created number.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Decimal)">
+        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicExtension.&lt;G&gt;$145466AA6EA930CCFA1A0273740FC0F7`1.CreateNumber(System.Double)">
             <summary>
             Creates a dynamic containing the given <paramref name="number"/>.
             </summary>
@@ -3078,12 +3078,6 @@
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateDouble(System.Double)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.GetNumberValue(System.Object)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateNumber(System.Decimal)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DotnetOps.CreateStream(System.IO.Stream)">
@@ -3655,20 +3649,6 @@
             <param name="value">The <see langword="double"/> to serialize.</param>
             <returns>The serialized <see langword="double"/>.</returns>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetNumberValue(`0)">
-            <summary>
-            Reads the given <paramref name="input"/> as a <see langword="decimal"/>.
-            </summary>
-            <param name="input">The serialized value to read.</param>
-            <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="decimal"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="decimal"/>.</returns>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.CreateNumber(System.Decimal)">
-            <summary>
-            Creates a serialized <see langword="decimal"/> from the given <paramref name="value"/>.
-            </summary>
-            <param name="value">The <see langword="decimal"/> to serialize.</param>
-            <returns>The serialized <see langword="decimal"/>.</returns>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.DynamicOps`1.GetStream(`0)">
             <summary>
             Reads the given <paramref name="input"/> as a stream.
@@ -4019,19 +3999,10 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetByteValue(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateByte(System.Byte)">
-            <inheritdoc/>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetShortValue(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateShort(System.Int16)">
-            <inheritdoc/>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetIntValue(System.Text.Json.Nodes.JsonNode)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateInt(System.Int32)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetLongValue(System.Text.Json.Nodes.JsonNode)">
@@ -4043,19 +4014,10 @@
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetFloatValue(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateFloat(System.Single)">
-            <inheritdoc/>
-        </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetDoubleValue(System.Text.Json.Nodes.JsonNode)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateDouble(System.Double)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetNumberValue(System.Text.Json.Nodes.JsonNode)">
-            <inheritdoc/>
-        </member>
-        <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.CreateNumber(System.Decimal)">
             <inheritdoc/>
         </member>
         <member name="M:DataFixerUpper.Serialization.DynamicOps.JsonOps.GetStringValue(System.Text.Json.Nodes.JsonNode)">
