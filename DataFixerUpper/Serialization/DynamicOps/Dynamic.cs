@@ -139,7 +139,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <remarks>
     /// The values are merged with <c>MergeToList</c>.
     /// </remarks>
-    public OptionalDynamic<TObject> Combine(Dynamic<TObject> other)
+    public OptionalDynamic<TObject> Merge(Dynamic<TObject> other)
     {
         DataResult<TObject> combined = Ops.MergeToList(Value, other.Value);
         return new OptionalDynamic<TObject>(Ops, combined.Map(m => new Dynamic<TObject>(Ops, m)));
@@ -155,7 +155,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <remarks>
     /// The values are merged with <c>MergeToMap</c>.
     /// </remarks>
-    public OptionalDynamic<TObject> Combine(Dynamic<TObject> key, Dynamic<TObject> value)
+    public OptionalDynamic<TObject> Merge(Dynamic<TObject> key, Dynamic<TObject> value)
     {
         DataResult<TObject> combined = Ops.MergeToMap(Value, key.Value, value.Value);
         return new OptionalDynamic<TObject>(Ops, combined.Map(m => new Dynamic<TObject>(Ops, m)));
@@ -175,9 +175,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// </summary>
     /// <param name="updater">The function that transforms an entry.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the updated map, or this dynamic itself if the value is not a map.</returns>
-    public Dynamic<TObject> UpdateMapValues(Func<KeyValuePair<TObject, TObject>, KeyValuePair<TObject, TObject>> updater)
+    public Dynamic<TObject> UpdateMapValues(Func<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>, KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>> updater)
     {
-        return Ops.GetMapValues(Value).Map(map => new Dynamic<TObject>(Ops, Ops.CreateMap(map.Select(updater)))).GetResultOrDefault(this);
+        return GetMapValues().Map(map => this.CreateMap(map.Select(updater))).GetResultOrDefault(this);
     }
 
     /// <summary>
@@ -399,9 +399,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        int hash = Ops.GetHashCode();
+        int hash = Value.GetHashCode();
 
-        hash |= Value.GetHashCode() * 31;
+        hash |= Ops.GetHashCode() * 31;
 
         return hash;
     }
