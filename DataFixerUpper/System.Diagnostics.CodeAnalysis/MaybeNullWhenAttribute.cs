@@ -1,0 +1,8 @@
+﻿// ReSharper disable once CheckNamespace
+namespace System.Diagnostics.CodeAnalysis;
+
+[AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+internal sealed class MaybeNullWhenAttribute(bool returnValue) : Attribute
+{
+    public bool ReturnValue => returnValue;
+}
