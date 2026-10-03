@@ -625,7 +625,7 @@ public abstract class DynamicOps<TObject>
             return input;
         }
 
-        return MergeToMap(input, CreateString(key), value).GetResultOrDefault(input);
+        return MergeToMap(input, key, value).GetResultOrDefault(input);
     }
 
     /// <summary>
@@ -667,7 +667,18 @@ public abstract class DynamicOps<TObject>
     {
         ThrowIfKeyNull(key);
 
-        return Update(input, CreateString(key), updater);
+        if (IsEmpty(input))
+        {
+            return input;
+        }
+
+        DataResult<TObject> result = Get(input, key);
+        if (!result.TryGetResult(out TObject? kr))
+        {
+            return input;
+        }
+
+        return MergeToMap(input, key, updater.Apply(kr)).GetResultOrDefault(input);
     }
 
     /// <summary>
@@ -725,18 +736,7 @@ public abstract class DynamicOps<TObject>
     /// <summary>
     /// Helper to throw <see cref="T:System.ArgumentNullException"/> if key is null.
     /// </summary>
-    protected static void ThrowIfKeyNull(string key)
-    {
-        if (key is null)
-        {
-            throw new ArgumentNullException(nameof(key), "Key cannot be null");
-        }
-    }
-
-    /// <summary>
-    /// Helper to throw <see cref="T:System.ArgumentNullException"/> if key is null.
-    /// </summary>
-    protected static void ThrowIfKeyNull(TObject key)
+    protected static void ThrowIfKeyNull([NotNull] object? key)
     {
         if (key is null)
         {

@@ -9,8 +9,8 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>XmlDocs.xml</DocumentationFile>
-        <Version>2.0.0</Version>
-        <PackageReleaseNotes>Release.</PackageReleaseNotes>
+        <Version>2.1.0</Version>
+        <PackageReleaseNotes>Enable nullable, no api changes.</PackageReleaseNotes>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -33,7 +33,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="XmlDocs.xml"/>
         <None Include="../README.md" Pack="true" PackagePath="">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>

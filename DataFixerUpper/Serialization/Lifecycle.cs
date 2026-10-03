@@ -73,7 +73,7 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is Lifecycle other && EqualsCore(other);
     }
@@ -105,7 +105,7 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     /// <param name="right">The value to compare with <paramref name="left" />.</param>
     /// <returns>
     /// <see langword="true" /> if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
-    public static bool operator ==(Lifecycle left, Lifecycle right)
+    public static bool operator ==(Lifecycle? left, Lifecycle? right)
     {
         return left?.State == right?.State;
     }
@@ -115,12 +115,12 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     /// <param name="right">The value to compare with <paramref name="left" />.</param>
     /// <returns>
     /// <see langword="true" /> if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, <see langword="false" />.</returns>
-    public static bool operator !=(Lifecycle left, Lifecycle right)
+    public static bool operator !=(Lifecycle? left, Lifecycle? right)
     {
         return !(left == right);
     }
 
-    private bool EqualsCore(Lifecycle other)
+    private bool EqualsCore(Lifecycle? other)
     {
         return State == other?.State;
     }

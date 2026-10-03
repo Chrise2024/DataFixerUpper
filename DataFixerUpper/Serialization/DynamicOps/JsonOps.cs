@@ -184,7 +184,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override JsonNode CreateList(IEnumerable<JsonNode?> list)
     {
-        return list.Select(v => v?.DeepClone()).Aggregate(new JsonArray(), (arr, value) => arr.AddAndReturn(value));
+        return list.Select(v => v?.DeepClone()).Aggregate(new JsonArray(), Functions.AddToFirst);
     }
 
     /// <inheritdoc/>
