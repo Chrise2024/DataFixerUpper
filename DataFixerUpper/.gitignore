@@ -39,6 +39,7 @@ msbuild.wrn
 *.lo
 *.o
 *.exe
+XmlDocs.xml
 
 # Cross building rootfs
 cross/rootfs/
