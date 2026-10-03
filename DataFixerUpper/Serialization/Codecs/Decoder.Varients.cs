@@ -59,7 +59,7 @@ public partial interface IDecoder<T>
         /// <param name="input">The value to decode.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object.</returns>
-        public DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+        public DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
             where TObject : notnull;
 
         /// <summary>
@@ -86,7 +86,7 @@ public partial interface IDecoder<T>
         /// <param name="dynamic">The serialized data.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object and the remaining serialized data.</returns>
-        public DataResult<(T, TObject)> Decode<TObject>(Dynamic<TObject> dynamic)
+        public DataResult<(T, TObject?)> Decode<TObject>(Dynamic<TObject> dynamic)
             where TObject : notnull;
 
         /// <summary>
@@ -147,7 +147,7 @@ public abstract partial class DecoderBase<T>
 
 internal sealed record TerminalImpl<T>(IDecoder<T> Decoder) : IDecoder<T>.ITerminal
 {
-    public DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull
     {
         return Decoder.Parse(ops, input);
@@ -161,7 +161,7 @@ internal sealed record TerminalImpl<T>(IDecoder<T> Decoder) : IDecoder<T>.ITermi
 
 internal sealed class TerminalDecoderImpl<T>(IDecoder<T>.ITerminal terminal) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return terminal.Decode(ops, input).Map(value => (value, ops.Empty()));
@@ -175,7 +175,7 @@ internal sealed class TerminalDecoderImpl<T>(IDecoder<T>.ITerminal terminal) : D
 
 internal sealed record BoxedImpl<T>(IDecoder<T> Decoder) : IDecoder<T>.IBoxed
 {
-    public DataResult<(T, TObject)> Decode<TObject>(Dynamic<TObject> dynamic)
+    public DataResult<(T, TObject?)> Decode<TObject>(Dynamic<TObject> dynamic)
         where TObject : notnull
     {
         return Decoder.Decode(dynamic);
@@ -189,7 +189,7 @@ internal sealed record BoxedImpl<T>(IDecoder<T> Decoder) : IDecoder<T>.IBoxed
 
 internal sealed class BoxedDecoderImpl<T>(IDecoder<T>.IBoxed boxed) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return boxed.Decode(new Dynamic<TObject>(ops, input));
@@ -217,7 +217,7 @@ internal sealed record SimpleImpl<T>(IDecoder<T> Decoder) : IDecoder<T>.ISimple
 
 internal sealed class SimpleDecoderImpl<T>(IDecoder<T>.ISimple simple) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return simple.Decode(new Dynamic<TObject>(ops, input)).Map(value => (value, input));

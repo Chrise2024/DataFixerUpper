@@ -33,7 +33,7 @@ internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
             return baseCodec.Parse(ops, ops.CreateMap(input));
         }
 
-        TObject value = input[CompressedValueKey];
+        TObject? value = input[CompressedValueKey];
         return value is null
             ? DataResult.CreateError<T>("Missing value")
             : baseCodec.Parse(ops, value);

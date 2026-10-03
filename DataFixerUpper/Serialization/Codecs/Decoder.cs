@@ -61,7 +61,7 @@ public partial interface IDecoder<T>
     /// <param name="input">The value to decode.</param>
     /// <typeparam name="TObject">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value together with the remaining input, or an error if the value cannot be decoded.</returns>
-    DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull;
 
     /// <summary>
@@ -85,7 +85,7 @@ public partial interface IDecoder<T>
 public abstract partial class DecoderBase<T> : IDecoder<T>
 {
     /// <inheritdoc/>
-    public abstract DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public abstract DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull;
 
     /// <inheritdoc/>

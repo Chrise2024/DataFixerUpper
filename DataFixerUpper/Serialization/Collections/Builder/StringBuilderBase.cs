@@ -24,10 +24,10 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
     /// <param name="value">The value of the entry to append.</param>
     /// <param name="builder">The builder to append the entry to.</param>
     /// <returns>The given <paramref name="builder"/>.</returns>
-    protected abstract TBuilder Append(string key, TObject value, TBuilder builder);
+    protected abstract TBuilder Append(string key, TObject? value, TBuilder builder);
 
     /// <inheritdoc/>
-    public override RecordBuilder<TObject> Add(TObject key, TObject value)
+    public override RecordBuilder<TObject> Add(TObject key, TObject? value)
     {
         Builder = Ops.GetStringValue(key).FlatMap(s =>
             {
@@ -63,7 +63,7 @@ public abstract class StringBuilderBase<TObject, TBuilder> : RecordBuilderBase<T
     }
 
     /// <inheritdoc/>
-    public override RecordBuilder<TObject> Add(string key, TObject value)
+    public override RecordBuilder<TObject> Add(string key, TObject? value)
     {
         Builder = Builder.Map(builder => Append(key, value, builder));
         return this;

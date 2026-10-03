@@ -13,7 +13,7 @@ namespace DataFixerUpper.Serialization.Collections.Builder;
 public sealed class ListBuilder<TObject> : ListBuilderBase<TObject>
     where TObject : notnull
 {
-    private DataResult<ImmutableList<TObject>.Builder> _builder = DataResult.CreateSuccess(ImmutableList.CreateBuilder<TObject>(), Lifecycle.Stable);
+    private DataResult<ImmutableList<TObject?>.Builder> _builder = DataResult.CreateSuccess(ImmutableList.CreateBuilder<TObject?>(), Lifecycle.Stable);
 
     /// <summary>
     /// Initializes a new instance with the given <paramref name="ops"/>.
@@ -22,12 +22,9 @@ public sealed class ListBuilder<TObject> : ListBuilderBase<TObject>
     public ListBuilder(DynamicOps<TObject> ops) : base(ops) { }
 
     /// <inheritdoc/>
-    public override ListBuilderBase<TObject> Add(TObject value)
+    public override ListBuilderBase<TObject> Add(TObject? value)
     {
-        if (value is not null)
-        {
-            _builder = _builder.Map(builder => builder.AddAndReturn(value));
-        }
+        _builder = _builder.Map(builder => builder.AddAndReturn(value));
 
         return this;
     }
@@ -35,7 +32,7 @@ public sealed class ListBuilder<TObject> : ListBuilderBase<TObject>
     /// <inheritdoc/>
     public override ListBuilderBase<TObject> Add(DataResult<TObject> value)
     {
-        _builder = _builder.CombineStable(Functions.AddToFirst, value);
+        _builder = _builder.CombineStable(Functions.AddToFirst, value.Map(TObject? (v) => v));
         return this;
     }
 
@@ -54,10 +51,10 @@ public sealed class ListBuilder<TObject> : ListBuilderBase<TObject>
     }
 
     /// <inheritdoc/>
-    public override DataResult<TObject> Build(TObject prefix)
+    public override DataResult<TObject> Build(TObject? prefix)
     {
         DataResult<TObject> result = _builder.FlatMap(builder => Ops.MergeToList(prefix, builder.ToImmutable()));
-        _builder = DataResult.CreateSuccess(ImmutableList.CreateBuilder<TObject>(), Lifecycle.Stable);
+        _builder = DataResult.CreateSuccess(ImmutableList.CreateBuilder<TObject?>(), Lifecycle.Stable);
         return result;
     }
 }

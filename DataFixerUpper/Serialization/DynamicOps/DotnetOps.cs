@@ -24,7 +24,7 @@ public sealed class DotnetOps : DynamicOps<object>
     private DotnetOps() { }
 
     /// <inheritdoc/>
-    public override object Empty()
+    public override object? Empty()
     {
         return null;
     }
@@ -42,7 +42,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override TOther ConvertTo<TOther>(DynamicOps<TOther> otherOp, object input)
+    public override TOther? ConvertTo<TOther>(DynamicOps<TOther> otherOp, object? input)
         where TOther : default
     {
         if (input is null)
@@ -60,7 +60,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<byte> GetByteValue(object input)
+    public override DataResult<byte> GetByteValue(object? input)
     {
         if (input is byte b)
         {
@@ -84,7 +84,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<short> GetShortValue(object input)
+    public override DataResult<short> GetShortValue(object? input)
     {
         if (input is short s)
         {
@@ -108,7 +108,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<int> GetIntValue(object input)
+    public override DataResult<int> GetIntValue(object? input)
     {
         if (input is int i)
         {
@@ -132,7 +132,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<long> GetLongValue(object input)
+    public override DataResult<long> GetLongValue(object? input)
     {
         if (input is long l)
         {
@@ -156,7 +156,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<float> GetFloatValue(object input)
+    public override DataResult<float> GetFloatValue(object? input)
     {
         if (input is float f)
         {
@@ -180,7 +180,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<double> GetDoubleValue(object input)
+    public override DataResult<double> GetDoubleValue(object? input)
     {
         if (input is double d)
         {
@@ -222,7 +222,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<string> GetStringValue(object @string)
+    public override DataResult<string> GetStringValue(object? @string)
     {
         if (@string is string str)
         {
@@ -239,7 +239,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<bool> GetBoolValue(object @bool)
+    public override DataResult<bool> GetBoolValue(object? @bool)
     {
         if (@bool is bool bl)
         {
@@ -256,19 +256,19 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override object CreateList(IEnumerable<object> list)
+    public override object CreateList(IEnumerable<object?> list)
     {
         return list.ToImmutableList();
     }
 
     /// <inheritdoc/>
-    public override object CreateMap(IEnumerable<KeyValuePair<object, object>> entries)
+    public override object CreateMap(IEnumerable<KeyValuePair<object, object?>> entries)
     {
         return entries.ToImmutableDictionary();
     }
 
     /// <inheritdoc/>
-    public override object CreateMap(IEnumerable<KeyValuePair<string, object>> entries)
+    public override object CreateMap(IEnumerable<KeyValuePair<string, object?>> entries)
     {
         return entries.ToImmutableDictionary();
     }
@@ -280,7 +280,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToList(object list, object other)
+    public override DataResult<object> MergeToList(object? list, object? other)
     {
         if (list is IList il)
         {
@@ -296,7 +296,7 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToList(object list, IEnumerable<object> values)
+    public override DataResult<object> MergeToList(object? list, IEnumerable<object?> values)
     {
         if (list is IList il)
         {
@@ -312,11 +312,11 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object dict, object key, object value)
+    public override DataResult<object> MergeToMap(object? dict, object key, object? value)
     {
         if (dict is IDictionary id)
         {
-            ImmutableDictionary<object, object>.Builder builder = ImmutableDictionary.CreateBuilder<object, object>();
+            ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
             builder.AddRange(GetDictionaryEntries(id));
             builder.Add(key, value);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
@@ -324,7 +324,7 @@ public sealed class DotnetOps : DynamicOps<object>
 
         if (dict is null)
         {
-            ImmutableDictionary<object, object>.Builder builder = ImmutableDictionary.CreateBuilder<object, object>();
+            ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
             builder.Add(key, value);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
         }
@@ -333,17 +333,17 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object dict, string key, object value)
+    public override DataResult<object> MergeToMap(object? dict, string key, object? value)
     {
         return MergeToMap(dict, (object) key, value);
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object dict, IEnumerable<KeyValuePair<object, object>> values)
+    public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<object, object?>> values)
     {
         if (dict is IDictionary id)
         {
-            ImmutableDictionary<object, object>.Builder builder = ImmutableDictionary.CreateBuilder<object, object>();
+            ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
             builder.AddRange(GetDictionaryEntries(id));
             builder.AddRange(values);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
@@ -358,35 +358,35 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object dict, IEnumerable<KeyValuePair<string, object>> values)
+    public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<string, object?>> values)
     {
         return MergeToMap(dict, values.Select(p => p.MapKey(object (k) => k)));
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<object, object>>> GetMapValues(object input)
+    public override DataResult<IEnumerable<KeyValuePair<object, object?>>> GetMapValues(object? input)
     {
         if (input is not IDictionary id)
         {
-            return DataResult.CreateError<IEnumerable<KeyValuePair<object, object>>>($"{nameof(GetMapValues)} called with not a dict: {input}");
+            return DataResult.CreateError<IEnumerable<KeyValuePair<object, object?>>>($"{nameof(GetMapValues)} called with not a dict: {input}");
         }
 
         return DataResult.CreateSuccess(GetDictionaryEntries(id));
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<object>> GetList(object input)
+    public override DataResult<IEnumerable<object?>> GetList(object? input)
     {
         if (input is not IList il)
         {
-            return DataResult.CreateError<IEnumerable<object>>($"{nameof(GetList)} called with not a list: {input}");
+            return DataResult.CreateError<IEnumerable<object?>>($"{nameof(GetList)} called with not a list: {input}");
         }
 
-        return DataResult.CreateSuccess(il.Cast<object>());
+        return DataResult.CreateSuccess(il.Cast<object?>());
     }
 
     /// <inheritdoc/>
-    public override DataResult<MapLike<object>> GetMap(object input)
+    public override DataResult<MapLike<object>> GetMap(object? input)
     {
         if (input is not IDictionary id)
         {
@@ -397,8 +397,10 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> Get(object input, object key)
+    public override DataResult<object> Get(object? input, object key)
     {
+        ThrowIfKeyNull(key);
+
         if (input is not IDictionary id)
         {
             return DataResult.CreateError<object>($"{nameof(Get)} called with not a dict: {input}");
@@ -411,26 +413,32 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> Get(object input, string key)
+    public override DataResult<object> Get(object? input, string key)
     {
+        ThrowIfKeyNull(key);
+
         return Get(input, (object) key);
     }
 
     /// <inheritdoc/>
-    public override object Set(object input, string key, object value)
+    public override object? Set(object? input, string key, object? value)
     {
         return Set(input, (object) key, value);
     }
 
     /// <inheritdoc/>
-    public override object Update(object input, string key, Func<object, object> updater)
+    public override object? Update(object? input, string key, Func<object?, object?> updater)
     {
+        ThrowIfKeyNull(key);
+
         return Update(input, (object) key, updater);
     }
 
     /// <inheritdoc/>
-    public override object Remove(object input, object key)
+    public override object? Remove(object? input, object key)
     {
+        ThrowIfKeyNull(key);
+
         if (input is not IDictionary id)
         {
             return input;
@@ -443,19 +451,21 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override object Remove(object input, string key)
+    public override object? Remove(object? input, string key)
     {
+        ThrowIfKeyNull(key);
+
         return Remove(input, (object) key);
     }
 
     /// <inheritdoc/>
-    public override object Copy(object source)
+    public override object? Copy(object? source)
     {
         return source;
     }
 
     /// <inheritdoc/>
-    public override bool IsEmpty(object input)
+    public override bool IsEmpty(object? input)
     {
         return input is null;
     }
@@ -483,34 +493,34 @@ public sealed class DotnetOps : DynamicOps<object>
         throw new NotSupportedException($"Unsupported primitive type: {input.GetType()}");
     }
 
-    private static IEnumerable<KeyValuePair<object, object>> GetDictionaryEntries(IDictionary dictionary)
+    private static IEnumerable<KeyValuePair<object, object?>> GetDictionaryEntries(IDictionary dictionary)
     {
         // ReSharper disable once GenericEnumeratorNotDisposed
         IDictionaryEnumerator enumerator = dictionary.GetEnumerator();
         while (enumerator.MoveNext())
         {
-            yield return new KeyValuePair<object, object>(enumerator.Key, enumerator.Value);
+            yield return new KeyValuePair<object, object?>(enumerator.Key, enumerator.Value);
         }
     }
 
-    private sealed class FixedDictionaryBuilder(DynamicOps<object> ops) : MapBuilderBase<object, ImmutableDictionary<object, object>.Builder>(ops)
+    private sealed class FixedDictionaryBuilder(DynamicOps<object> ops) : MapBuilderBase<object, ImmutableDictionary<object, object?>.Builder>(ops)
     {
-        protected override ImmutableDictionary<object, object>.Builder InitBuilder()
+        protected override ImmutableDictionary<object, object?>.Builder InitBuilder()
         {
-            return ImmutableDictionary.CreateBuilder<object, object>();
+            return ImmutableDictionary.CreateBuilder<object, object?>();
         }
 
-        protected override DataResult<object> BuildResult(ImmutableDictionary<object, object>.Builder builder, object prefix)
+        protected override DataResult<object> BuildResult(ImmutableDictionary<object, object?>.Builder builder, object? prefix)
         {
             return Ops.MergeToMap(prefix, builder.ToImmutable());
         }
 
-        protected override ImmutableDictionary<object, object>.Builder Append(object key, object value, ImmutableDictionary<object, object>.Builder builder)
+        protected override ImmutableDictionary<object, object?>.Builder Append(object key, object? value, ImmutableDictionary<object, object?>.Builder builder)
         {
             return builder.AddAndReturn(key, value);
         }
 
-        protected override ImmutableDictionary<object, object>.Builder Append(string key, object value, ImmutableDictionary<object, object>.Builder builder)
+        protected override ImmutableDictionary<object, object?>.Builder Append(string key, object? value, ImmutableDictionary<object, object?>.Builder builder)
         {
             return builder.AddAndReturn((object) key, value);
         }

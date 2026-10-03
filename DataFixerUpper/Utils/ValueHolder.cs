@@ -35,8 +35,8 @@ public static class ValueHolder
 /// </summary>
 public struct ValueHolder<T>
 {
-    private Provider<T> _provider;
-    private T _value;
+    private Provider<T>? _provider;
+    private T? _value;
 
     /// <summary>
     /// 0 = not initialized

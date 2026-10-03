@@ -23,7 +23,7 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
         IDictionary<TKey, TValue> read = Mutable
             ? new Dictionary<TKey, TValue>()
             : ImmutableDictionary.CreateBuilder<TKey, TValue>();
-        ImmutableDictionary<TObject, TObject>.Builder fails = ImmutableDictionary.CreateBuilder<TObject, TObject>();
+        ImmutableDictionary<TObject, TObject?>.Builder fails = ImmutableDictionary.CreateBuilder<TObject, TObject?>();
 
         DataResult<Unit> aggregatedResult = map.Aggregate(
             DataResult.CreateSuccess(Unit.Instance, Lifecycle.Stable),
@@ -123,16 +123,16 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
     public override DataResult<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
         DynamicOps<TObject> ops,
-        TObject prefix
+        TObject? prefix
     )
         where TObject : default
     {
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject)> Decode<TObject>(
+    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(
         DynamicOps<TObject> ops,
-        TObject input
+        TObject? input
     )
         where TObject : default
     {
@@ -157,14 +157,14 @@ internal sealed class DispatchedDictionaryCodec<TKey, TValue>(
     public override DataResult<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
         DynamicOps<TObject> ops,
-        TObject prefix
+        TObject? prefix
     )
         where TObject : default
     {
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetMap(input)

@@ -89,7 +89,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<(TResult, TObject)> Decode<TResult>(IDecoder<TResult> decoder)
+    public override DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder)
     {
         return _delegate.FlatMap(dynamic => dynamic.Decode(decoder));
     }

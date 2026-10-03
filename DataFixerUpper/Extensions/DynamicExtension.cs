@@ -35,7 +35,7 @@ public static class DynamicExtension
         /// <returns>The empty map.</returns>
         public TObject CreateMap()
         {
-            return ops.CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject>>());
+            return ops.CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject?>>());
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ public static class DynamicExtension
         /// <param name="decoder">The decoder to use.</param>
         /// <typeparam name="T">The type of the value to decode.</typeparam>
         /// <returns>A function that produces the decoded value together with the remaining input, or an error if the value cannot be decoded.</returns>
-        public Func<TObject, DataResult<(T, TObject)>> WithDecoder<T>(IDecoder<T> decoder)
+        public Func<TObject, DataResult<(T, TObject?)>> WithDecoder<T>(IDecoder<T> decoder)
         {
             return obj => decoder.Decode(ops, obj);
         }
@@ -108,9 +108,9 @@ public static class DynamicExtension
         public TOther ConvertMap<TOther>(DynamicOps<TOther> otherOp, TObject input)
             where TOther : notnull
         {
-            IEnumerable<KeyValuePair<TOther, TOther>> entries = ops.GetMapValues(input)
-                .GetResultOrDefault(Enumerable.Empty<KeyValuePair<TObject, TObject>>())
-                .Select(p => new KeyValuePair<TOther, TOther>(ops.ConvertTo(otherOp, p.Key), ops.ConvertTo(otherOp, p.Value)));
+            IEnumerable<KeyValuePair<TOther, TOther?>> entries = ops.GetMapValues(input)
+                .GetResultOrDefault(Enumerable.Empty<KeyValuePair<TObject, TObject?>>())
+                .Select(p => new KeyValuePair<TOther, TOther?>(ops.ConvertTo(otherOp, p.Key), ops.ConvertTo(otherOp, p.Value)));
             return otherOp.CreateMap(entries);
         }
 
@@ -124,7 +124,7 @@ public static class DynamicExtension
         public TOther ConvertList<TOther>(DynamicOps<TOther> otherOp, TObject input)
             where TOther : notnull
         {
-            IEnumerable<TOther> entries = ops.GetList(input)
+            IEnumerable<TOther?> entries = ops.GetList(input)
                 .GetResultOrDefault(Enumerable.Empty<TObject>())
                 .Select(e => ops.ConvertTo(otherOp, e));
             return otherOp.CreateList(entries);
@@ -455,7 +455,7 @@ public static class DynamicExtension
         /// </remarks>
         public Dynamic<TObject> CreateMap(IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>> entries)
         {
-            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateMap(entries.Where(pair => pair.Key.Value is not null).Select(pair => new KeyValuePair<TObject, TObject>(pair.Key.Value!, pair.Value.Value))));
+            return new Dynamic<TObject>(dynamic.Ops, dynamic.Ops.CreateMap(entries.Where(pair => pair.Key.Value is not null).Select(pair => new KeyValuePair<TObject, TObject?>(pair.Key.Value!, pair.Value.Value))));
         }
 
         /// <summary>

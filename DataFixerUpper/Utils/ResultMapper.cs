@@ -34,7 +34,7 @@ public sealed record CodecOrDefaultMapper<T>(ValueHolder<T> ValueHolder, UnaryOp
     public CodecOrDefaultMapper(T value) : this(value, Functions.Identity) { }
 
     /// <inheritdoc/>
-    public DataResult<(T, TObject)> Apply<TObject>(DynamicOps<TObject> ops, TObject input, DataResult<(T, TObject)> original)
+    public DataResult<(T, TObject?)> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<(T, TObject?)> original)
         where TObject : notnull
     {
         return DataResult.CreateSuccess(original.MapError(OnError).GetResultOrDefault((ValueHolder.Value, input)));
@@ -109,7 +109,7 @@ public sealed record MapCodecOrDefaultMapper<T>(ValueHolder<T> ValueHolder, Unar
 public sealed record CodecSetPartialMapper<T>(ValueHolder<T> PartialHolder) : Codec<T>.IResultMapper
 {
     /// <inheritdoc/>
-    public DataResult<(T, TObject)> Apply<TObject>(DynamicOps<TObject> ops, TObject input, DataResult<(T, TObject)> original)
+    public DataResult<(T, TObject?)> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<(T, TObject?)> original)
         where TObject : notnull
     {
         return original.SetPartial((PartialHolder.Value, input));

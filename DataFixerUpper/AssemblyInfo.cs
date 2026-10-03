@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("DataFixerUpper.Test")]
+[assembly: InternalsVisibleTo("DataFixerUpper.Test")]

@@ -308,11 +308,11 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
 
 
     /// <inheritdoc/>
-    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : notnull;
 
     /// <inheritdoc/>
-    public abstract DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public abstract DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull;
 
     IEncoder<T> IEncoder<T>.WithLifecycle(Lifecycle lifecycle)
@@ -390,7 +390,7 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
         /// <param name="original">The result produced by the decoder.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>The transformed result.</returns>
-        DataResult<(T, TObject)> Apply<TObject>(DynamicOps<TObject> ops, TObject input, DataResult<(T, TObject)> original)
+        DataResult<(T, TObject?)> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<(T, TObject?)> original)
             where TObject : notnull;
 
         /// <summary>

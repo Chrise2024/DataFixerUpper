@@ -34,7 +34,7 @@ public abstract class DynamicLike<TObject>
     /// <param name="decoder">The decoder used to parse this value.</param>
     /// <typeparam name="TResult">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value together with the remaining input, or an error if this value cannot be decoded.</returns>
-    public abstract DataResult<(TResult, TObject)> Decode<TResult>(IDecoder<TResult> decoder);
+    public abstract DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder);
 
     /// <summary>
     /// Reads this value as a number.

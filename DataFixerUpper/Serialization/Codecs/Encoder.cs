@@ -45,7 +45,7 @@ public partial interface IEncoder<T>
     /// <param name="prefix">The value to merge the encoded value into, or <see langword="null"/> to produce a standalone value.</param>
     /// <typeparam name="TObject">The type of the encoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the encoded value, or an error if the value cannot be encoded.</returns>
-    DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : notnull;
 
     /// <summary>
@@ -69,7 +69,7 @@ public partial interface IEncoder<T>
 public abstract partial class EncoderBase<T> : IEncoder<T>
 {
     /// <inheritdoc/>
-    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public abstract DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : notnull;
 
     /// <inheritdoc/>

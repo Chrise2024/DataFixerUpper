@@ -71,7 +71,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
         DataResult<TType> typeResult = _typeSelector.Apply(input);
 
         RecordBuilder<TObject> builder = prefix.WithErrorsFrom(encoderResult).WithErrorsFrom(typeResult);
-        if (!encoderResult.TryGetResult(out IMapEncoder<TValue> valueEncoder) || !typeResult.TryGetResult(out TType type))
+        if (!encoderResult.TryGetResult(out IMapEncoder<TValue>? valueEncoder) || !typeResult.TryGetResult(out TType? type))
         {
             return builder;
         }
@@ -95,7 +95,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
                             return decoder.Decode(ops, input);
                         }
 
-                        TObject value = input[CompressedValueKey];
+                        TObject? value = input[CompressedValueKey];
                         if (value is null)
                         {
                             return DataResult.CreateError<TValue>($"Input does not have a \"value\" entry: {input}");

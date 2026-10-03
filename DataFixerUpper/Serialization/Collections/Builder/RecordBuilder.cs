@@ -33,14 +33,14 @@ public abstract class RecordBuilder<TObject>
     /// <param name="key">The key of the entry to add.</param>
     /// <param name="value">The value of the entry to add.</param>
     /// <returns>This builder.</returns>
-    public abstract RecordBuilder<TObject> Add(TObject key, TObject value);
+    public abstract RecordBuilder<TObject> Add(TObject key, TObject? value);
 
     /// <summary>
     /// Adds the given <paramref name="pair"/>.
     /// </summary>
     /// <param name="pair">The entry to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> Add(KeyValuePair<TObject, TObject> pair)
+    public RecordBuilder<TObject> Add(KeyValuePair<TObject, TObject?> pair)
     {
         return Add(pair.Key, pair.Value);
     }
@@ -50,7 +50,7 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="pairs">The entries to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> AddRange(IEnumerable<KeyValuePair<TObject, TObject>> pairs)
+    public RecordBuilder<TObject> AddRange(IEnumerable<KeyValuePair<TObject, TObject?>> pairs)
     {
         return pairs.Aggregate(this, (builder, pair) => builder.Add(pair));
     }
@@ -80,7 +80,7 @@ public abstract class RecordBuilder<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual RecordBuilder<TObject> Add(string key, TObject value)
+    public virtual RecordBuilder<TObject> Add(string key, TObject? value)
     {
         return Add(Ops.CreateString(key), value);
     }
@@ -142,7 +142,7 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="prefix">The existing map to merge the built map into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built map, or an error if the entries could not be merged.</returns>
-    public abstract DataResult<TObject> Build(TObject prefix);
+    public abstract DataResult<TObject> Build(TObject? prefix);
 
     /// <summary>
     /// Builds the map, merging it into the value of <paramref name="prefix"/>.
@@ -194,7 +194,7 @@ public abstract class RecordBuilderBase<TObject, TBuilder> : RecordBuilder<TObje
     /// <param name="builder">The builder that contains the accumulated value.</param>
     /// <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built value, or an error if it could not be built.</returns>
-    protected abstract DataResult<TObject> BuildResult(TBuilder builder, TObject prefix);
+    protected abstract DataResult<TObject> BuildResult(TBuilder builder, TObject? prefix);
 
     /// <inheritdoc/>
     public override RecordBuilder<TObject> SetLifecycle(Lifecycle lifecycle)
@@ -222,7 +222,7 @@ public abstract class RecordBuilderBase<TObject, TBuilder> : RecordBuilder<TObje
     /// </summary>
     /// <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built value, or an error if it could not be built.</returns>
-    public override DataResult<TObject> Build(TObject prefix)
+    public override DataResult<TObject> Build(TObject? prefix)
     {
         DataResult<TObject> result = Builder.FlatMap(builder => BuildResult(builder, prefix));
         Builder = CreateBuilder();

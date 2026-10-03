@@ -32,7 +32,7 @@ public abstract class ListBuilderBase<TObject>
     /// </summary>
     /// <param name="value">The value to add.</param>
     /// <returns>This builder.</returns>
-    public abstract ListBuilderBase<TObject> Add(TObject value);
+    public abstract ListBuilderBase<TObject> Add(TObject? value);
 
     /// <summary>
     /// Adds the value of <paramref name="value"/> to the list, carrying over the errors of <paramref name="value"/>.
@@ -58,9 +58,9 @@ public abstract class ListBuilderBase<TObject>
     /// </summary>
     /// <param name="values">The values to add.</param>
     /// <returns>This builder.</returns>
-    public ListBuilderBase<TObject> AddRange(IEnumerable<TObject> values)
+    public ListBuilderBase<TObject> AddRange(IEnumerable<TObject?> values)
     {
-        foreach (TObject value in values)
+        foreach (TObject? value in values)
         {
             Add(value);
         }
@@ -120,7 +120,7 @@ public abstract class ListBuilderBase<TObject>
     /// </summary>
     /// <param name="prefix">The existing list to merge the built list into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built list, or an error if the elements could not be merged.</returns>
-    public abstract DataResult<TObject> Build(TObject prefix);
+    public abstract DataResult<TObject> Build(TObject? prefix);
 
     /// <summary>
     /// Builds the list, merging it into the value of <paramref name="prefix"/>.

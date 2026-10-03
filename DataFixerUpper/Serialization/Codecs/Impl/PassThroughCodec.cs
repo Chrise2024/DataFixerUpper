@@ -8,7 +8,7 @@ internal sealed class PassThroughCodec : Codec<IDynamic>
 {
     public override ValueHolder<string> CodecNameHolder => "PassThrough";
 
-    public override DataResult<TObject> Encode<TObject>(IDynamic input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(IDynamic input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         if (input.IsEmpty())
@@ -18,13 +18,13 @@ internal sealed class PassThroughCodec : Codec<IDynamic>
 
         TObject casted = input.Convert(ops).Value ?? throw new InvalidCastException("Casting not empty value into empty.");
         DataResult<TObject> toMap = ops.GetMapValues(casted).FlatMap(m => ops.MergeToMap(prefix, m));
-        if (toMap.TryGetResult(out TObject mr))
+        if (toMap.TryGetResult(out TObject? mr))
         {
             return DataResult.CreateSuccess(mr);
         }
 
         DataResult<TObject> toList = ops.GetList(casted).FlatMap(l => ops.MergeToList(prefix, l));
-        if (toList.TryGetResult(out TObject lr))
+        if (toList.TryGetResult(out TObject? lr))
         {
             return DataResult.CreateSuccess(lr);
         }
@@ -32,7 +32,7 @@ internal sealed class PassThroughCodec : Codec<IDynamic>
         return DataResult.CreateError<TObject>($"Don't know how to merge {prefix} and {casted}");
     }
 
-    public override DataResult<(IDynamic, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(IDynamic, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return DataResult.CreateSuccess(((IDynamic) new Dynamic<TObject>(ops, input), ops.Empty()));

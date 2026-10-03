@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -45,7 +46,8 @@ public static class Dynamic
     /// <typeparam name="T1">The type <paramref name="ops1"/> serializes to and deserializes from.</typeparam>
     /// <typeparam name="T2">The type <paramref name="ops2"/> serializes to and deserializes from.</typeparam>
     /// <returns>The converted value, or <paramref name="value"/> itself if both formats use the same type.</returns>
-    public static T2 Convert<T1, T2>(DynamicOps<T1> ops1, DynamicOps<T2> ops2, T1 value)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static T2? Convert<T1, T2>(DynamicOps<T1> ops1, DynamicOps<T2> ops2, T1? value)
         where T1 : notnull
         where T2 : notnull
     {
@@ -106,14 +108,14 @@ public static class Dynamic
 /// <typeparam name="TObject">The type this class serializes to and deserializes from, for example <see cref="T:System.Text.Json.Nodes.JsonNode"/>.</typeparam>
 /// <seealso cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1"/>
 /// <seealso cref="T:DataFixerUpper.Serialization.DynamicOps.OptionalDynamic`1"/>
-public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) : DynamicLike<TObject>(ops), IDynamic, IEquatable<Dynamic<TObject>>
+public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) : DynamicLike<TObject>(ops), IDynamic, IEquatable<Dynamic<TObject>>
     where TObject : notnull
 
 {
     /// <summary>
     /// Gets the wrapped value, or the empty value of the ops of this <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> if no value was wrapped.
     /// </summary>
-    public TObject Value => wrapped;
+    public TObject? Value => wrapped;
 
     /// <summary>
     /// Initializes a new instance that wraps the empty value of <paramref name="ops"/>.
@@ -126,7 +128,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// </summary>
     /// <param name="mapper">The function that produces the new value.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the result of <paramref name="mapper"/>.</returns>
-    public Dynamic<TObject> Map(Func<TObject, TObject> mapper)
+    public Dynamic<TObject> Map(Func<TObject?, TObject?> mapper)
     {
         return new Dynamic<TObject>(Ops, mapper.Apply(Value));
     }
@@ -157,6 +159,11 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// </remarks>
     public OptionalDynamic<TObject> Merge(Dynamic<TObject> key, Dynamic<TObject> value)
     {
+        if (key.IsEmpty())
+        {
+            return new OptionalDynamic<TObject>(Ops, DataResult.CreateError("Key is empty", Optional.Create(this)));
+        }
+
         DataResult<TObject> combined = Ops.MergeToMap(Value, key.Value, value.Value);
         return new OptionalDynamic<TObject>(Ops, combined.Map(m => new Dynamic<TObject>(Ops, m)));
     }
@@ -198,7 +205,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the modified map, or this dynamic itself if <paramref name="value"/> is <see langword="null"/>.</returns>
     public Dynamic<TObject> Set(string key, Dynamic<TObject> value)
     {
-        if (value is null)
+        if (value.IsEmpty())
         {
             return this;
         }
@@ -234,7 +241,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <param name="key">The key of the entry to update.</param>
     /// <param name="updater">The function that produces the new raw value from the current one.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the modified map, or a dynamic wrapping the unchanged value if the value is not a map or has no entry under <paramref name="key"/>.</returns>
-    public Dynamic<TObject> Update(TObject key, Func<TObject, TObject> updater)
+    public Dynamic<TObject> Update(TObject key, Func<TObject?, TObject?> updater)
     {
         return Map(i => Ops.Update(i, key, updater));
     }
@@ -291,7 +298,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     {
         DataResult<TObject> valueResult = Ops.Get(Value, Ops.CreateString(key));
         DataResult<Dynamic<TObject>> dynamicValue;
-        if (valueResult.TryGetResult(out TObject result))
+        if (valueResult.TryGetResult(out TObject? result))
         {
             dynamicValue = DataResult.CreateSuccess(new Dynamic<TObject>(Ops, result));
         }
@@ -310,7 +317,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     }
 
     /// <inheritdoc/>
-    public override DataResult<(TResult, TObject)> Decode<TResult>(IDecoder<TResult> decoder)
+    public override DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder)
     {
         return decoder.Decode(Ops, Value);
     }
@@ -371,6 +378,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     }
 
     /// <inheritdoc/>
+    [MemberNotNullWhen(false, nameof(Value))]
     public bool IsEmpty()
     {
         return Ops.IsEmpty(Value);
@@ -383,7 +391,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <returns>A <see langword="true"/> if <paramref name="other"/> wraps the same value with the same ops; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Dynamic<TObject> other)
     {
-        return other is not null && EqualsCore(other);
+        return EqualsCore(other);
     }
 
     /// <summary>
@@ -391,7 +399,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// </summary>
     /// <param name="obj">The object to compare with.</param>
     /// <returns>A <see langword="true"/> if <paramref name="obj"/> is a <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> that wraps the same value with the same ops; otherwise, <see langword="false"/>.</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is Dynamic<TObject> other && EqualsCore(other);
     }
@@ -399,7 +407,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject wrapped) :
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        int hash = Value.GetHashCode();
+        int hash = Value?.GetHashCode() ?? 0;
 
         hash |= Ops.GetHashCode() * 31;
 

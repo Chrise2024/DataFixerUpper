@@ -9,22 +9,22 @@ internal sealed class AlternativeCodec<T, TAlt>(Codec<T> codec, Codec<TAlt> altC
 {
     public override ValueHolder<string> CodecNameHolder => $"AlternativeCodec[{codec} {altCodec}]";
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return codec.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        DataResult<(T, TObject)> result = codec.Decode(ops, input);
+        DataResult<(T, TObject?)> result = codec.Decode(ops, input);
         if (result.IsSuccess)
         {
             return result;
         }
 
-        DataResult<(TAlt, TObject)> altResult = altCodec.Decode(ops, input);
+        DataResult<(TAlt, TObject?)> altResult = altCodec.Decode(ops, input);
         if (altResult.IsSuccess)
         {
             return altResult.Map(p => p.MapFirst(converter));
@@ -50,13 +50,13 @@ internal sealed class AlternativeCodec<T>(Codec<T> codec, Codec<T> altCodec)
     private readonly AlternativeCodec<T, T> _impl = new(codec, altCodec, Functions.Identity);
     public override ValueHolder<string> CodecNameHolder => _impl.CodecNameHolder;
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return _impl.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _impl.Decode(ops, input);

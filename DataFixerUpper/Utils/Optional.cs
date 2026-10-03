@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using DataFixerUpper.Extensions;
 
 namespace DataFixerUpper.Utils;
@@ -13,12 +14,10 @@ public static class Optional
     /// </summary>
     /// <param name="value">Value to wrap.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Utils.Optional`1"/> instance.</returns>
-#nullable enable
     public static Optional<T> Create<T>(T? value)
     {
         return value is null ? Optional<T>.Empty : new Optional<T>(value);
     }
-#nullable disable
 
     // public static Optional<T> Create<T>(T? value) where T : struct
     // {
@@ -46,8 +45,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// </summary>
     public static Optional<T> Empty => new();
 
-    private readonly T _value;
-    private readonly bool _hasValue;
+    private readonly T? _value;
 
     /// <summary>
     /// Unwrap value. Throws exception if not has value.
@@ -61,13 +59,14 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has a value; <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object has no value.
     /// </returns>
-    public bool HasValue => _hasValue;
+    [MemberNotNullWhen(true, nameof(_value))]
+    public bool HasValue { get; }
 
     internal Optional(T value)
     {
         //ArgumentNullException.ThrowIfNull(value);
         _value = value;
-        _hasValue = value is not null;
+        HasValue = value is not null;
     }
 
 
@@ -78,7 +77,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <exception cref="InvalidOperationException">If <see cref="P:HasValue"/> is false.</exception>
     public T GetOrThrow()
     {
-        return _hasValue ? _value : throw new InvalidOperationException("No value present");
+        return HasValue ? _value : throw new InvalidOperationException("No value present");
     }
 
     /// <summary>
@@ -93,14 +92,14 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
             throw new ArgumentNullException(nameof(exceptionProvider));
         }
 
-        return _hasValue ? _value : throw exceptionProvider.Get();
+        return HasValue ? _value : throw exceptionProvider.Get();
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or <see langword="default"/>.</summary>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="default"/>.</returns>
-    public T GetOrDefault()
+    public T? GetOrDefault()
     {
-        return _hasValue ? _value : default;
+        return HasValue ? _value : default;
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -108,7 +107,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(T defaultValue)
     {
-        return _hasValue ? _value : defaultValue;
+        return HasValue ? _value : defaultValue;
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -116,7 +115,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(Provider<T> defaultValue)
     {
-        return _hasValue ? _value : defaultValue.Get();
+        return HasValue ? _value : defaultValue.Get();
     }
 
     /// <summary>Retrieves the value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or the specified default value.</summary>
@@ -124,7 +123,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(ValueHolder<T> defaultValue)
     {
-        return _hasValue ? _value : defaultValue.Value;
+        return HasValue ? _value : defaultValue.Value;
     }
 
     /// <summary>
@@ -132,10 +131,10 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// </summary>
     /// <param name="result">When this method returns, the result of <see cref="T:DataFixerUpper.Utils.Optional`1"/>, if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
     /// <returns><see langword="true" /> if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
-    public bool TryGet(out T result)
+    public bool TryGet([NotNullWhen(true)] out T? result)
     {
         result = _value;
-        return _hasValue;
+        return HasValue;
     }
 
     /// <summary>
@@ -162,7 +161,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     {
         if (HasValue)
         {
-            action?.Accept(_value);
+            action.Accept(_value);
         }
     }
 
@@ -173,7 +172,7 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     }
 
     /// <inheritdoc/>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is Optional<T> other && EqualsCore(other);
     }
@@ -181,20 +180,20 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return _hasValue ? _value!.GetHashCode() : 0;
+        return HasValue ? _value!.GetHashCode() : 0;
     }
 
     /// <inheritdoc/>
     public override string ToString()
     {
-        return _hasValue
+        return HasValue
             ? $"Optional[{_value}]"
             : "Optional.Empty";
     }
 
     private bool EqualsCore(Optional<T> other)
     {
-        return (_hasValue, other._hasValue) switch
+        return (HasValue, other.HasValue) switch
         {
             (true, true) => _value!.Equals(other._value),
             (false, false) => true,

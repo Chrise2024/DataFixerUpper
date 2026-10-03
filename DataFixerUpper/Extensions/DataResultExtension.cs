@@ -27,7 +27,7 @@ public static class DataResultExtension
         /// <returns>The successful result or a default value.</returns>
         public Optional<T> GetResult()
         {
-            if (dataResult.TryGetResult(out T result))
+            if (dataResult.TryGetResult(out T? result))
             {
                 return Optional.Create(result);
             }
@@ -42,7 +42,7 @@ public static class DataResultExtension
         /// <returns>The successful result or a default value.</returns>
         public T GetResultOrDefault(T defaultValue)
         {
-            if (dataResult.TryGetResult(out T result))
+            if (dataResult.TryGetResult(out T? result))
             {
                 return result;
             }
@@ -57,7 +57,7 @@ public static class DataResultExtension
         /// <returns>The successful result or a default value.</returns>
         public T GetResultOrDefault(Provider<T> defaultValue)
         {
-            if (dataResult.TryGetResult(out T result))
+            if (dataResult.TryGetResult(out T? result))
             {
                 return result;
             }
@@ -72,7 +72,7 @@ public static class DataResultExtension
         /// <returns>The successful result or a default value.</returns>
         public T GetResultOrDefault(ValueHolder<T> defaultValue)
         {
-            if (dataResult.TryGetResult(out T result))
+            if (dataResult.TryGetResult(out T? result))
             {
                 return result;
             }
@@ -88,7 +88,7 @@ public static class DataResultExtension
         /// <exception cref="Exception">Exception provided by <paramref name="errorFactory"/>.</exception>
         public T GetResultOrThrow(Func<string, Exception> errorFactory)
         {
-            if (dataResult.TryGetResult(out T result))
+            if (dataResult.TryGetResult(out T? result))
             {
                 return result;
             }
@@ -113,7 +113,7 @@ public static class DataResultExtension
         /// <returns>The successful result or a partial result.</returns>
         public Optional<T> GetResultOrPartial(Consumer<string> onError)
         {
-            if (dataResult.TryGetResultOrPartial(out T result, onError))
+            if (dataResult.TryGetResultOrPartial(out T? result, onError))
             {
                 return Optional.Create(result);
             }
@@ -149,7 +149,7 @@ public static class DataResultExtension
         /// <exception cref="Exception">Exception provided by <paramref name="errorFactory"/>.</exception>
         public T GetResultOrPartialOrThrow(Func<string, Exception> errorFactory)
         {
-            if (dataResult.TryGetResultOrPartial(out T result))
+            if (dataResult.TryGetResultOrPartial(out T? result))
             {
                 return result;
             }

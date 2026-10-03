@@ -65,7 +65,7 @@ public static class CodecExtension
         /// <param name="input">The value to decode.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object.</returns>
-        public DataResult<T> Parse<TObject>(DynamicOps<TObject> ops, TObject input)
+        public DataResult<T> Parse<TObject>(DynamicOps<TObject> ops, TObject? input)
             where TObject : notnull
         {
             return decoder.Decode(ops, input).Map(result => result.Item1);
@@ -77,7 +77,7 @@ public static class CodecExtension
         /// <param name="dynamic">The serialized data.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object and the remaining serialized data.</returns>
-        public DataResult<(T, TObject)> Decode<TObject>(Dynamic<TObject> dynamic)
+        public DataResult<(T, TObject?)> Decode<TObject>(Dynamic<TObject> dynamic)
             where TObject : notnull
 
         {
@@ -280,7 +280,7 @@ public static class MapCodecExtension
         /// <param name="input">The serialized value that contains the record data to deserialize.</param>
         /// <typeparam name="TObject">The type of the serialized form.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object, or an error if no object could be decoded.</returns>
-        public DataResult<T> CompressedDecode<TObject>(DynamicOps<TObject> ops, TObject input)
+        public DataResult<T> CompressedDecode<TObject>(DynamicOps<TObject> ops, TObject? input)
             where TObject : notnull
         {
             if (!ops.CompressMaps())
@@ -288,8 +288,8 @@ public static class MapCodecExtension
                 return ops.GetMap(input).FlatMap(map => decoder.Decode(ops, map));
             }
 
-            DataResult<IEnumerable<TObject>> listResult = ops.GetList(input);
-            if (!listResult.TryGetResult(out IEnumerable<TObject> list))
+            DataResult<IEnumerable<TObject?>> listResult = ops.GetList(input);
+            if (!listResult.TryGetResult(out IEnumerable<TObject?>? list))
             {
                 return DataResult.CreateError<T>("Input is not a list");
             }

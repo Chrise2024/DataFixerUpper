@@ -12,7 +12,7 @@ internal sealed class XorCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : Cod
 {
     public override ValueHolder<string> CodecNameHolder => $"Xor[{lCodec} {rCodec}]";
 
-    public override DataResult<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return input.MapGet(
@@ -21,15 +21,15 @@ internal sealed class XorCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : Cod
         );
     }
 
-    public override DataResult<(Either<TL, TR>, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(Either<TL, TR>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        DataResult<(Either<TL, TR>, TObject)> lResult = lCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateLeft<TL, TR>));
-        DataResult<(Either<TL, TR>, TObject)> rResult = rCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateRight<TL, TR>));
+        DataResult<(Either<TL, TR>, TObject?)> lResult = lCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateLeft<TL, TR>));
+        DataResult<(Either<TL, TR>, TObject?)> rResult = rCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateRight<TL, TR>));
 
-        if (lResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject) lp) && rResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject) rp))
+        if (lResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject?) lp) && rResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject?) rp))
         {
-            return DataResult.CreateError<(Either<TL, TR>, TObject)>($"Both alternatives read successfully, can not pick the correct one. First: {lp} Second: {rp}");
+            return DataResult.CreateError<(Either<TL, TR>, TObject?)>($"Both alternatives read successfully, can not pick the correct one. First: {lp} Second: {rp}");
         }
 
         if (lResult.HasResultOrPartial)
@@ -63,7 +63,7 @@ internal sealed class XorMapCodec<TL, TR>(MapCodec<TL> lCodec, MapCodec<TR> rCod
         DataResult<Either<TL, TR>> lResult = lCodec.Decode(ops, input).Map(Either.CreateLeft<TL, TR>);
         DataResult<Either<TL, TR>> rResult = rCodec.Decode(ops, input).Map(Either.CreateRight<TL, TR>);
 
-        if (lResult.TryGetResult(out Either<TL, TR> lr) && rResult.TryGetResult(out Either<TL, TR> rr))
+        if (lResult.TryGetResult(out Either<TL, TR>? lr) && rResult.TryGetResult(out Either<TL, TR>? rr))
         {
             return DataResult.CreateError<Either<TL, TR>>($"Both alternatives read successfully, can not pick the correct one. First: {lr} Second: {rr}");
         }

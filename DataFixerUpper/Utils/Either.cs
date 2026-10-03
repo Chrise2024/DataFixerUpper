@@ -58,7 +58,7 @@ public abstract record Either<TL, TR>
     /// Get the left value.
     /// </summary>
     /// <value>Left value.</value>
-    public abstract TL Left { get; }
+    public abstract TL? Left { get; }
 
 
     /// <summary>
@@ -67,13 +67,17 @@ public abstract record Either<TL, TR>
     /// <returns>
     /// <see langword="true"/>If the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has left value; <see langword="false"/> if the current <see cref="T:DataFixerUpper.Utils.Either`2"/> object has right value.
     /// </returns>
+    [MemberNotNullWhen(true, nameof(Left))]
+    [MemberNotNullWhen(false, nameof(Right))]
     public abstract bool HasLeft { get; }
 
     /// <summary>
     /// Get the right value.
     /// </summary>
     /// <value>Right value.</value>
-    public abstract TR Right { get; }
+    [MemberNotNullWhen(true, nameof(Right))]
+    [MemberNotNullWhen(false, nameof(Left))]
+    public abstract TR? Right { get; }
 
     /// <summary>
     /// Gets a value indicating whether the current <see cref="T:DataFixerUpper.Utils.Either`2"/> has right value or not.
@@ -181,13 +185,14 @@ public abstract record Either<TL, TR>
 
 file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 {
+    [NotNull]
     private readonly TL _left;
 
     public override TL Left => _left;
 
     public override bool HasLeft => true;
 
-    public override TR Right => default;
+    public override TR? Right => default;
 
     public override bool HasRight => false;
 
@@ -232,9 +237,10 @@ file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 
 file sealed record EitherRight<TL, TR> : Either<TL, TR>
 {
+    [NotNull]
     private readonly TR _right;
 
-    public override TL Left => default;
+    public override TL? Left => default;
 
     public override bool HasLeft => false;
 

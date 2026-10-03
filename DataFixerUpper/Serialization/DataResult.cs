@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using DataFixerUpper.Datafixers.Kinds;
@@ -157,27 +158,28 @@ public static class DataResult
         /// <summary>
         /// Wrapped result.
         /// </summary>
+        [NotNull]
         public T Result { get; }
 
         /// <inheritdoc/>
         public override bool HasResultOrPartial => true;
 
         /// <inheritdoc/>
-        public override bool TryGetResult(out T result)
+        public override bool TryGetResult([NotNullWhen(true)] out T? result)
         {
             result = Result;
             return true;
         }
 
         /// <inheritdoc/>
-        public override bool TryGetResultOrPartial(out T result)
+        public override bool TryGetResultOrPartial([NotNullWhen(true)] out T? result)
         {
             result = Result;
             return true;
         }
 
         /// <inheritdoc/>
-        public override bool TryGetResultOrPartial(out T result, Consumer<string> onError)
+        public override bool TryGetResultOrPartial([NotNullWhen(true)] out T? result, Consumer<string> onError)
         {
             result = Result;
             return true;
@@ -212,7 +214,7 @@ public static class DataResult
         public override DataResult<TResult> Map<TResult>(DataResult<Func<T, TResult>> mapperResult)
         {
             Lifecycle combinedLifecycle = Lifecycle + mapperResult.Lifecycle;
-            if (mapperResult.TryGetResult(out Func<T, TResult> func))
+            if (mapperResult.TryGetResult(out Func<T, TResult>? func))
             {
                 return CreateSuccess(func.Apply(Result), combinedLifecycle);
             }
@@ -320,21 +322,21 @@ public static class DataResult
         }
 
         /// <inheritdoc/>
-        public override bool TryGetResult(out T result)
+        public override bool TryGetResult([NotNullWhen(true)] out T? result)
         {
             result = default;
             return false;
         }
 
         /// <inheritdoc/>
-        public override bool TryGetResultOrPartial(out T result)
+        public override bool TryGetResultOrPartial([NotNullWhen(true)] out T? result)
         {
             result = Partial.GetOrDefault();
             return Partial.HasValue;
         }
 
         /// <inheritdoc/>
-        public override bool TryGetResultOrPartial(out T result, Consumer<string> onError)
+        public override bool TryGetResultOrPartial([NotNullWhen(true)] out T? result, Consumer<string> onError)
         {
             onError.Accept(Message);
             result = Partial.GetOrDefault();
@@ -360,7 +362,7 @@ public static class DataResult
         )
         {
             Lifecycle combinedLifecycle = Lifecycle + mapperResult.Lifecycle;
-            if (mapperResult.TryGetResult(out Func<T, TResult> func))
+            if (mapperResult.TryGetResult(out Func<T, TResult>? func))
             {
                 return CreateError(MessageHolder, Partial.Select(func), combinedLifecycle);
             }
@@ -382,7 +384,7 @@ public static class DataResult
             DataResult<TResult> other = mapper.Apply(Partial.Value);
             Lifecycle combinedLifecycle = Lifecycle + other.Lifecycle;
 
-            if (other.TryGetResult(out TResult result))
+            if (other.TryGetResult(out TResult? result))
             {
                 return new Error<TResult>(MessageHolder, Optional.Create(result), Lifecycle);
             }
@@ -458,14 +460,14 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// </summary>
     /// <exception cref="InvalidOperationException">If not a success.</exception>
     [JsonIgnore]
-    public abstract DataResult.Success<T> SuccessResult { get; }
+    public abstract DataResult.Success<T>? SuccessResult { get; }
 
     /// <summary>
     /// Gets the error result if the operation was not successful.
     /// </summary>
     /// <exception cref="InvalidOperationException">If not an exception.</exception>
     [JsonIgnore]
-    public abstract DataResult.Error<T> ErrorResult { get; }
+    public abstract DataResult.Error<T>? ErrorResult { get; }
 
     /// <summary>
     /// Gets a value indicating whether the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> has a successful result or a partial result.
@@ -475,11 +477,13 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <summary>
     /// Gets a value indicating whether the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> is successful.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(SuccessResult))]
     public abstract bool IsSuccess { get; }
 
     /// <summary>
     /// Gets a value indicating whether the <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> is an error.
     /// </summary>
+    [MemberNotNullWhen(true, nameof(ErrorResult))]
     public bool IsError => !IsSuccess;
 
     /// <summary>
@@ -487,7 +491,9 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// </summary>
     /// <param name="result">When this method returns, the result of <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
     /// <returns><see langword="true" /> if <see cref="P:DataFixerUpper.Serialization.DataResult`1.IsSuccess"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
-    public abstract bool TryGetResult(out T result);
+    [MemberNotNullWhen(true, nameof(SuccessResult))]
+    [MemberNotNullWhen(false, nameof(ErrorResult))]
+    public abstract bool TryGetResult([NotNullWhen(true)] out T? result);
 
 
     /// <summary>
@@ -495,7 +501,8 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// </summary>
     /// <param name="result">When this method returns, the result or partial result of <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, if <see cref="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
     /// <returns><see langword="true"/> if <see cref="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
-    public abstract bool TryGetResultOrPartial(out T result);
+    [MemberNotNullWhen(false, nameof(ErrorResult))]
+    public abstract bool TryGetResultOrPartial([NotNullWhen(true)] out T? result);
 
     /// <summary>
     /// Gets the result or partial result of <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.
@@ -503,7 +510,8 @@ public abstract class DataResult<T> : IApp<DataResult.Mu, T>
     /// <param name="result">When this method returns, the result or partial result of <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>, if <see cref="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial"/> property is <see langword="true"/>; otherwise, the default value. This parameter is passed uninitialized.</param>
     /// <param name="onError">The action to perform if there is an error.</param>
     /// <returns><see langword="true"/> if <see cref="P:DataFixerUpper.Serialization.DataResult`1.HasResultOrPartial"/> property is <see langword="true"/>; otherwise, <see langword="false" />.</returns>
-    public abstract bool TryGetResultOrPartial(out T result, Consumer<string> onError);
+    [MemberNotNullWhen(false, nameof(ErrorResult))]
+    public abstract bool TryGetResultOrPartial([NotNullWhen(true)] out T? result, Consumer<string> onError);
 
     /// <summary>
     /// If <see cref="M:IsSuccess"/> returns <see langword="true"/> perform the given action on the success result.

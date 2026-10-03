@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using DataFixerUpper.Serialization.DynamicOps;
@@ -23,7 +22,7 @@ public abstract class PrimitiveCodec<T> : Codec<T>
     /// <param name="input">The value to decode.</param>
     /// <typeparam name="TObject">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value.</returns>
-    protected abstract DataResult<T> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected abstract DataResult<T> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull;
 
     /// <summary>
@@ -37,14 +36,14 @@ public abstract class PrimitiveCodec<T> : Codec<T>
         where TObject : notnull;
 
     /// <inheritdoc/>
-    public override DataResult<TResult> Encode<TResult>(T input, DynamicOps<TResult> ops, TResult prefix)
+    public override DataResult<TResult> Encode<TResult>(T input, DynamicOps<TResult> ops, TResult? prefix)
         where TResult : default
     {
         return ops.MergeToPrimitive(prefix, Write(ops, input));
     }
 
     /// <inheritdoc/>
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return Read(ops, input).Map(value => (value, ops.Empty()));
@@ -57,7 +56,8 @@ public abstract class PrimitiveCodec<T> : Codec<T>
 public sealed class ByteCodec : PrimitiveCodec<byte>
 {
     /// <inheritdoc/>
-    protected override DataResult<byte> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<byte> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetByteValue(input);
     }
@@ -75,7 +75,8 @@ public sealed class ByteCodec : PrimitiveCodec<byte>
 public sealed class ShortCodec : PrimitiveCodec<short>
 {
     /// <inheritdoc/>
-    protected override DataResult<short> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<short> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetShortValue(input);
     }
@@ -93,7 +94,8 @@ public sealed class ShortCodec : PrimitiveCodec<short>
 public sealed class IntCodec : PrimitiveCodec<int>
 {
     /// <inheritdoc/>
-    protected override DataResult<int> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<int> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetIntValue(input);
     }
@@ -111,7 +113,8 @@ public sealed class IntCodec : PrimitiveCodec<int>
 public sealed class LongCodec : PrimitiveCodec<long>
 {
     /// <inheritdoc/>
-    protected override DataResult<long> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<long> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetLongValue(input);
     }
@@ -129,7 +132,8 @@ public sealed class LongCodec : PrimitiveCodec<long>
 public sealed class FloatCodec : PrimitiveCodec<float>
 {
     /// <inheritdoc/>
-    protected override DataResult<float> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<float> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetFloatValue(input);
     }
@@ -147,7 +151,8 @@ public sealed class FloatCodec : PrimitiveCodec<float>
 public sealed class DoubleCodec : PrimitiveCodec<double>
 {
     /// <inheritdoc/>
-    protected override DataResult<double> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<double> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetDoubleValue(input);
     }
@@ -165,7 +170,7 @@ public sealed class DoubleCodec : PrimitiveCodec<double>
 public sealed class BooleanCodec : PrimitiveCodec<bool>
 {
     /// <inheritdoc/>
-    protected override DataResult<bool> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<bool> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetBoolValue(input);
@@ -184,7 +189,7 @@ public sealed class BooleanCodec : PrimitiveCodec<bool>
 public sealed class StringCodec : PrimitiveCodec<string>
 {
     /// <inheritdoc/>
-    protected override DataResult<string> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<string> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetStringValue(input);
@@ -249,7 +254,7 @@ public sealed class StringCodec : PrimitiveCodec<string>
 public sealed class StreamCodec : PrimitiveCodec<Stream>
 {
     /// <inheritdoc/>
-    protected override DataResult<Stream> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<Stream> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetStream(input);
@@ -268,7 +273,8 @@ public sealed class StreamCodec : PrimitiveCodec<Stream>
 public sealed class IntListCodec : PrimitiveCodec<IEnumerable<int>>
 {
     /// <inheritdoc/>
-    protected override DataResult<IEnumerable<int>> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<IEnumerable<int>> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetIntList(input);
     }
@@ -286,7 +292,8 @@ public sealed class IntListCodec : PrimitiveCodec<IEnumerable<int>>
 public sealed class LongListCodec : PrimitiveCodec<IEnumerable<long>>
 {
     /// <inheritdoc/>
-    protected override DataResult<IEnumerable<long>> Read<TObject>(DynamicOps<TObject> ops, TObject input)
+    protected override DataResult<IEnumerable<long>> Read<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return ops.GetLongList(input);
     }

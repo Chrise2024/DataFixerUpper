@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using DataFixerUpper.Extensions;
@@ -13,6 +14,7 @@ namespace DataFixerUpper.Serialization.DynamicOps;
 
 /// <summary>
 /// An adapter for a hierarchical serialization format. Clients may use this class to interact with serialization formats such as JSON without knowing the specific serialization format being used.
+/// If serialization format's null value is <see langword="null"/>, override with nullable mark.
 /// </summary>
 /// <remarks>
 /// This class, along with <see cref="T:DataFixerUpper.Serialization.DynamicOps.DynamicLike`1"/>, is a low-level serialization abstraction used in the implementation of <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/>. The functionality offered by <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> is more easily composed than the fixed class offered here.
@@ -31,7 +33,7 @@ public abstract class DynamicOps<TObject>
     /// In <c>System.Text.Json</c>, <see langword="null"/> represents both empty value and absent value, in <c>Newtonsoft.Json</c>, empty value is <c>JValue.CreateNull()</c>.
     /// </remarks>
     /// <returns>The empty <typeparamref name="TObject"/>, or <see langword="null"/> if this format has no empty value type.</returns>
-    public abstract TObject Empty();
+    public abstract TObject? Empty();
 
     /// <summary>
     /// Gets an empty serialized map.
@@ -39,7 +41,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The empty map.</returns>
     public virtual TObject EmptyMap()
     {
-        return CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject>>());
+        return CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject?>>());
     }
 
     /// <summary>
@@ -58,7 +60,8 @@ public abstract class DynamicOps<TObject>
     /// <param name="input">The serialized value to convert.</param>
     /// <typeparam name="TOther">The type the other ops serializes to and deserializes from.</typeparam>
     /// <returns>The converted value, or the empty value of <paramref name="otherOp"/> if <paramref name="input"/> is empty.</returns>
-    public abstract TOther ConvertTo<TOther>(DynamicOps<TOther> otherOp, TObject input)
+    [return: NotNullIfNotNull(nameof(input))]
+    public abstract TOther? ConvertTo<TOther>(DynamicOps<TOther> otherOp, TObject? input)
         where TOther : notnull;
 
     /// <summary>
@@ -66,7 +69,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="byte"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="byte"/>.</returns>
-    public virtual DataResult<byte> GetByteValue(TObject input)
+    public virtual DataResult<byte> GetByteValue(TObject? input)
     {
         return GetLongValue(input).Map(ConvertUtil.ToByte);
     }
@@ -86,7 +89,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="short"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="short"/>.</returns>
-    public virtual DataResult<short> GetShortValue(TObject input)
+    public virtual DataResult<short> GetShortValue(TObject? input)
     {
         return GetLongValue(input).Map(ConvertUtil.ToShort);
     }
@@ -107,7 +110,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="int"/>.</returns>
-    public virtual DataResult<int> GetIntValue(TObject input)
+    public virtual DataResult<int> GetIntValue(TObject? input)
     {
         return GetLongValue(input).Map(ConvertUtil.ToInt);
     }
@@ -127,7 +130,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="long"/>.</returns>
-    public abstract DataResult<long> GetLongValue(TObject input);
+    public abstract DataResult<long> GetLongValue(TObject? input);
 
     /// <summary>
     /// Creates a serialized <see langword="long"/> from the given <paramref name="value"/>.
@@ -141,7 +144,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="float"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="float"/>.</returns>
-    public virtual DataResult<float> GetFloatValue(TObject input)
+    public virtual DataResult<float> GetFloatValue(TObject? input)
     {
         return GetDoubleValue(input).Map(ConvertUtil.ToFloat);
     }
@@ -161,7 +164,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="double"/>, or an error if <paramref name="input"/> is not a number that can be represented by <see langword="double"/>.</returns>
-    public abstract DataResult<double> GetDoubleValue(TObject input);
+    public abstract DataResult<double> GetDoubleValue(TObject? input);
 
     /// <summary>
     /// Creates a serialized <see langword="double"/> from the given <paramref name="value"/>.
@@ -175,12 +178,12 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list of bytes to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the stream, or an error if <paramref name="input"/> is not a list or contains elements that are not bytes.</returns>
-    public DataResult<Stream> GetStream(TObject input)
+    public DataResult<Stream> GetStream(TObject? input)
     {
         return GetList(input).FlatMap(l =>
             {
                 ImmutableArray<byte>.Builder builder = ImmutableArray.CreateBuilder<byte>();
-                foreach (TObject obj in l)
+                foreach (TObject? obj in l)
                 {
                     DataResult<long> numberResult = GetLongValue(obj);
                     if (!numberResult.TryGetResult(out long number) || number > byte.MaxValue)
@@ -203,7 +206,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="string">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the string, or an error if <paramref name="string"/> is not a string.</returns>
-    public abstract DataResult<string> GetStringValue(TObject @string);
+    public abstract DataResult<string> GetStringValue(TObject? @string);
 
     /// <summary>
     /// Creates a serialized string from the given <paramref name="string"/>.
@@ -217,7 +220,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="bool">The serialized value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the boolean, or an error if <paramref name="bool"/> is not a boolean.</returns>
-    public abstract DataResult<bool> GetBoolValue(TObject @bool);
+    public abstract DataResult<bool> GetBoolValue(TObject? @bool);
 
     /// <summary>
     /// Creates a serialized boolean from the given <paramref name="bool"/>.
@@ -278,14 +281,14 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="list">The elements of the list.</param>
     /// <returns>The serialized list.</returns>
-    public abstract TObject CreateList(IEnumerable<TObject> list);
+    public abstract TObject CreateList(IEnumerable<TObject?> list);
 
     /// <summary>
     /// Creates a serialized map from the given <paramref name="entries"/>.
     /// </summary>
     /// <param name="entries">The entries of the map.</param>
     /// <returns>The serialized map.</returns>
-    public abstract TObject CreateMap(IEnumerable<KeyValuePair<TObject, TObject>> entries);
+    public abstract TObject CreateMap(IEnumerable<KeyValuePair<TObject, TObject?>> entries);
 
     /// <summary>
     /// Creates a serialized map from entries with string keys.
@@ -295,7 +298,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The keys are converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual TObject CreateMap(IEnumerable<KeyValuePair<string, TObject>> entries)
+    public virtual TObject CreateMap(IEnumerable<KeyValuePair<string, TObject?>> entries)
     {
         return CreateMap(entries.Select(pair => pair.MapKey(CreateString)));
     }
@@ -306,7 +309,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="prefix">The existing primitive value to add to.</param>
     /// <param name="value">The primitive value to merge into <paramref name="prefix"/>.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the merged primitive, or an error message if the serialized primitive is of an incorrect type.</returns>
-    public virtual DataResult<TObject> MergeToPrimitive(TObject prefix, TObject value)
+    public virtual DataResult<TObject> MergeToPrimitive(TObject? prefix, TObject value)
     {
         return IsEmpty(prefix)
             ? DataResult.CreateSuccess(value)
@@ -337,7 +340,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="list">The list to merge into, which may be empty.</param>
     /// <param name="other">The value to merge into <paramref name="list"/>.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the merged list, or an error if <paramref name="list"/> is not a list or cannot hold <paramref name="other"/>.</returns>
-    public abstract DataResult<TObject> MergeToList(TObject list, TObject other);
+    public abstract DataResult<TObject> MergeToList(TObject? list, TObject? other);
 
     /// <summary>
     /// Returns a copy of <paramref name="list"/> with all values of <paramref name="values"/> merged into it.
@@ -348,7 +351,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// If <paramref name="list"/> is empty, the result is created with <c>CreateList</c>. Otherwise, the values are merged one at a time with <c>MergeToList</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToList(TObject list, IEnumerable<TObject> values)
+    public virtual DataResult<TObject> MergeToList(TObject? list, IEnumerable<TObject?> values)
     {
         if (IsEmpty(list))
         {
@@ -368,7 +371,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="key">The key to set.</param>
     /// <param name="value">The value to set <paramref name="key"/> to.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the merged map, or an error if <paramref name="map"/> is not a map or cannot hold <paramref name="key"/>.</returns>
-    public abstract DataResult<TObject> MergeToMap(TObject map, TObject key, TObject value);
+    public abstract DataResult<TObject> MergeToMap(TObject? map, TObject key, TObject? value);
 
     /// <summary>
     /// Returns a copy of <paramref name="map"/> with the given string <paramref name="key"/> set to <paramref name="value"/>.
@@ -380,7 +383,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToMap(TObject map, string key, TObject value)
+    public virtual DataResult<TObject> MergeToMap(TObject? map, string key, TObject? value)
     {
         ThrowIfKeyNull(key);
 
@@ -396,7 +399,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// If <paramref name="map"/> is empty, the result is created with <c>CreateMap</c>. Otherwise, the entries are merged one at a time with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToMap(TObject map, IEnumerable<KeyValuePair<string, TObject>> values)
+    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<KeyValuePair<string, TObject?>> values)
     {
         if (IsEmpty(map))
         {
@@ -418,7 +421,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// If <paramref name="map"/> is empty, the result is created with <c>CreateMap</c>. Otherwise, the entries are merged one at a time with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToMap(TObject map, IEnumerable<KeyValuePair<TObject, TObject>> values)
+    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<KeyValuePair<TObject, TObject?>> values)
     {
         if (IsEmpty(map))
         {
@@ -436,15 +439,15 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list to read.</param>
     /// <returns>An iteration over the elements in the input, which may perform some user-specified action on each element.</returns>
-    public virtual DataResult<Consumer<Consumer<TObject>>> GetListValues(TObject input)
+    public virtual DataResult<Consumer<Consumer<TObject?>>> GetListValues(TObject? input)
     {
         return GetList(input).Map(MakeForeach);
 
-        static Consumer<Consumer<TObject>> MakeForeach(IEnumerable<TObject> enumerable)
+        static Consumer<Consumer<TObject?>> MakeForeach(IEnumerable<TObject?> enumerable)
         {
             return func =>
             {
-                foreach (TObject obj in enumerable)
+                foreach (TObject? obj in enumerable)
                 {
                     func.Accept(obj);
                 }
@@ -457,7 +460,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the elements of the list, or an error if <paramref name="input"/> is not a list.</returns>
-    public abstract DataResult<IEnumerable<TObject>> GetList(TObject input);
+    public abstract DataResult<IEnumerable<TObject?>> GetList(TObject? input);
 
     /// <summary>
     /// Reads the given <paramref name="input"/> as an indexed map.
@@ -467,7 +470,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The default implementation builds the map from the entries returned by <c>GetMapValues</c>.
     /// </remarks>
-    public virtual DataResult<MapLike<TObject>> GetMap(TObject input)
+    public virtual DataResult<MapLike<TObject>> GetMap(TObject? input)
     {
         return GetMapValues(input).FlatMap(pairs =>
             {
@@ -495,7 +498,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized map to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if <paramref name="input"/> is not a map.</returns>
-    public abstract DataResult<IEnumerable<KeyValuePair<TObject, TObject>>> GetMapValues(TObject input);
+    public abstract DataResult<IEnumerable<KeyValuePair<TObject, TObject?>>> GetMapValues(TObject? input);
 
 
     /// <summary>
@@ -503,15 +506,15 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized map to read.</param>
     /// <returns>An iteration over the entries in the input, which may perform some user-specified action on each entry.</returns>
-    public virtual DataResult<Consumer<BiConsumer<TObject, TObject>>> GetMapEntries(TObject input)
+    public virtual DataResult<Consumer<BiConsumer<TObject, TObject?>>> GetMapEntries(TObject? input)
     {
         return GetMapValues(input).Map(MakeForeach);
 
-        static Consumer<BiConsumer<TObject, TObject>> MakeForeach(IEnumerable<KeyValuePair<TObject, TObject>> keyValuePairs)
+        static Consumer<BiConsumer<TObject, TObject?>> MakeForeach(IEnumerable<KeyValuePair<TObject, TObject?>> keyValuePairs)
         {
             return func =>
             {
-                foreach (KeyValuePair<TObject, TObject> pair in keyValuePairs)
+                foreach (KeyValuePair<TObject, TObject?> pair in keyValuePairs)
                 {
                     func.Accept(pair.Key, pair.Value);
                 }
@@ -524,7 +527,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="int"/>, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers.</returns>
-    public virtual DataResult<IEnumerable<int>> GetIntList(TObject input)
+    public virtual DataResult<IEnumerable<int>> GetIntList(TObject? input)
     {
         return GetList(input).FlatMap(l =>
             {
@@ -543,7 +546,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized list to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the <see langword="long"/>, or an error if <paramref name="input"/> is not a list or contains elements that are not numbers.</returns>
-    public virtual DataResult<IEnumerable<long>> GetLongList(TObject input)
+    public virtual DataResult<IEnumerable<long>> GetLongList(TObject? input)
     {
         return GetList(input).FlatMap(l =>
             {
@@ -563,7 +566,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="input">The serialized map to read from.</param>
     /// <param name="key">The key of the value to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the value, or an error if <paramref name="input"/> is not a map or does not contain <paramref name="key"/>.</returns>
-    public abstract DataResult<TObject> Get(TObject input, TObject key);
+    public abstract DataResult<TObject> Get(TObject? input, TObject key);
 
     /// <summary>
     /// Reads the value stored under the given string <paramref name="key"/> in <paramref name="input"/>.
@@ -574,7 +577,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual DataResult<TObject> Get(TObject input, string key)
+    public virtual DataResult<TObject> Get(TObject? input, string key)
     {
         ThrowIfKeyNull(key);
 
@@ -591,7 +594,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The change is applied with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual TObject Set(TObject input, TObject key, TObject value)
+    public virtual TObject? Set(TObject? input, TObject key, TObject? value)
     {
         ThrowIfKeyNull(key);
 
@@ -613,7 +616,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>, and the change is applied with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual TObject Set(TObject input, string key, TObject value)
+    public virtual TObject? Set(TObject? input, string key, TObject? value)
     {
         ThrowIfKeyNull(key);
 
@@ -632,7 +635,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="key">The key of the value to replace.</param>
     /// <param name="updater">The function that produces the new value from the current one.</param>
     /// <returns>The modified map, or <paramref name="input"/> itself if it is empty or does not contain <paramref name="key"/>.</returns>
-    public virtual TObject Update(TObject input, TObject key, Func<TObject, TObject> updater)
+    public virtual TObject? Update(TObject? input, TObject key, Func<TObject?, TObject?> updater)
     {
         ThrowIfKeyNull(key);
 
@@ -642,7 +645,7 @@ public abstract class DynamicOps<TObject>
         }
 
         DataResult<TObject> result = Get(input, key);
-        if (!result.TryGetResult(out TObject kr))
+        if (!result.TryGetResult(out TObject? kr))
         {
             return input;
         }
@@ -660,7 +663,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual TObject Update(TObject input, string key, Func<TObject, TObject> updater)
+    public virtual TObject? Update(TObject? input, string key, Func<TObject?, TObject?> updater)
     {
         ThrowIfKeyNull(key);
 
@@ -673,7 +676,7 @@ public abstract class DynamicOps<TObject>
     /// <param name="input">The serialized map to modify.</param>
     /// <param name="key">The key of the value to remove.</param>
     /// <returns>The modified map, or <paramref name="input"/> itself if it is empty or does not contain <paramref name="key"/>.</returns>
-    public abstract TObject Remove(TObject input, TObject key);
+    public abstract TObject? Remove(TObject? input, TObject key);
 
     /// <summary>
     /// Returns a copy of <paramref name="input"/> without the value stored under the given string <paramref name="key"/>.
@@ -684,7 +687,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual TObject Remove(TObject input, string key)
+    public virtual TObject? Remove(TObject? input, string key)
     {
         ThrowIfKeyNull(key);
 
@@ -696,14 +699,15 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="source">The serialized value to copy.</param>
     /// <returns>A copy of <paramref name="source"/>.</returns>
-    public abstract TObject Copy(TObject source);
+    [return: NotNullIfNotNull(nameof(source))]
+    public abstract TObject? Copy(TObject? source);
 
     /// <summary>
     /// Gets a value indicating whether the given <paramref name="input"/> is the empty value of this format.
     /// </summary>
     /// <param name="input">The serialized value to test.</param>
     /// <returns>A <see langword="true"/> if <paramref name="input"/> is empty; otherwise, <see langword="false"/>. When this method returns <see langword="false"/>, <paramref name="input"/> is not <see langword="null"/>.</returns>
-    public abstract bool IsEmpty(TObject input);
+    public abstract bool IsEmpty([NotNullWhen(false)] TObject? input);
 
     /// <summary>
     /// Whether the caller should serialize maps using a compressed representation.

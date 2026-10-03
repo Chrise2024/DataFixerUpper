@@ -10,7 +10,8 @@ internal sealed class RangedCodec<T>(Codec<T> baseCodec, T minInclusive, T maxIn
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.NewNameForTransform($"Range[{minInclusive}:{maxInclusive}]");
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
+        where TObject : default
     {
         if (input.CompareTo(minInclusive) >= 0 && input.CompareTo(maxInclusive) <= 0)
         {
@@ -20,7 +21,8 @@ internal sealed class RangedCodec<T>(Codec<T> baseCodec, T minInclusive, T maxIn
         return GetOutOfRangeResult<TObject>(input);
     }
 
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+        where TObject : default
     {
         return baseCodec.Decode(ops, input).FlatMap(t =>
             {
@@ -30,7 +32,7 @@ internal sealed class RangedCodec<T>(Codec<T> baseCodec, T minInclusive, T maxIn
                     return DataResult.CreateSuccess(t);
                 }
 
-                return GetOutOfRangeResult<(T, TObject)>(value);
+                return GetOutOfRangeResult<(T, TObject?)>(value);
             }
         );
     }

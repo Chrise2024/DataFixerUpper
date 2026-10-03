@@ -28,7 +28,7 @@ internal sealed class FieldDecoder<T>(string name, IDecoder<T> decoder) : MapDec
 
     public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        TObject value = input[name];
+        TObject? value = input[name];
         return value is null
             ? DataResult.CreateError<T>($"No key {name} in {input}")
             : decoder.Parse(ops, value);
@@ -64,7 +64,7 @@ internal sealed class OptionalFieldCodec<T>(
 
     public override DataResult<Optional<T>> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        TObject value = input[name];
+        TObject? value = input[name];
         if (value is null)
         {
             return DefaultResult();

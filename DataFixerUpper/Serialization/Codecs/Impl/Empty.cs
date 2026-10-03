@@ -25,7 +25,7 @@ internal sealed class EmptyMapEncoder<T> : MapEncoderBase<T>
 
 internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
 {
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return DataResult.CreateError<TObject>($"{message} {input}");
@@ -39,10 +39,10 @@ internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
 
 internal sealed class ErrorDecoder<T>(string message) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return DataResult.CreateError<(T, TObject)>(message);
+        return DataResult.CreateError<(T, TObject?)>(message);
     }
 
     public override string ToString()

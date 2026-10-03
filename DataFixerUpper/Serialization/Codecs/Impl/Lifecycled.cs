@@ -8,7 +8,7 @@ namespace DataFixerUpper.Serialization.Codecs.Impl;
 
 internal sealed class LifecycleEncoder<T>(IEncoder<T> baseEncoder, Lifecycle lifecycle) : EncoderBase<T>
 {
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return baseEncoder.Encode(input, ops, prefix).SetLifecycle(lifecycle);
@@ -17,7 +17,7 @@ internal sealed class LifecycleEncoder<T>(IEncoder<T> baseEncoder, Lifecycle lif
 
 internal sealed class LifecycleDecoder<T>(IDecoder<T> baseDecoder, Lifecycle lifecycle) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return baseDecoder.Decode(ops, input).SetLifecycle(lifecycle);
@@ -29,13 +29,13 @@ internal sealed class LifecycleCodec<T>(Codec<T> baseCodec, Lifecycle lifecycle)
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return baseCodec.Encode(input, ops, prefix).SetLifecycle(lifecycle);
     }
 
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return baseCodec.Decode(ops, input).SetLifecycle(lifecycle);

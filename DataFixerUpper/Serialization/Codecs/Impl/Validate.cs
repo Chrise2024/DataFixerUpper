@@ -12,19 +12,19 @@ internal sealed class ValidateCodec<T>(Codec<T> baseCodec, Func<T, DataResult<T>
 {
     public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
 
-    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject prefix)
+    public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
         return validator.Apply(input).FlatMap(validated => baseCodec.Encode(validated, ops, prefix));
     }
 
-    public override DataResult<(T, TObject)> Decode<TObject>(DynamicOps<TObject> ops, TObject input)
+    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return baseCodec.Decode(ops, input).FlatMap(result =>
             {
                 T value = result.Item1;
-                TObject remainder = result.Item2;
+                TObject? remainder = result.Item2;
                 return validator.Apply(value).Map(validated => (validated, remainder));
             }
         );
