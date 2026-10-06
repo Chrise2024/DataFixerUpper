@@ -20,7 +20,35 @@ public static class Applicative
 /// </summary>
 /// <typeparam name="TFunctor">The container type.</typeparam>
 /// <typeparam name="TMu">The witness type of this applicative functor.</typeparam>
-public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu>
+/// <seealso cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>
+public partial interface IApplicative<TFunctor, TMu> : IFunctor<TFunctor, TMu>
+    where TFunctor : Anchor
+    where TMu : Applicative.Mu
+{
+    /// <summary>
+    /// Create container from value.
+    /// </summary>
+    /// <returns>Container instance.</returns>
+    IApp<TFunctor, T> Point<T>(T instance);
+
+    /// <summary>
+    /// Projects contents of arg into a new form with a wrapped transformation function.
+    /// </summary>
+    /// <param name="selector">The wrapped transformation function.</param>
+    /// <param name="app">The input container that will be transformed.</param>
+    /// <typeparam name="TSource">The type of the <paramref name="app"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <returns>The transformed container.</returns>
+    IApp<TFunctor, TResult> Select<TSource, TResult>(IApp<TFunctor, Func<TSource, TResult>> selector, IApp<TFunctor, TSource> app);
+}
+
+/// <summary>
+/// Basic implementation of <see cref="T:DataFixerUpper.Datafixers.Kinds.IApplicative`2"/>.
+/// </summary>
+/// <typeparam name="TFunctor">The container type.</typeparam>
+/// <typeparam name="TMu">The witness type of this applicative functor.</typeparam>
+/// <seealso cref="T:DataFixerUpper.Datafixers.Kinds.IApplicative`2"/>
+public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu>, IApplicative<TFunctor, TMu>
     where TFunctor : Anchor
     where TMu : Applicative.Mu
 {
@@ -34,20 +62,10 @@ public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu
         // return (Applicative<TFunctor, TMu>) proofBox;
     }
 
-    /// <summary>
-    /// Create container from value.
-    /// </summary>
-    /// <returns>Container instance.</returns>
+    /// <inheritdoc/>
     public abstract IApp<TFunctor, T> Point<T>(T instance);
-
-    /// <summary>
-    /// Projects contents of arg into a new form with a wrapped transformation function.
-    /// </summary>
-    /// <param name="selector">The wrapped transformation function.</param>
-    /// <param name="app">The input container that will be transformed.</param>
-    /// <typeparam name="TSource">The type of the <paramref name="app"/>.</typeparam>
-    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
-    /// <returns>The transformed container.</returns>
+    
+    /// <inheritdoc/>
     public virtual IApp<TFunctor, TResult> Select<TSource, TResult>(IApp<TFunctor, Func<TSource, TResult>> selector, IApp<TFunctor, TSource> app)
     {
         return Lift(selector).Apply(app);
