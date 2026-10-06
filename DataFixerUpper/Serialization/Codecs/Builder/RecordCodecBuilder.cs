@@ -46,6 +46,15 @@ public static class RecordCodecBuilder
     public abstract class Mu<TInstance> : Anchor;
 
     /// <summary>
+    /// Gets instance of <see cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilderOperator`1"/>.
+    /// </summary>
+    /// <seealso cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilderOperator`1"/>
+    public static RecordCodecBuilderOperator<TInstance> GetInstance<TInstance>()
+    {
+        return RecordCodecBuilderOperator<TInstance>.Instance;
+    }
+
+    /// <summary>
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <param name="box">Boxed <see cref="T:DataFixerUpper.Serialization.Codecs.Builder.RecordCodecBuilder`2"/>.</param>

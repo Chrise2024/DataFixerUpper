@@ -19,6 +19,12 @@ public static class DataResult
     public abstract class Mu : Anchor;
 
     /// <summary>
+    /// Instance of <see cref="T:DataFixerUpper.Serialization.DataResultOperator"/>.
+    /// </summary>
+    /// <seealso cref="T:DataFixerUpper.Serialization.DataResultOperator"/>
+    public static DataResultOperator Operator => DataResultOperator.Instance;
+
+    /// <summary>
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <param name="box">Boxed <see cref="T:DataFixerUpper.Serialization.DataResult`1"/>.</param>
