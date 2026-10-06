@@ -21,6 +21,16 @@ internal sealed class EmptyMapEncoder<T> : MapEncoderBase<T>
     {
         return "EmptyEncoder";
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is EmptyMapEncoder<T>;
+    }
+
+    public override int GetHashCode()
+    {
+        return ToString().GetHashCode();
+    }
 }
 
 internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
@@ -35,6 +45,16 @@ internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
     {
         return $"ErrorEncoder[{message}]";
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ErrorEncoder<T>;
+    }
+
+    public override int GetHashCode()
+    {
+        return ToString().GetHashCode();
+    }
 }
 
 internal sealed class ErrorDecoder<T>(string message) : DecoderBase<T>
@@ -48,5 +68,15 @@ internal sealed class ErrorDecoder<T>(string message) : DecoderBase<T>
     public override string ToString()
     {
         return $"ErrorDecoder[{message}]";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ErrorDecoder<T>;
+    }
+
+    public override int GetHashCode()
+    {
+        return ToString().GetHashCode();
     }
 }
