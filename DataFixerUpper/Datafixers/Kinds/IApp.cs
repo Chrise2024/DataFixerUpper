@@ -10,6 +10,6 @@ namespace DataFixerUpper.Datafixers.Kinds;
 public interface IApp<TAnchor, out T>
     where TAnchor : Anchor;
 
-[Obsolete("Not implemented")]
-internal interface IApp<TAnchor, T1, T2>
-    where TAnchor : Anchor;
+// App2
+internal interface IBiApp<TAnchor, T1, T2>
+    where TAnchor : BiAnchor;

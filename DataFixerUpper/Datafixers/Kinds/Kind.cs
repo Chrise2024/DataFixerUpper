@@ -1,4 +1,6 @@
-﻿namespace DataFixerUpper.Datafixers.Kinds;
+﻿using System.Runtime.CompilerServices;
+
+namespace DataFixerUpper.Datafixers.Kinds;
 
 /// <summary>
 /// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.Kind`2"/>
@@ -33,7 +35,7 @@ public partial interface IKind<TFunctor, TMu> : IApp<TFunctor, TMu>
 /// <typeparam name="TFunctor">The witness type for the type constructor this type class is defined for.</typeparam>
 /// <typeparam name="TMu">The witness type for this type class.</typeparam>
 /// <seealso cref="T:DataFixerUpper.Datafixers.Kinds.IKind`2"/>
-public abstract partial class Kind<TFunctor, TMu> : IKind<TFunctor, Kind.Mu>
+public abstract partial class Kind<TFunctor, TMu> : IKind<TFunctor, TMu>
     where TFunctor : Anchor
     where TMu : Kind.Mu
 {
@@ -41,9 +43,9 @@ public abstract partial class Kind<TFunctor, TMu> : IKind<TFunctor, Kind.Mu>
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public static Kind<TFunctor, TProof> Unbox<TProof>(IApp<TFunctor, TProof> value)
+    public static IKind<TFunctor, TProof> Unbox<TProof>(IApp<TFunctor, TProof> value)
         where TProof : Kind.Mu
     {
-        return (Kind<TFunctor, TProof>) value;
+        return Unsafe.As<IKind<TFunctor, TProof>>(value);
     }
 }

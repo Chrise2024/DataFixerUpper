@@ -73,9 +73,9 @@ public abstract class Traversable<TFunctor, TMu> : Functor<TFunctor, TMu>, ITrav
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public static Traversable<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
+    public static ITraversable<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
     {
-        return Unsafe.As<Traversable<TFunctor, TMu>>(proofBox);
+        return Unsafe.As<ITraversable<TFunctor, TMu>>(proofBox);
         // return (Traversable<TFunctor, TMu>) proofBox;
     }
 
