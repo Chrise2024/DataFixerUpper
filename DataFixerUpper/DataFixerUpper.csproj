@@ -9,8 +9,8 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <DocumentationFile>XmlDocs.xml</DocumentationFile>
-        <Version>2.1.0</Version>
-        <PackageReleaseNotes>Enable nullable, no api changes.</PackageReleaseNotes>
+        <Version>2.1.1</Version>
+        <PackageReleaseNotes>Extract DataFixers kind's interfaces.</PackageReleaseNotes>
     </PropertyGroup>
 
     <PropertyGroup>
