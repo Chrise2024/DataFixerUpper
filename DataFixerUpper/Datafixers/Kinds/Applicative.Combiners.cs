@@ -3,6 +3,8 @@ using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Datafixers.Kinds;
 
+#pragma warning disable CS1574
+
 public partial interface IApplicative<TFunctor, TMu>
 {
     /// <summary>
