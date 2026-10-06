@@ -91,13 +91,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10, p.Item11, p.Item12, p.Item13, p.Item14, p.Item15);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1);
@@ -180,13 +180,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10, p.Item11, p.Item12, p.Item13, p.Item14);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2);
@@ -265,13 +265,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10, p.Item11, p.Item12, p.Item13);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3);
@@ -346,13 +346,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10, p.Item11, p.Item12);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4);
@@ -423,13 +423,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10, p.Item11);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5);
@@ -496,13 +496,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9, p.Item10);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6);
@@ -565,13 +565,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8, p.Item9);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7);
@@ -630,13 +630,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7, p.Item8);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8);
@@ -691,13 +691,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6, p.Item7);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9);
@@ -748,13 +748,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5, p.Item6);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10);
@@ -801,13 +801,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, p.Item1, p.Item2, p.Item3, p.Item4, p.Item5);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11);
@@ -850,13 +850,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, p.Item1, p.Item2, p.Item3, p.Item4);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12);
@@ -895,13 +895,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, p.Item1, p.Item2, p.Item3);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13);
@@ -936,13 +936,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, Item14, p.Item1, p.Item2);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, Item14);
@@ -973,13 +973,13 @@ public static class Products
             return new P16<TFunctor, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>(Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, Item14, Item15, p.Item1);
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, Item14, Item15);
@@ -1006,13 +1006,13 @@ public static class Products
     )
         where TFunctor : Anchor
     {
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TR> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TR> function)
             where TMu : Applicative.Mu
         {
             return Apply(instance, instance.Point(function));
         }
 
-        public IApp<TFunctor, TR> Apply<TR, TMu>(Applicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TR>> function)
+        public IApp<TFunctor, TR> Apply<TR, TMu>(IApplicative<TFunctor, TMu> instance, IApp<TFunctor, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TR>> function)
             where TMu : Applicative.Mu
         {
             return instance.Combine(function, Item1, Item2, Item3, Item4, Item5, Item6, Item7, Item8, Item9, Item10, Item11, Item12, Item13, Item14, Item15, Item16);

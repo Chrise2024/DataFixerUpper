@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace DataFixerUpper.Datafixers.Kinds;
 
 /// <summary>
-/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.Functor`2"/>
+/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.IFunctor`2"/>
 /// </summary>
 public static class Functor
 {
@@ -37,7 +37,7 @@ public interface IFunctor<TFunctor, TMu> : IKind<TFunctor, TMu>
 }
 
 /// <summary>
-/// Basic implementation of <see cref="T:DataFixerUpper.Datafixers.Kinds.IKind`2"/>.
+/// Basic implementation of <see cref="T:DataFixerUpper.Datafixers.Kinds.IFunctor`2"/>.
 /// </summary>
 /// <typeparam name="TFunctor">The container type.</typeparam>
 /// <typeparam name="TMu">The witness type of this functor.</typeparam>
@@ -50,9 +50,9 @@ public abstract class Functor<TFunctor, TMu> : Kind<TFunctor, TMu>, IFunctor<TFu
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> into container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public static Functor<TFunctor, TMu> Unbox<T>(IApp<TMu, TFunctor> proofBox)
+    public static IFunctor<TFunctor, TMu> Unbox<T>(IApp<TMu, TFunctor> proofBox)
     {
-        return Unsafe.As<Functor<TFunctor, TMu>>(proofBox);
+        return Unsafe.As<IFunctor<TFunctor, TMu>>(proofBox);
         // return (Functor<TFunctor, TMu>) proofBox;
     }
 

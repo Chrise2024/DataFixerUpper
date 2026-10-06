@@ -5,7 +5,7 @@ using DataFixerUpper.Utils;
 namespace DataFixerUpper.Datafixers.Kinds;
 
 /// <summary>
-/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.Traversable`2"/>
+/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.ITraversable`2"/>
 /// </summary>
 public static class Traversable
 {
@@ -36,7 +36,7 @@ public interface ITraversable<TFunctor, TMu> : IFunctor<TFunctor, TMu>
     /// <typeparam name="TResult">The output type.</typeparam>
     /// <returns>A container holding the results of applying function to each element, if the function was successful for every element.</returns>
     IApp<TFunctor1, IApp<TFunctor, TResult>> Traverse<TFunctor1, TMu1, TSource, TResult>(
-        Applicative<TFunctor1, TMu1> applicative,
+        IApplicative<TFunctor1, TMu1> applicative,
         Func<TSource, IApp<TFunctor1, TResult>> selector,
         IApp<TFunctor, TSource> input
     )
@@ -53,7 +53,7 @@ public interface ITraversable<TFunctor, TMu> : IFunctor<TFunctor, TMu>
     /// <typeparam name="T">The contained type.</typeparam>
     /// <returns>The nested contained value with the containers swapped.</returns>
     IApp<TFunctor1, IApp<TFunctor, T>> Flip<TFunctor1, TMu1, T>(
-        Applicative<TFunctor1, TMu1> applicative,
+        IApplicative<TFunctor1, TMu1> applicative,
         IApp<TFunctor, IApp<TFunctor1, T>> input
     )
         where TFunctor1 : Anchor
@@ -81,7 +81,7 @@ public abstract class Traversable<TFunctor, TMu> : Functor<TFunctor, TMu>, ITrav
 
     /// <inheritdoc/>
     public abstract IApp<TFunctor1, IApp<TFunctor, TResult>> Traverse<TFunctor1, TMu1, TSource, TResult>(
-        Applicative<TFunctor1, TMu1> applicative,
+        IApplicative<TFunctor1, TMu1> applicative,
         Func<TSource, IApp<TFunctor1, TResult>> selector,
         IApp<TFunctor, TSource> input
     )
@@ -90,7 +90,7 @@ public abstract class Traversable<TFunctor, TMu> : Functor<TFunctor, TMu>, ITrav
 
     /// <inheritdoc/>
     public virtual IApp<TFunctor1, IApp<TFunctor, T>> Flip<TFunctor1, TMu1, T>(
-        Applicative<TFunctor1, TMu1> applicative,
+        IApplicative<TFunctor1, TMu1> applicative,
         IApp<TFunctor, IApp<TFunctor1, T>> input
     )
         where TFunctor1 : Anchor

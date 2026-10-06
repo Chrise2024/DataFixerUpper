@@ -54,7 +54,7 @@ public static class ListBox
     /// <returns>A container of the output values.</returns>
     /// <seealso cref="M:DataFixerUpper.Datafixers.Kinds.ListBoxOperator.Traverse``4(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},System.Func{``2,DataFixerUpper.Datafixers.Kinds.IApp{``0,``3}},DataFixerUpper.Datafixers.Kinds.IApp{DataFixerUpper.Datafixers.Kinds.ListBox.Mu,``2})"/>
     public static IApp<TFunctor, IList<TResult>> Traverse<TFunctor, TMu, TSource, TResult>(
-        Applicative<TFunctor, TMu> applicative,
+        IApplicative<TFunctor, TMu> applicative,
         Func<TSource, IApp<TFunctor, TResult>> selector,
         IList<TSource> input
     )
@@ -75,7 +75,7 @@ public static class ListBox
     /// <returns>A container of list.</returns>
     /// <seealso cref="M:DataFixerUpper.Datafixers.Kinds.Traversable`2.Flip``3(DataFixerUpper.Datafixers.Kinds.Applicative{``0,``1},DataFixerUpper.Datafixers.Kinds.IApp{`0,DataFixerUpper.Datafixers.Kinds.IApp{``0,``2}})"/>
     public static IApp<TFunctor, IList<T>> Flip<TFunctor, TMu, T>(
-        Applicative<TFunctor, TMu> applicative,
+        IApplicative<TFunctor, TMu> applicative,
         IList<IApp<TFunctor, T>> input
     )
         where TFunctor : Anchor
@@ -121,7 +121,7 @@ public sealed class ListBoxOperator : Traversable<ListBox.Mu, ListBoxOperator.Mu
     }
 
     /// <inheritdoc/>
-    public override IApp<TFunctor1, IApp<ListBox.Mu, TResult>> Traverse<TFunctor1, TMu1, TSource, TResult>(Applicative<TFunctor1, TMu1> applicative, Func<TSource, IApp<TFunctor1, TResult>> selector, IApp<ListBox.Mu, TSource> input)
+    public override IApp<TFunctor1, IApp<ListBox.Mu, TResult>> Traverse<TFunctor1, TMu1, TSource, TResult>(IApplicative<TFunctor1, TMu1> applicative, Func<TSource, IApp<TFunctor1, TResult>> selector, IApp<ListBox.Mu, TSource> input)
     {
         IList<TSource> list = ListBox.Unbox(input);
         IApp<TFunctor1, ImmutableList<TResult>.Builder> result = applicative.Point(ImmutableList.CreateBuilder<TResult>());

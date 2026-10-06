@@ -5,7 +5,7 @@ using DataFixerUpper.Extensions;
 namespace DataFixerUpper.Datafixers.Kinds;
 
 /// <summary>
-/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.Applicative`2"/>
+/// Provide static usage for <see cref="T:DataFixerUpper.Datafixers.Kinds.IApplicative`2"/>
 /// </summary>
 public static class Applicative
 {
@@ -56,9 +56,9 @@ public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu
     /// Unbox <see cref="T:DataFixerUpper.Datafixers.Kinds.IApp`2"/> container.
     /// </summary>
     /// <returns>Unboxed container.</returns>
-    public static Applicative<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
+    public static IApplicative<TFunctor, TMu> Unbox(IApp<TMu, TFunctor> proofBox)
     {
-        return Unsafe.As<Applicative<TFunctor, TMu>>(proofBox);
+        return Unsafe.As<IApplicative<TFunctor, TMu>>(proofBox);
         // return (Applicative<TFunctor, TMu>) proofBox;
     }
 
