@@ -203,22 +203,52 @@ file sealed record EitherLeft<TL, TR> : Either<TL, TR>
 
     public override Either<TL1, TR1> MapBoth<TL1, TR1>(Func<TL, TL1> lMapper, Func<TR, TR1> rMapper)
     {
+        if (lMapper is null)
+        {
+            throw new ArgumentNullException(nameof(lMapper));
+        }
+        
+        if (rMapper is null)
+        {
+            throw new ArgumentNullException(nameof(rMapper));
+        }
+        
         return new EitherLeft<TL1, TR1>(lMapper.Apply(_left));
     }
 
     public override T MapGet<T>(Func<TL, T> lMapper, Func<TR, T> rMapper)
     {
+        if (lMapper is null)
+        {
+            throw new ArgumentNullException(nameof(lMapper));
+        }
+        
+        if (rMapper is null)
+        {
+            throw new ArgumentNullException(nameof(rMapper));
+        }
+        
         return lMapper.Apply(_left);
     }
 
     public override Either<TL, TR> IfLeft(Consumer<TL> ifAction)
     {
+        if (ifAction is null)
+        {
+            throw new ArgumentNullException(nameof(ifAction));
+        }
+        
         ifAction.Accept(_left);
         return this;
     }
 
     public override Either<TL, TR> IfRight(Consumer<TR> ifAction)
     {
+        if (ifAction is null)
+        {
+            throw new ArgumentNullException(nameof(ifAction));
+        }
+
         return this;
     }
 
@@ -255,21 +285,51 @@ file sealed record EitherRight<TL, TR> : Either<TL, TR>
 
     public override Either<TL1, TR1> MapBoth<TL1, TR1>(Func<TL, TL1> lMapper, Func<TR, TR1> rMapper)
     {
+        if (lMapper is null)
+        {
+            throw new ArgumentNullException(nameof(lMapper));
+        }
+        
+        if (rMapper is null)
+        {
+            throw new ArgumentNullException(nameof(rMapper));
+        }
+
         return new EitherRight<TL1, TR1>(rMapper.Apply(_right));
     }
 
     public override T MapGet<T>(Func<TL, T> lMapper, Func<TR, T> rMapper)
     {
+        if (lMapper is null)
+        {
+            throw new ArgumentNullException(nameof(lMapper));
+        }
+        
+        if (rMapper is null)
+        {
+            throw new ArgumentNullException(nameof(rMapper));
+        }
+
         return rMapper.Apply(_right);
     }
 
     public override Either<TL, TR> IfLeft(Consumer<TL> ifAction)
     {
+        if (ifAction is null)
+        {
+            throw new ArgumentNullException(nameof(ifAction));
+        }
+
         return this;
     }
 
     public override Either<TL, TR> IfRight(Consumer<TR> ifAction)
     {
+        if (ifAction is null)
+        {
+            throw new ArgumentNullException(nameof(ifAction));
+        }
+
         ifAction.Accept(_right);
         return this;
     }

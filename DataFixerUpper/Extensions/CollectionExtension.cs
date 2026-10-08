@@ -1,5 +1,8 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using System.Collections.Immutable;
+using System.Linq;
+using DataFixerUpper.Utils;
 
+// ReSharper disable once CheckNamespace
 namespace System.Collections.Generic;
 
 /// <summary>
@@ -52,6 +55,34 @@ public static class CollectionExtension
         {
             dict.Add(key, value);
             return dict;
+        }
+    }
+
+    extension<TKey, TValue>(IEnumerable<Pair<TKey, TValue>> pairs)
+        where TKey : notnull
+    {
+        /// <summary>
+        /// Creates a <see cref="T:System.Collections.Generic.Dictionary`2" /> from an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:DataFixerUpper.Utils.Pair`2"/>.
+        /// </summary>
+        /// <returns>A <see cref="T:System.Collections.Generic.Dictionary`2" /> that contains values of <see cref="T:DataFixerUpper.Utils.Pair`2"/>.</returns>
+        public Dictionary<TKey, TValue> ToDictionary()
+        {
+            return pairs.ToDictionary(
+                Pair.First,
+                Pair.Second
+            );
+        }
+        
+        /// <summary>
+        /// Creates a <see cref="T:System.Collections.Immutable.ImmutableDictionary`2" /> from an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:DataFixerUpper.Utils.Pair`2"/>.
+        /// </summary>
+        /// <returns>A <see cref="T:System.Collections.Immutable.ImmutableDictionary`2" /> that contains values of <see cref="T:DataFixerUpper.Utils.Pair`2"/>.</returns>
+        public ImmutableDictionary<TKey, TValue> ToImmutableDictionary()
+        {
+            return pairs.ToImmutableDictionary(
+                Pair.First,
+                Pair.Second
+            );
         }
     }
 }
