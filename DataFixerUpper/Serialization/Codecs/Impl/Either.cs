@@ -11,9 +11,9 @@ namespace DataFixerUpper.Serialization.Codecs.Impl;
 internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : Codec<Either<TL, TR>>
 {
     private readonly Codec<TL> _lCodec = lCodec;
-    
+
     private readonly Codec<TR> _rCodec = rCodec;
-    
+
     public override ValueHolder<string> CodecNameHolder => $"Either[{_lCodec} {_rCodec}]";
 
     public override DataResult<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, TObject? prefix)
@@ -57,7 +57,7 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
     {
         return obj is EitherCodec<TL, TR> codec && _lCodec.Equals(codec._lCodec) && _rCodec.Equals(codec._rCodec);
     }
-    
+
     public override int GetHashCode()
     {
         return _lCodec.GetHashCode() + _rCodec.GetHashCode() * 31;
@@ -67,9 +67,9 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
 internal sealed class EitherMapCodec<TL, TR>(MapCodec<TL> lCodec, MapCodec<TR> rCodec) : MapCodec<Either<TL, TR>>
 {
     private readonly MapCodec<TL> _lCodec = lCodec;
-    
+
     private readonly MapCodec<TR> _rCodec = rCodec;
-    
+
     public override ValueHolder<string> CodecNameHolder => $"Either[{_lCodec} {_rCodec}]";
 
     public override RecordBuilder<TObject> Encode<TObject>(Either<TL, TR> input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
@@ -106,7 +106,7 @@ internal sealed class EitherMapCodec<TL, TR>(MapCodec<TL> lCodec, MapCodec<TR> r
     {
         return obj is EitherMapCodec<TL, TR> codec && _lCodec.Equals(codec._lCodec) && _rCodec.Equals(codec._rCodec);
     }
-    
+
     public override int GetHashCode()
     {
         return _lCodec.GetHashCode() + _rCodec.GetHashCode() * 31;

@@ -31,6 +31,16 @@ internal sealed class RecursiveCodec<T> : Codec<T>
     {
         return _wrapped.Value.Decode(ops, input);
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecursiveCodec<T> codec && _name.Equals(codec._name);
+    }
+
+    public override int GetHashCode()
+    {
+        return _name.GetHashCode();
+    }
 }
 
 internal sealed class RecursiveMapCodec<T> : MapCodec<T>
@@ -58,5 +68,15 @@ internal sealed class RecursiveMapCodec<T> : MapCodec<T>
     public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _wrapped.Value.Decode(ops, input);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecursiveMapCodec<T> codec && _name.Equals(codec._name);
+    }
+
+    public override int GetHashCode()
+    {
+        return _name.GetHashCode();
     }
 }

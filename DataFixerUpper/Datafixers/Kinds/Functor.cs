@@ -14,7 +14,6 @@ public static class Functor
     public abstract class Mu : Kind.Mu;
 }
 
-
 /// <summary>
 /// Defines <see cref="M:DataFixerUpper.Datafixers.Kinds.Functor`2.Select``2(System.Func{``0,``1},DataFixerUpper.Datafixers.Kinds.IApp{`0,``0})"/> method to transform container.
 /// </summary>

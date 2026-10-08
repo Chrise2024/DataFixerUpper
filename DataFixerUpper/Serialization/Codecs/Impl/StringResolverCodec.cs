@@ -6,12 +6,16 @@ namespace DataFixerUpper.Serialization.Codecs.Impl;
 
 internal sealed class StringResolverCodec<T>(Func<T, string> toString, Func<string, T> fromString) : Codec<T>
 {
+    private readonly Func<T, string> _toString = toString;
+
+    private readonly Func<string, T> _fromString = fromString;
+
     public override ValueHolder<string> CodecNameHolder => $"StringResolver[{typeof(T).Name}]";
 
     public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
-        string str = toString(input);
+        string str = _toString(input);
         if (string.IsNullOrEmpty(str))
         {
             return DataResult.CreateError<TObject>($"Element with unknown name: {input}");
@@ -25,7 +29,7 @@ internal sealed class StringResolverCodec<T>(Func<T, string> toString, Func<stri
     {
         return ops.GetStringValue(input).FlatMap(t =>
             {
-                T item = fromString(t);
+                T item = _fromString(t);
                 if (item is null)
                 {
                     return DataResult.CreateError<(T, TObject?)>($"Unknown element name: {t}");
@@ -34,5 +38,15 @@ internal sealed class StringResolverCodec<T>(Func<T, string> toString, Func<stri
                 return DataResult.CreateSuccess((item, input));
             }
         );
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is StringResolverCodec<T> codec && _toString.Equals(codec._toString) && _fromString.Equals(codec._fromString);
+    }
+
+    public override int GetHashCode()
+    {
+        return _toString.GetHashCode() + _fromString.GetHashCode() * 31;
     }
 }

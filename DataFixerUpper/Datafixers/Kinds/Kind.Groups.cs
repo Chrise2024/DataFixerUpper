@@ -261,7 +261,7 @@ public abstract partial class Kind<TFunctor, TMu>
     {
         return new Products.P1<TFunctor, T1>(t1);
     }
-    
+
     /// <inheritdoc/>
     public virtual Products.P2<TFunctor, T1, T2> Group<T1, T2>(
         IApp<TFunctor, T1> t1,

@@ -84,11 +84,20 @@ internal sealed class SimpleDictionaryCodec<TKey, TValue>(
     where TKey : notnull
 {
     private readonly DictionaryCodecState<TKey, TValue> _state = new(keyCodec, _ => valueCodec, mutable);
-    public override ValueHolder<string> CodecNameHolder => $"SimpleMapCodec[{keyCodec} => {valueCodec}]";
+
+    private readonly Codec<TKey> _keyCodec = keyCodec;
+
+    private readonly Codec<TValue> _valueCodec = valueCodec;
+
+    private readonly IKeyable _keys = keys;
+
+    private readonly bool _mutable = mutable;
+
+    public override ValueHolder<string> CodecNameHolder => $"SimpleMapCodec[{_keyCodec} => {_valueCodec}]";
 
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
-        return keys.GetKeys(ops);
+        return _keys.GetKeys(ops);
     }
 
     public override RecordBuilder<TObject> Encode<TObject>(
@@ -107,6 +116,24 @@ internal sealed class SimpleDictionaryCodec<TKey, TValue>(
     {
         return _state.DecodeDictionary(ops, input);
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is SimpleDictionaryCodec<TKey, TValue> codec
+            && _keyCodec.Equals(codec._keyCodec)
+            && _valueCodec.Equals(codec._valueCodec)
+            && _keys.Equals(codec._keys)
+            && _mutable.Equals(codec._mutable);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _keyCodec.GetHashCode();
+        hash = hash * 31 + _valueCodec.GetHashCode();
+        hash = hash * 31 + _keys.GetHashCode();
+        hash = hash * 31 + _mutable.GetHashCode();
+        return hash;
+    }
 }
 
 internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
@@ -118,7 +145,14 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
     where TKey : notnull
 {
     private readonly DictionaryCodecState<TKey, TValue> _state = new(keyCodec, _ => valueCodec, mutable);
-    public override ValueHolder<string> CodecNameHolder => $"UnboundedMapCodec[{keyCodec} => {valueCodec}]";
+
+    private readonly Codec<TKey> _keyCodec = keyCodec;
+
+    private readonly Codec<TValue> _valueCodec = valueCodec;
+
+    private readonly bool _mutable = mutable;
+
+    public override ValueHolder<string> CodecNameHolder => $"UnboundedMapCodec[{_keyCodec} => {_valueCodec}]";
 
     public override DataResult<TObject> Encode<TObject>(
         IDictionary<TKey, TValue> input,
@@ -139,6 +173,22 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
         return ops.GetMap(input)
             .SetLifecycle(Lifecycle.Stable)
             .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => (result, input)));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is UnboundedDictionaryCodec<TKey, TValue> codec
+            && _keyCodec.Equals(codec._keyCodec)
+            && _valueCodec.Equals(codec._valueCodec)
+            && _mutable.Equals(codec._mutable);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _keyCodec.GetHashCode();
+        hash = hash * 31 + _valueCodec.GetHashCode();
+        hash = hash * 31 + _mutable.GetHashCode();
+        return hash;
     }
 }
 
@@ -170,5 +220,15 @@ internal sealed class DispatchedDictionaryCodec<TKey, TValue>(
         return ops.GetMap(input)
             .SetLifecycle(Lifecycle.Stable)
             .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => (result, input)));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is DispatchedDictionaryCodec<TKey, TValue> codec && _state.Equals(codec._state);
+    }
+
+    public override int GetHashCode()
+    {
+        return _state.GetHashCode();
     }
 }

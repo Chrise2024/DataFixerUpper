@@ -22,6 +22,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
     private readonly Func<TValue, DataResult<TType>> _typeSelector;
     private readonly Func<TValue, DataResult<IMapEncoder<TValue>>> _encoderDispatcher;
     private readonly Func<TType, DataResult<IMapDecoder<TValue>>> _decoderDispatcher;
+    private readonly Func<TType, DataResult<MapCodec<TValue>>>? _codecDispatcher;
 
     public TypeDispatchMapCodec(
         MapCodec<TType> typeCodec,
@@ -51,6 +52,7 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
     {
         _typeCodec = typeCodec;
         _typeSelector = typeSelector;
+        _codecDispatcher = codecDispatcher;
         _encoderDispatcher = v => typeSelector
             .Then(r => r.FlatMap(codecDispatcher).Map(codec => codec.AsMapEncoder()))(v);
         _decoderDispatcher = t => codecDispatcher
@@ -111,5 +113,37 @@ internal sealed class TypeDispatchMapCodec<TType, TValue> : MapCodec<TValue>
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
         return _typeCodec.GetKeys(ops).Append(ops.CreateString(CompressedValueKey));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TypeDispatchMapCodec<TType, TValue> codec
+            || !_typeCodec.Equals(codec._typeCodec)
+            || !_typeSelector.Equals(codec._typeSelector))
+        {
+            return false;
+        }
+
+        return _codecDispatcher is not null || codec._codecDispatcher is not null
+            ? Equals(_codecDispatcher, codec._codecDispatcher)
+            : _encoderDispatcher.Equals(codec._encoderDispatcher) && _decoderDispatcher.Equals(codec._decoderDispatcher);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _typeCodec.GetHashCode();
+        hash = hash * 31 + _typeSelector.GetHashCode();
+
+        if (_codecDispatcher is not null)
+        {
+            hash = hash * 31 + _codecDispatcher.GetHashCode();
+        }
+        else
+        {
+            hash = hash * 31 + _encoderDispatcher.GetHashCode();
+            hash = hash * 31 + _decoderDispatcher.GetHashCode();
+        }
+
+        return hash;
     }
 }

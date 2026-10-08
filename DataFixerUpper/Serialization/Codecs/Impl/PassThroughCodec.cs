@@ -37,4 +37,14 @@ internal sealed class PassThroughCodec : Codec<IDynamic>
     {
         return DataResult.CreateSuccess(((IDynamic) new Dynamic<TObject>(ops, input), ops.Empty()));
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is PassThroughCodec;
+    }
+
+    public override int GetHashCode()
+    {
+        return ToString().GetHashCode();
+    }
 }

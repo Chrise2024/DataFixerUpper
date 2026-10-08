@@ -10,45 +10,73 @@ namespace DataFixerUpper.Serialization.Codecs.Impl;
 
 internal sealed class ValidateCodec<T>(Codec<T> baseCodec, Func<T, DataResult<T>> validator) : Codec<T>
 {
-    public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
+    private readonly Codec<T> _baseCodec = baseCodec;
+
+    private readonly Func<T, DataResult<T>> _validator = validator;
+
+    public override ValueHolder<string> CodecNameHolder => _baseCodec.CodecNameHolder;
 
     public override DataResult<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
-        return validator.Apply(input).FlatMap(validated => baseCodec.Encode(validated, ops, prefix));
+        return _validator.Apply(input).FlatMap(validated => _baseCodec.Encode(validated, ops, prefix));
     }
 
     public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return baseCodec.Decode(ops, input).FlatMap(result =>
+        return _baseCodec.Decode(ops, input).FlatMap(result =>
             {
                 T value = result.Item1;
                 TObject? remainder = result.Item2;
-                return validator.Apply(value).Map(validated => (validated, remainder));
+                return _validator.Apply(value).Map(validated => (validated, remainder));
             }
         );
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ValidateCodec<T> codec && _baseCodec.Equals(codec._baseCodec) && _validator.Equals(codec._validator);
+    }
+
+    public override int GetHashCode()
+    {
+        return _baseCodec.GetHashCode() + _validator.GetHashCode() * 31;
     }
 }
 
 internal sealed class ValidateMapCodec<T>(MapCodec<T> baseCodec, Func<T, DataResult<T>> validator) : MapCodec<T>
 {
-    public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
+    private readonly MapCodec<T> _baseCodec = baseCodec;
+
+    private readonly Func<T, DataResult<T>> _validator = validator;
+
+    public override ValueHolder<string> CodecNameHolder => _baseCodec.CodecNameHolder;
 
     public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
-        DataResult<T> validated = validator.Apply(input);
+        DataResult<T> validated = _validator.Apply(input);
         RecordBuilder<TObject> result = prefix.WithErrorsFrom(validated);
-        return validated.Map(v => baseCodec.Encode(v, ops, prefix)).GetResultOrDefault(result);
+        return validated.Map(v => _baseCodec.Encode(v, ops, prefix)).GetResultOrDefault(result);
     }
 
     public override DataResult<T> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        return baseCodec.Decode(ops, input).FlatMap(validator);
+        return _baseCodec.Decode(ops, input).FlatMap(_validator);
     }
 
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
-        return baseCodec.GetKeys(ops);
+        return _baseCodec.GetKeys(ops);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ValidateMapCodec<T> codec && _baseCodec.Equals(codec._baseCodec) && _validator.Equals(codec._validator);
+    }
+
+    public override int GetHashCode()
+    {
+        return _baseCodec.GetHashCode() + _validator.GetHashCode() * 31;
     }
 }

@@ -48,6 +48,18 @@ public abstract class PrimitiveCodec<T> : Codec<T>
     {
         return Read(ops, input).Map(value => (value, ops.Empty()));
     }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return obj is PrimitiveCodec<T>;
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return typeof(T).GetHashCode();
+    }
 }
 
 /// <summary>

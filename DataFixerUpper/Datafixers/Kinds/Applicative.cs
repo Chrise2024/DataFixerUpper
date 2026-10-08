@@ -64,7 +64,7 @@ public abstract partial class Applicative<TFunctor, TMu> : Functor<TFunctor, TMu
 
     /// <inheritdoc/>
     public abstract IApp<TFunctor, T> Point<T>(T instance);
-    
+
     /// <inheritdoc/>
     public virtual IApp<TFunctor, TResult> Select<TSource, TResult>(IApp<TFunctor, Func<TSource, TResult>> selector, IApp<TFunctor, TSource> app)
     {

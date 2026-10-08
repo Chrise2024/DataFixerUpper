@@ -31,6 +31,16 @@ internal sealed class RecordCodec<T>(RecordCodecBuilder<T, T> builder) : MapCode
     {
         return _decoder.Decode(ops, input);
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordCodec<T> codec && _encoderDispatcher.Equals(codec._encoderDispatcher) && _decoder.Equals(codec._decoder);
+    }
+
+    public override int GetHashCode()
+    {
+        return _encoderDispatcher.GetHashCode() + _decoder.GetHashCode() * 31;
+    }
 }
 
 internal sealed class MappedRecordEncoder<TInstance, T1, T2>(
@@ -45,6 +55,7 @@ internal sealed class MappedRecordEncoder<TInstance, T1, T2>(
 
     private readonly Func<TInstance, T1> _getter = builder.Getter;
     private readonly IMapEncoder<T1> _encoder = builder.EncoderDispatcher.Apply(i);
+    private readonly TInstance _i = i;
 
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
@@ -53,12 +64,28 @@ internal sealed class MappedRecordEncoder<TInstance, T1, T2>(
 
     public override RecordBuilder<TObject> Encode<TObject>(T2 input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
-        return _encoder.Encode(_getter.Apply(i), ops, prefix);
+        return _encoder.Encode(_getter.Apply(_i), ops, prefix);
     }
 
     public override string ToString()
     {
         return $"{_encoder}[Mapped]";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is MappedRecordEncoder<TInstance, T1, T2> encoder
+            && _getter.Equals(encoder._getter)
+            && _encoder.Equals(encoder._encoder)
+            && EqualityComparer<TInstance>.Default.Equals(_i, encoder._i);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _getter.GetHashCode();
+        hash = hash * 31 + _encoder.GetHashCode();
+        hash = hash * 31 + (_i is null ? 0 : _i.GetHashCode());
+        return hash;
     }
 }
 
@@ -68,19 +95,41 @@ internal sealed class DependentRecordDecoder<TElement, TField>(
     Func<TField, IMapDecoder<TElement>> dispatcher
 ) : MapDecoderBase<TElement>
 {
+    private readonly IMapEncoder<TElement> _encoder = encoder;
+
+    private readonly IMapDecoder<TField> _decoder = decoder;
+
+    private readonly Func<TField, IMapDecoder<TElement>> _dispatcher = dispatcher;
+
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
     {
-        return encoder.GetKeys(ops);
+        return _encoder.GetKeys(ops);
     }
 
     public override DataResult<TElement> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        return decoder.Decode(ops, input).Map(dispatcher).FlatMap(eDecoder => eDecoder.Decode(ops, input));
+        return _decoder.Decode(ops, input).Map(_dispatcher).FlatMap(eDecoder => eDecoder.Decode(ops, input));
     }
 
     public override string ToString()
     {
-        return $"Dependent[{encoder}]";
+        return $"Dependent[{_encoder}]";
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is DependentRecordDecoder<TElement, TField> decoder
+            && _encoder.Equals(decoder._encoder)
+            && _decoder.Equals(decoder._decoder)
+            && _dispatcher.Equals(decoder._dispatcher);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _encoder.GetHashCode();
+        hash = hash * 31 + _decoder.GetHashCode();
+        hash = hash * 31 + _dispatcher.GetHashCode();
+        return hash;
     }
 }
 
@@ -114,6 +163,22 @@ internal sealed class LiftedRecordEncoder<TInstance, T1, T2>(
         _encoder.Encode(_fromInstance, ops, prefix);
         return prefix;
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is LiftedRecordEncoder<TInstance, T1, T2> encoder
+            && _funcEncoder.Equals(encoder._funcEncoder)
+            && _encoder.Equals(encoder._encoder)
+            && EqualityComparer<T1>.Default.Equals(_fromInstance, encoder._fromInstance);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcEncoder.GetHashCode();
+        hash = hash * 31 + _encoder.GetHashCode();
+        hash = hash * 31 + (_fromInstance is null ? 0 : _fromInstance.GetHashCode());
+        return hash;
+    }
 }
 
 internal sealed class LiftedRecordDecoder<TInstance, T1, T2>(
@@ -133,6 +198,18 @@ internal sealed class LiftedRecordDecoder<TInstance, T1, T2>(
     public override DataResult<T2> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
         return _decoder.Decode(ops, input).FlatMap(t1 => _funcDecoder.Decode(ops, input).Map(f => f.Apply(t1)));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is LiftedRecordDecoder<TInstance, T1, T2> decoder
+            && _funcDecoder.Equals(decoder._funcDecoder)
+            && _decoder.Equals(decoder._decoder);
+    }
+
+    public override int GetHashCode()
+    {
+        return _funcDecoder.GetHashCode() + _decoder.GetHashCode() * 31;
     }
 }
 
@@ -172,6 +249,26 @@ internal sealed class RecordEncoder2<TInstance, T1, T2, TR>(
         _encoder2.Encode(_fromInstance2, ops, prefix);
         return prefix;
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordEncoder2<TInstance, T1, T2, TR> encoder
+            && _funcEncoder.Equals(encoder._funcEncoder)
+            && _encoder1.Equals(encoder._encoder1)
+            && _encoder2.Equals(encoder._encoder2)
+            && EqualityComparer<T1>.Default.Equals(_fromInstance1, encoder._fromInstance1)
+            && EqualityComparer<T2>.Default.Equals(_fromInstance2, encoder._fromInstance2);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcEncoder.GetHashCode();
+        hash = hash * 31 + _encoder1.GetHashCode();
+        hash = hash * 31 + _encoder2.GetHashCode();
+        hash = hash * 31 + (_fromInstance1 is null ? 0 : _fromInstance1.GetHashCode());
+        hash = hash * 31 + (_fromInstance2 is null ? 0 : _fromInstance2.GetHashCode());
+        return hash;
+    }
 }
 
 internal sealed class RecordDecoder2<TInstance, T1, T2, TR>(
@@ -200,6 +297,22 @@ internal sealed class RecordDecoder2<TInstance, T1, T2, TR>(
                 _decoder2.Decode(ops, input)
             )
         );
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordDecoder2<TInstance, T1, T2, TR> decoder
+            && _funcDecoder.Equals(decoder._funcDecoder)
+            && _decoder1.Equals(decoder._decoder1)
+            && _decoder2.Equals(decoder._decoder2);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcDecoder.GetHashCode();
+        hash = hash * 31 + _decoder1.GetHashCode();
+        hash = hash * 31 + _decoder2.GetHashCode();
+        return hash;
     }
 }
 
@@ -245,6 +358,30 @@ internal sealed class RecordEncoder3<TInstance, T1, T2, T3, TR>(
         _encoder3.Encode(_fromInstance3, ops, prefix);
         return prefix;
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordEncoder3<TInstance, T1, T2, T3, TR> encoder
+            && _funcEncoder.Equals(encoder._funcEncoder)
+            && _encoder1.Equals(encoder._encoder1)
+            && _encoder2.Equals(encoder._encoder2)
+            && _encoder3.Equals(encoder._encoder3)
+            && EqualityComparer<T1>.Default.Equals(_fromInstance1, encoder._fromInstance1)
+            && EqualityComparer<T2>.Default.Equals(_fromInstance2, encoder._fromInstance2)
+            && EqualityComparer<T3>.Default.Equals(_fromInstance3, encoder._fromInstance3);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcEncoder.GetHashCode();
+        hash = hash * 31 + _encoder1.GetHashCode();
+        hash = hash * 31 + _encoder2.GetHashCode();
+        hash = hash * 31 + _encoder3.GetHashCode();
+        hash = hash * 31 + (_fromInstance1 is null ? 0 : _fromInstance1.GetHashCode());
+        hash = hash * 31 + (_fromInstance2 is null ? 0 : _fromInstance2.GetHashCode());
+        hash = hash * 31 + (_fromInstance3 is null ? 0 : _fromInstance3.GetHashCode());
+        return hash;
+    }
 }
 
 internal sealed class RecordDecoder3<TInstance, T1, T2, T3, TR>(
@@ -277,6 +414,24 @@ internal sealed class RecordDecoder3<TInstance, T1, T2, T3, TR>(
                 _decoder3.Decode(ops, input)
             )
         );
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordDecoder3<TInstance, T1, T2, T3, TR> decoder
+            && _funcDecoder.Equals(decoder._funcDecoder)
+            && _decoder1.Equals(decoder._decoder1)
+            && _decoder2.Equals(decoder._decoder2)
+            && _decoder3.Equals(decoder._decoder3);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcDecoder.GetHashCode();
+        hash = hash * 31 + _decoder1.GetHashCode();
+        hash = hash * 31 + _decoder2.GetHashCode();
+        hash = hash * 31 + _decoder3.GetHashCode();
+        return hash;
     }
 }
 
@@ -328,6 +483,34 @@ internal sealed class RecordEncoder4<TInstance, T1, T2, T3, T4, TR>(
         _encoder4.Encode(_fromInstance4, ops, prefix);
         return prefix;
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordEncoder4<TInstance, T1, T2, T3, T4, TR> encoder
+            && _funcEncoder.Equals(encoder._funcEncoder)
+            && _encoder1.Equals(encoder._encoder1)
+            && _encoder2.Equals(encoder._encoder2)
+            && _encoder3.Equals(encoder._encoder3)
+            && _encoder4.Equals(encoder._encoder4)
+            && EqualityComparer<T1>.Default.Equals(_fromInstance1, encoder._fromInstance1)
+            && EqualityComparer<T2>.Default.Equals(_fromInstance2, encoder._fromInstance2)
+            && EqualityComparer<T3>.Default.Equals(_fromInstance3, encoder._fromInstance3)
+            && EqualityComparer<T4>.Default.Equals(_fromInstance4, encoder._fromInstance4);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcEncoder.GetHashCode();
+        hash = hash * 31 + _encoder1.GetHashCode();
+        hash = hash * 31 + _encoder2.GetHashCode();
+        hash = hash * 31 + _encoder3.GetHashCode();
+        hash = hash * 31 + _encoder4.GetHashCode();
+        hash = hash * 31 + (_fromInstance1 is null ? 0 : _fromInstance1.GetHashCode());
+        hash = hash * 31 + (_fromInstance2 is null ? 0 : _fromInstance2.GetHashCode());
+        hash = hash * 31 + (_fromInstance3 is null ? 0 : _fromInstance3.GetHashCode());
+        hash = hash * 31 + (_fromInstance4 is null ? 0 : _fromInstance4.GetHashCode());
+        return hash;
+    }
 }
 
 internal sealed class RecordDecoder4<TInstance, T1, T2, T3, T4, TR>(
@@ -364,5 +547,25 @@ internal sealed class RecordDecoder4<TInstance, T1, T2, T3, T4, TR>(
                 _decoder4.Decode(ops, input)
             )
         );
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RecordDecoder4<TInstance, T1, T2, T3, T4, TR> decoder
+            && _funcDecoder.Equals(decoder._funcDecoder)
+            && _decoder1.Equals(decoder._decoder1)
+            && _decoder2.Equals(decoder._decoder2)
+            && _decoder3.Equals(decoder._decoder3)
+            && _decoder4.Equals(decoder._decoder4);
+    }
+
+    public override int GetHashCode()
+    {
+        int hash = _funcDecoder.GetHashCode();
+        hash = hash * 31 + _decoder1.GetHashCode();
+        hash = hash * 31 + _decoder2.GetHashCode();
+        hash = hash * 31 + _decoder3.GetHashCode();
+        hash = hash * 31 + _decoder4.GetHashCode();
+        return hash;
     }
 }

@@ -12,11 +12,14 @@ namespace DataFixerUpper.Serialization.Codecs.Impl;
 internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
 {
     private const string CompressedValueKey = "value";
-    public override ValueHolder<string> CodecNameHolder => baseCodec.CodecNameHolder;
+
+    private readonly Codec<T> _baseCodec = baseCodec;
+
+    public override ValueHolder<string> CodecNameHolder => _baseCodec.CodecNameHolder;
 
     public override RecordBuilder<TObject> Encode<TObject>(T input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
-        DataResult<TObject> encoded = baseCodec.EncodeStart(ops, input);
+        DataResult<TObject> encoded = _baseCodec.EncodeStart(ops, input);
         if (ops.CompressMaps())
         {
             return prefix.Add(CompressedValueKey, encoded);
@@ -30,13 +33,13 @@ internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
     {
         if (!ops.CompressMaps())
         {
-            return baseCodec.Parse(ops, ops.CreateMap(input));
+            return _baseCodec.Parse(ops, ops.CreateMap(input));
         }
 
         TObject? value = input[CompressedValueKey];
         return value is null
             ? DataResult.CreateError<T>("Missing value")
-            : baseCodec.Parse(ops, value);
+            : _baseCodec.Parse(ops, value);
     }
 
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
@@ -46,6 +49,16 @@ internal sealed class CodecMapCodec<T>(Codec<T> baseCodec) : MapCodec<T>
 
     public override Codec<T> AsCodec()
     {
-        return baseCodec;
+        return _baseCodec;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is CodecMapCodec<T> codec && _baseCodec.Equals(codec._baseCodec);
+    }
+
+    public override int GetHashCode()
+    {
+        return _baseCodec.GetHashCode();
     }
 }
