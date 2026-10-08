@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Collections;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Utils;
@@ -521,8 +520,8 @@ public sealed class JsonOps : DynamicOps<JsonNode>
                 return DataResult.CreateError($"Cannot merge json object into not an object: {prefix}", Optional.Create(prefix));
             }
 
-            JsonObject merged = prefixObject.Aggregate(
-                builder, (obj, pair) =>
+            JsonObject merged = builder.Aggregate(
+                prefixObject, (obj, pair) =>
                 {
                     obj[pair.Key] = pair.Value;
                     return obj;

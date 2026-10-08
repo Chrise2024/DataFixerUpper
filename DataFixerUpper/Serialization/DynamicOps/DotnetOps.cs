@@ -521,7 +521,25 @@ public sealed class DotnetOps : DynamicOps<object>
 
         protected override DataResult<object> BuildResult(ImmutableList<Pair<object, object?>>.Builder builder, object? prefix)
         {
-            return Ops.MergeToMap(prefix, builder.ToImmutable());
+            if (Ops.IsEmpty(prefix))
+            {
+                return DataResult.CreateSuccess<object>(builder);
+            }
+
+            if (prefix is not IDictionary<object, object?> prefixObject)
+            {
+                return DataResult.CreateError($"Cannot merge json object into not an object: {prefix}", Optional.Create(prefix));
+            }
+            
+            IDictionary<object, object?> merged = builder.Aggregate(
+                prefixObject, (obj, pair) =>
+                {
+                    obj[pair.First] = pair.Second;
+                    return obj;
+                }
+            );
+            
+            return DataResult.CreateSuccess<object>(merged);
         }
 
         protected override ImmutableList<Pair<object, object?>>.Builder Append(object key, object? value, ImmutableList<Pair<object, object?>>.Builder builder)
