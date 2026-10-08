@@ -115,6 +115,11 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The value of the <see cref="P:DataFixerUpper.Utils.Optional`1.Value"/> property if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="defaultValue"/> parameter.</returns>
     public T GetOrDefault(Provider<T> defaultValue)
     {
+        if (defaultValue is null)
+        {
+            throw new ArgumentNullException(nameof(defaultValue));
+        }
+
         return HasValue ? _value : defaultValue.Get();
     }
 
@@ -131,6 +136,11 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>The <see cref="T:DataFixerUpper.Utils.Optional`1"/> self if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="provider"/> parameter provided.</returns>
     public Optional<T> GetOrElse(Provider<Optional<T>> provider)
     {
+        if (provider is null)
+        {
+            throw new ArgumentNullException(nameof(provider));
+        }
+
         return HasValue ? this : provider.Get();
     }
 
@@ -192,6 +202,11 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <returns>If <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/> or value is not match <paramref name="predicate"/>, <see cref="P:DataFixerUpper.Utils.Optional`1.Empty"/>; or else self.</returns>
     public Optional<T> Where(Predicate<T> predicate)
     {
+        if (predicate is null)
+        {
+            throw new ArgumentNullException(nameof(predicate));
+        }
+
         if (!HasValue || predicate.Test(_value))
         {
             return this;
@@ -206,12 +221,17 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <param name="action">Action to perform.</param>
     public void IfHasValue(Consumer<T> action)
     {
+        if (action is null)
+        {
+            throw new ArgumentNullException(nameof(action));
+        }
+
         if (HasValue)
         {
             action.Accept(_value);
         }
     }
-    
+
     /// <summary>
     /// If the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>, perform the given action on the value of <see cref="T:DataFixerUpper.Utils.Optional`1"/> or else action if <see langword="false"/>.
     /// </summary>
@@ -219,6 +239,17 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     /// <param name="else">Action to perform if not has value.</param>
     public void IfHasValueOrElse(Consumer<T> action, Action @else)
     {
+        if (action is null)
+        {
+            throw new ArgumentNullException(nameof(action));
+        }
+
+        if (@else is null)
+        {
+            throw new ArgumentNullException(nameof(@else));
+        }
+
+
         if (HasValue)
         {
             action.Accept(_value);

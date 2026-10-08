@@ -79,7 +79,7 @@ public struct ValueHolder<T>
 
         if (Interlocked.CompareExchange(ref _state, 1, 0) == 0)
         {
-            if (_provider == null)
+            if (_provider is null)
             {
                 throw new InvalidOperationException("Provider is null.");
             }
