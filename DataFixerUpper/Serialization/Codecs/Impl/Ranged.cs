@@ -27,7 +27,7 @@ internal sealed class RangedCodec<T>(Codec<T> baseCodec, T minInclusive, T maxIn
         return GetOutOfRangeResult<TObject>(input);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseCodec.Decode(ops, input).FlatMap(t =>
@@ -38,7 +38,7 @@ internal sealed class RangedCodec<T>(Codec<T> baseCodec, T minInclusive, T maxIn
                     return DataResult.CreateSuccess(t);
                 }
 
-                return GetOutOfRangeResult<(T, TObject?)>(value);
+                return GetOutOfRangeResult<Pair<T, TObject?>>(value);
             }
         );
     }

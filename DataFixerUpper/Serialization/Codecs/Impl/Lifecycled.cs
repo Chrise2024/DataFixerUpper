@@ -35,7 +35,7 @@ internal sealed class LifecycleDecoder<T>(IDecoder<T> baseDecoder, Lifecycle lif
 
     private readonly Lifecycle _lifecycle = lifecycle;
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseDecoder.Decode(ops, input).SetLifecycle(_lifecycle);
@@ -67,7 +67,7 @@ internal sealed class LifecycleCodec<T>(Codec<T> baseCodec, Lifecycle lifecycle)
         return _baseCodec.Encode(input, ops, prefix).SetLifecycle(_lifecycle);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseCodec.Decode(ops, input).SetLifecycle(_lifecycle);

@@ -71,7 +71,7 @@ public static class MapCodec
     /// <typeparam name="TLeft">The type of the left value of the pair.</typeparam>
     /// <typeparam name="TRight">The type of the right value of the pair.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.MapCodec`1"/> that combines the fields written by <paramref name="left"/> and <paramref name="right"/>.</returns>
-    public static MapCodec<(TLeft, TRight)> CreatePair<TLeft, TRight>(MapCodec<TLeft> left, MapCodec<TRight> right)
+    public static MapCodec<Pair<TLeft, TRight>> CreatePair<TLeft, TRight>(MapCodec<TLeft> left, MapCodec<TRight> right)
     {
         return new PairMapCodec<TLeft, TRight>(left, right);
     }

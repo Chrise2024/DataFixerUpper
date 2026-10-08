@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Collections;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Serialization.DynamicOps;
@@ -25,16 +24,16 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
         );
     }
 
-    public override DataResult<(Either<TL, TR>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<Either<TL, TR>, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        DataResult<(Either<TL, TR>, TObject?)> lResult = _lCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject?)>(result => result.MapFirst(Either.CreateLeft<TL, TR>));
+        DataResult<Pair<Either<TL, TR>, TObject?>> lResult = _lCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateLeft<TL, TR>));
         if (lResult.IsSuccess)
         {
             return lResult;
         }
 
-        DataResult<(Either<TL, TR>, TObject?)> rResult = _rCodec.Decode(ops, input).Map<(Either<TL, TR>, TObject?)>(result => result.MapFirst(Either.CreateRight<TL, TR>));
+        DataResult<Pair<Either<TL, TR>, TObject?>> rResult = _rCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateRight<TL, TR>));
         if (rResult.IsSuccess)
         {
             return rResult;
@@ -50,7 +49,7 @@ internal sealed class EitherCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : 
             return rResult;
         }
 
-        return DataResult.CreateError<(Either<TL, TR>, TObject?)>($"Failed to parse either. First: {lResult.ErrorResult?.Message} Second: {rResult.ErrorResult?.Message}");
+        return DataResult.CreateError<Pair<Either<TL, TR>, TObject?>>($"Failed to parse either. First: {lResult.ErrorResult?.Message} Second: {rResult.ErrorResult?.Message}");
     }
 
     public override bool Equals(object? obj)

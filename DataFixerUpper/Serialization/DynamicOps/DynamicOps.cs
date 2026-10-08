@@ -41,7 +41,7 @@ public abstract class DynamicOps<TObject>
     /// <returns>The empty map.</returns>
     public virtual TObject EmptyMap()
     {
-        return CreateMap(Enumerable.Empty<KeyValuePair<TObject, TObject?>>());
+        return CreateMap(Enumerable.Empty<Pair<TObject, TObject?>>());
     }
 
     /// <summary>
@@ -288,7 +288,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="entries">The entries of the map.</param>
     /// <returns>The serialized map.</returns>
-    public abstract TObject CreateMap(IEnumerable<KeyValuePair<TObject, TObject?>> entries);
+    public abstract TObject CreateMap(IEnumerable<Pair<TObject, TObject?>> entries);
 
     /// <summary>
     /// Creates a serialized map from entries with string keys.
@@ -298,9 +298,9 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// The keys are converted with <c>CreateString</c>.
     /// </remarks>
-    public virtual TObject CreateMap(IEnumerable<KeyValuePair<string, TObject?>> entries)
+    public virtual TObject CreateMap(IEnumerable<Pair<string, TObject?>> entries)
     {
-        return CreateMap(entries.Select(pair => pair.MapKey(CreateString)));
+        return CreateMap(entries.Select(pair => pair.MapFirst(CreateString)));
     }
 
     /// <summary>
@@ -399,7 +399,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// If <paramref name="map"/> is empty, the result is created with <c>CreateMap</c>. Otherwise, the entries are merged one at a time with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<KeyValuePair<string, TObject?>> values)
+    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<Pair<string, TObject?>> values)
     {
         if (IsEmpty(map))
         {
@@ -408,7 +408,7 @@ public abstract class DynamicOps<TObject>
 
         return values.Aggregate(
             DataResult.CreateSuccess(map),
-            (seed, pair) => seed.FlatMap(r => MergeToMap(r, pair.Key, pair.Value))
+            (seed, pair) => seed.FlatMap(r => MergeToMap(r, pair.First, pair.Second))
         );
     }
 
@@ -421,7 +421,7 @@ public abstract class DynamicOps<TObject>
     /// <remarks>
     /// If <paramref name="map"/> is empty, the result is created with <c>CreateMap</c>. Otherwise, the entries are merged one at a time with <c>MergeToMap</c>.
     /// </remarks>
-    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<KeyValuePair<TObject, TObject?>> values)
+    public virtual DataResult<TObject> MergeToMap(TObject? map, IEnumerable<Pair<TObject, TObject?>> values)
     {
         if (IsEmpty(map))
         {
@@ -430,7 +430,7 @@ public abstract class DynamicOps<TObject>
 
         return values.Aggregate(
             DataResult.CreateSuccess(map),
-            (seed, pair) => seed.FlatMap(r => MergeToMap(r, pair.Key, pair.Value))
+            (seed, pair) => seed.FlatMap(r => MergeToMap(r, pair.First, pair.Second))
         );
     }
 
@@ -476,14 +476,7 @@ public abstract class DynamicOps<TObject>
             {
                 try
                 {
-                    return DataResult.CreateSuccess(
-                        MapLike<TObject>.ForMap(
-                            pairs.ToDictionary(
-                                p => p.Key,
-                                p => p.Value
-                            ), this
-                        )
-                    );
+                    return DataResult.CreateSuccess(MapLike<TObject>.ForMap(pairs.ToDictionary(), this));
                 }
                 catch (Exception e)
                 {
@@ -498,7 +491,7 @@ public abstract class DynamicOps<TObject>
     /// </summary>
     /// <param name="input">The serialized map to read.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if <paramref name="input"/> is not a map.</returns>
-    public abstract DataResult<IEnumerable<KeyValuePair<TObject, TObject?>>> GetMapValues(TObject? input);
+    public abstract DataResult<IEnumerable<Pair<TObject, TObject?>>> GetMapValues(TObject? input);
 
 
     /// <summary>
@@ -510,13 +503,13 @@ public abstract class DynamicOps<TObject>
     {
         return GetMapValues(input).Map(MakeForeach);
 
-        static Consumer<BiConsumer<TObject, TObject?>> MakeForeach(IEnumerable<KeyValuePair<TObject, TObject?>> keyValuePairs)
+        static Consumer<BiConsumer<TObject, TObject?>> MakeForeach(IEnumerable<Pair<TObject, TObject?>> keyValuePairs)
         {
             return func =>
             {
-                foreach (KeyValuePair<TObject, TObject?> pair in keyValuePairs)
+                foreach (Pair<TObject, TObject?> pair in keyValuePairs)
                 {
-                    func.Accept(pair.Key, pair.Value);
+                    func.Accept(pair.First, pair.Second);
                 }
             };
         }

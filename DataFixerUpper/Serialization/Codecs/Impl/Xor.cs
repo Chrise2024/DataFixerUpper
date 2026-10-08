@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Collections;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Serialization.DynamicOps;
@@ -25,15 +24,15 @@ internal sealed class XorCodec<TL, TR>(Codec<TL> lCodec, Codec<TR> rCodec) : Cod
         );
     }
 
-    public override DataResult<(Either<TL, TR>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<Either<TL, TR>, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        DataResult<(Either<TL, TR>, TObject?)> lResult = _lCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateLeft<TL, TR>));
-        DataResult<(Either<TL, TR>, TObject?)> rResult = _rCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateRight<TL, TR>));
+        DataResult<Pair<Either<TL, TR>, TObject?>> lResult = _lCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateLeft<TL, TR>));
+        DataResult<Pair<Either<TL, TR>, TObject?>> rResult = _rCodec.Decode(ops, input).Map(result => result.MapFirst(Either.CreateRight<TL, TR>));
 
-        if (lResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject?) lp) && rResult.TryGetResultOrPartial(out (Either<TL, TR>, TObject?) rp))
+        if (lResult.TryGetResultOrPartial(out Pair<Either<TL, TR>, TObject?> lp) && rResult.TryGetResultOrPartial(out Pair<Either<TL, TR>, TObject?> rp))
         {
-            return DataResult.CreateError<(Either<TL, TR>, TObject?)>($"Both alternatives read successfully, can not pick the correct one. First: {lp} Second: {rp}");
+            return DataResult.CreateError<Pair<Either<TL, TR>, TObject?>>($"Both alternatives read successfully, can not pick the correct one. First: {lp} Second: {rp}");
         }
 
         if (lResult.HasResultOrPartial)

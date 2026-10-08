@@ -89,7 +89,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder)
+    public override DataResult<Pair<TResult, TObject?>> Decode<TResult>(IDecoder<TResult> decoder)
     {
         return _delegate.FlatMap(dynamic => dynamic.Decode(decoder));
     }
@@ -119,7 +119,7 @@ public sealed class OptionalDynamic<TObject>(DynamicOps<TObject> ops, DataResult
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
+    public override DataResult<IEnumerable<Pair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
     {
         return _delegate.FlatMap(dynamic => dynamic.AsMapOpt());
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using DataFixerUpper.Serialization.Codecs;
+using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.DynamicOps;
 
@@ -34,7 +35,7 @@ public abstract class DynamicLike<TObject>
     /// <param name="decoder">The decoder used to parse this value.</param>
     /// <typeparam name="TResult">The type of the decoded value.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded value together with the remaining input, or an error if this value cannot be decoded.</returns>
-    public abstract DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder);
+    public abstract DataResult<Pair<TResult, TObject?>> Decode<TResult>(IDecoder<TResult> decoder);
 
     /// <summary>
     /// Reads this value as a number.
@@ -82,7 +83,7 @@ public abstract class DynamicLike<TObject>
     /// Reads this value as a map.
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if this value is not a map.</returns>
-    public abstract DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt();
+    public abstract DataResult<IEnumerable<Pair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt();
 
     /// <summary>
     /// Reads the entry stored under the given <paramref name="key"/>.

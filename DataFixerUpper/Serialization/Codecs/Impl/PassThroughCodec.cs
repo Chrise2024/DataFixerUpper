@@ -32,10 +32,10 @@ internal sealed class PassThroughCodec : Codec<IDynamic>
         return DataResult.CreateError<TObject>($"Don't know how to merge {prefix} and {casted}");
     }
 
-    public override DataResult<(IDynamic, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<IDynamic, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return DataResult.CreateSuccess(((IDynamic) new Dynamic<TObject>(ops, input), ops.Empty()));
+        return DataResult.CreateSuccess(Pair.Create<IDynamic, TObject?>(new Dynamic<TObject>(ops, input), ops.Empty()));
     }
 
     public override bool Equals(object? obj)

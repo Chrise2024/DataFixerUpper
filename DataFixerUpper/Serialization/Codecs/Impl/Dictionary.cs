@@ -23,14 +23,14 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
         IDictionary<TKey, TValue> read = Mutable
             ? new Dictionary<TKey, TValue>()
             : ImmutableDictionary.CreateBuilder<TKey, TValue>();
-        ImmutableDictionary<TObject, TObject?>.Builder fails = ImmutableDictionary.CreateBuilder<TObject, TObject?>();
+        ImmutableList<Pair<TObject, TObject?>>.Builder fails = ImmutableList.CreateBuilder<Pair<TObject, TObject?>>();
 
         DataResult<Unit> aggregatedResult = map.Aggregate(
             DataResult.CreateSuccess(Unit.Instance, Lifecycle.Stable),
             (seed, entry) =>
             {
-                DataResult<TKey> keyResult = KeyCodec.Parse(ops, entry.Key);
-                DataResult<TValue> valueResult = keyResult.FlatMap(k => ValueCodecDispatcher.Apply(k).Parse(ops, entry.Value));
+                DataResult<TKey> keyResult = KeyCodec.Parse(ops, entry.First);
+                DataResult<TValue> valueResult = keyResult.FlatMap(k => ValueCodecDispatcher.Apply(k).Parse(ops, entry.Second));
                 DataResult<KeyValuePair<TKey, TValue>> entryResult = keyResult.CombineStable(Functions.CreatePair, valueResult);
 
                 if (entryResult.TryGetResultOrPartial(out KeyValuePair<TKey, TValue> combinedEntry))
@@ -40,7 +40,7 @@ internal sealed record DictionaryCodecState<TKey, TValue>(
                         fails.Add(entry);
                         seed = seed.CombineStable(
                             Functions.LiftFirst,
-                            DataResult.CreateError<Unit>($"Duplicate entry for key: '{entry.Key}'")
+                            DataResult.CreateError<Unit>($"Duplicate entry for key: '{entry.First}'")
                         );
                     }
                     else
@@ -164,7 +164,7 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(
+    public override DataResult<Pair<IDictionary<TKey, TValue>, TObject?>> Decode<TObject>(
         DynamicOps<TObject> ops,
         TObject? input
     )
@@ -172,7 +172,7 @@ internal sealed class UnboundedDictionaryCodec<TKey, TValue>(
     {
         return ops.GetMap(input)
             .SetLifecycle(Lifecycle.Stable)
-            .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => (result, input)));
+            .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => Pair.Create(result, input)));
     }
 
     public override bool Equals(object? obj)
@@ -214,12 +214,12 @@ internal sealed class DispatchedDictionaryCodec<TKey, TValue>(
         return _state.EncodeDictionary(input, ops, ops.CreateMapBuilder()).Build(prefix);
     }
 
-    public override DataResult<(IDictionary<TKey, TValue>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<IDictionary<TKey, TValue>, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetMap(input)
             .SetLifecycle(Lifecycle.Stable)
-            .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => (result, input)));
+            .FlatMap(map => _state.DecodeDictionary(ops, map).Map(result => Pair.Create(result, input)));
     }
 
     public override bool Equals(object? obj)

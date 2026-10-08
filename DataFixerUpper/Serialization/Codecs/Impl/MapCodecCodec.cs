@@ -16,10 +16,10 @@ internal sealed class MapCodecCodec<T>(MapCodec<T> baseCodec) : Codec<T>
         return _baseCodec.Encode(input, ops, _baseCodec.GetCompressedBuilder(ops)).Build(prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return _baseCodec.CompressedDecode(ops, input).Map(r => (r, input));
+        return _baseCodec.CompressedDecode(ops, input).Map(r => Pair.Create(r, input));
     }
 
     public override bool Equals(object? obj)
@@ -58,10 +58,10 @@ internal sealed class MapDecoderDecoder<T>(IMapDecoder<T> baseDecoder) : Decoder
 {
     private readonly IMapDecoder<T> _baseDecoder = baseDecoder;
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return _baseDecoder.CompressedDecode(ops, input).Map(r => (r, input));
+        return _baseDecoder.CompressedDecode(ops, input).Map(r => Pair.Create(r, input));
     }
 
     public override bool Equals(object? obj)

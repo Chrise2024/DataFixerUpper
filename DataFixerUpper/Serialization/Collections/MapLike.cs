@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataFixerUpper.Serialization.DynamicOps;
+using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.Collections;
 
@@ -9,7 +10,7 @@ namespace DataFixerUpper.Serialization.Collections;
 /// An unmodifiable store for serialized key-value pairs. This interface can be used when access to and iteration over serialized key-value pairs.
 /// </summary>
 /// <typeparam name="TObject">The type of the serialized form.</typeparam>
-public abstract class MapLike<TObject> : IEnumerable<KeyValuePair<TObject, TObject?>>
+public abstract class MapLike<TObject> : IEnumerable<Pair<TObject, TObject?>>
     where TObject : notnull
 {
     /// <summary>
@@ -37,7 +38,7 @@ public abstract class MapLike<TObject> : IEnumerable<KeyValuePair<TObject, TObje
     public abstract TObject? this[string key] { get; }
 
     /// <inheritdoc/>
-    public abstract IEnumerator<KeyValuePair<TObject, TObject?>> GetEnumerator();
+    public abstract IEnumerator<Pair<TObject, TObject?>> GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
     {
@@ -80,9 +81,9 @@ file sealed class CompressedImpl<TObject>(IList<TObject?> values, KeyCompressor<
 
     public override TObject? this[string key] => values[compressor.Compress(key)];
 
-    public override IEnumerator<KeyValuePair<TObject, TObject?>> GetEnumerator()
+    public override IEnumerator<Pair<TObject, TObject?>> GetEnumerator()
     {
-        return values.Select((t, i) => new KeyValuePair<TObject, TObject?>(compressor.Decompress(i), t)).GetEnumerator();
+        return values.Select((t, i) => Pair.Create(compressor.Decompress(i), t)).GetEnumerator();
     }
 
     public override string ToString()
@@ -99,9 +100,9 @@ file sealed class DictImpl<TObject>(DynamicOps<TObject> ops, IDictionary<TObject
 
     public override TObject? this[string key] => this[ops.CreateString(key)];
 
-    public override IEnumerator<KeyValuePair<TObject, TObject?>> GetEnumerator()
+    public override IEnumerator<Pair<TObject, TObject?>> GetEnumerator()
     {
-        return map.GetEnumerator();
+        return map.Select(Pair.FromKeyValuePair).GetEnumerator();
     }
 
     public override string ToString()
@@ -118,7 +119,7 @@ file sealed class EmptyImpl<TObject> : MapLike<TObject>
 
     public override TObject? this[string key] => default;
 
-    public override IEnumerator<KeyValuePair<TObject, TObject?>> GetEnumerator()
+    public override IEnumerator<Pair<TObject, TObject?>> GetEnumerator()
     {
         yield break;
     }

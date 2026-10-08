@@ -43,10 +43,10 @@ public abstract class PrimitiveCodec<T> : Codec<T>
     }
 
     /// <inheritdoc/>
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return Read(ops, input).Map(value => (value, ops.Empty()));
+        return Read(ops, input).Map(value => Pair.Create(value, ops.Empty()));
     }
 
     /// <inheritdoc/>

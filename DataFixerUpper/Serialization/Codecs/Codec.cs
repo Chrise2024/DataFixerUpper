@@ -74,7 +74,7 @@ public static partial class Codec
     /// <typeparam name="TLeft">The type of the left value of the pair.</typeparam>
     /// <typeparam name="TRight">The type of the right value of the pair.</typeparam>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.Codecs.Codec`1"/> that encodes the left value followed by the right value and decodes them in the same order.</returns>
-    public static Codec<(TLeft, TRight)> CreatePair<TLeft, TRight>(Codec<TLeft> left, Codec<TRight> right)
+    public static Codec<Pair<TLeft, TRight>> CreatePair<TLeft, TRight>(Codec<TLeft> left, Codec<TRight> right)
     {
         return new PairCodec<TLeft, TRight>(left, right);
     }
@@ -312,7 +312,7 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
         where TObject : notnull;
 
     /// <inheritdoc/>
-    public abstract DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public abstract DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : notnull;
 
     IEncoder<T> IEncoder<T>.WithLifecycle(Lifecycle lifecycle)
@@ -390,7 +390,7 @@ public abstract partial class Codec<T> : IEncoder<T>, IDecoder<T>
         /// <param name="original">The result produced by the decoder.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>The transformed result.</returns>
-        DataResult<(T, TObject?)> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<(T, TObject?)> original)
+        DataResult<Pair<T, TObject?>> Apply<TObject>(DynamicOps<TObject> ops, TObject? input, DataResult<Pair<T, TObject?>> original)
             where TObject : notnull;
 
         /// <summary>

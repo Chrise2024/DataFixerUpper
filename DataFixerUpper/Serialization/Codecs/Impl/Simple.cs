@@ -23,7 +23,7 @@ internal sealed class SimpleCodec<T>(IEncoder<T> encoder, IDecoder<T> decoder, V
         return _encoder.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _decoder.Decode(ops, input);

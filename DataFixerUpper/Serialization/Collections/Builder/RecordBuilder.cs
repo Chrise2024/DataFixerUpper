@@ -40,9 +40,9 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="pair">The entry to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> Add(KeyValuePair<TObject, TObject?> pair)
+    public RecordBuilder<TObject> Add(Pair<TObject, TObject?> pair)
     {
-        return Add(pair.Key, pair.Value);
+        return Add(pair.First, pair.Second);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="pairs">The entries to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> AddRange(IEnumerable<KeyValuePair<TObject, TObject?>> pairs)
+    public RecordBuilder<TObject> AddRange(IEnumerable<Pair<TObject, TObject?>> pairs)
     {
         return pairs.Aggregate(this, (builder, pair) => builder.Add(pair));
     }

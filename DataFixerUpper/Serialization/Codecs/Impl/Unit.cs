@@ -61,11 +61,11 @@ internal sealed class UnitCodec<T>(ValueHolder<T> valueHolder) : Codec<T>
         return ops.MergeToMap(prefix, MapLike<TObject>.Empty);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.CompressMaps()
-            ? ops.GetList(input).Map(_ => (valueHolder.Value, input))
-            : ops.GetMapValues(input).Map(_ => (valueHolder.Value, input));
+            ? ops.GetList(input).Map(_ => Pair.Create(valueHolder.Value, input))
+            : ops.GetMapValues(input).Map(_ => Pair.Create(valueHolder.Value, input));
     }
 }

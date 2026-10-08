@@ -194,23 +194,23 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateMap(IEnumerable<KeyValuePair<string, JsonNode?>> entries)
+    public override JsonNode CreateMap(IEnumerable<Pair<string, JsonNode?>> entries)
     {
-        return new JsonObject(entries.Select(pair => pair.MapValue(v => v?.DeepClone())));
+        return new JsonObject(entries.Select(pair => new KeyValuePair<string, JsonNode?>(pair.First, pair.Second?.DeepClone())));
     }
 
     /// <inheritdoc/>
-    public override JsonNode CreateMap(IEnumerable<KeyValuePair<JsonNode, JsonNode?>> entries)
+    public override JsonNode CreateMap(IEnumerable<Pair<JsonNode, JsonNode?>> entries)
     {
         JsonObject jsonObject = new();
-        foreach (KeyValuePair<JsonNode, JsonNode?> pair in entries)
+        foreach (Pair<JsonNode, JsonNode?> pair in entries)
         {
-            if (pair.Key.GetValueKind() != JsonValueKind.String)
+            if (pair.First.GetValueKind() != JsonValueKind.String)
             {
                 continue;
             }
 
-            jsonObject.Add(pair.Key.GetValue<string>(), pair.Value?.DeepClone());
+            jsonObject.Add(pair.First.GetValue<string>(), pair.Second?.DeepClone());
         }
 
         return jsonObject;
@@ -286,7 +286,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<KeyValuePair<string, JsonNode?>> values)
+    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<Pair<string, JsonNode?>> values)
     {
         if (map is not JsonObject && !IsEmpty(map))
         {
@@ -297,7 +297,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         JsonObject result = values.Aggregate(
             newObject, (obj, pair) =>
             {
-                obj[pair.Key] = pair.Value?.DeepClone();
+                obj[pair.First] = pair.Second?.DeepClone();
                 return obj;
             }
         );
@@ -305,7 +305,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<KeyValuePair<JsonNode, JsonNode?>> values)
+    public override DataResult<JsonNode> MergeToMap(JsonNode? map, IEnumerable<Pair<JsonNode, JsonNode?>> values)
     {
         if (map is not JsonObject && !IsEmpty(map))
         {
@@ -316,15 +316,15 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         JsonObject newObject = IsEmpty(map) ? new JsonObject() : map.DeepClone().AsObject();
         LinkedList<JsonNode> fails = new();
 
-        foreach (KeyValuePair<JsonNode, JsonNode?> pair in values)
+        foreach (Pair<JsonNode, JsonNode?> pair in values)
         {
-            if (pair.Key.GetValueKind() != JsonValueKind.String)
+            if (pair.First.GetValueKind() != JsonValueKind.String)
             {
-                fails.AddLast(pair.Key);
+                fails.AddLast(pair.First);
                 continue;
             }
 
-            newObject[pair.Key.GetValue<string>()] = pair.Value?.DeepClone();
+            newObject[pair.First.GetValue<string>()] = pair.Second?.DeepClone();
         }
 
         return fails.Count > 0
@@ -333,14 +333,14 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<JsonNode, JsonNode?>>> GetMapValues(JsonNode? input)
+    public override DataResult<IEnumerable<Pair<JsonNode, JsonNode?>>> GetMapValues(JsonNode? input)
     {
         if (input is not JsonObject jsonObject)
         {
-            return DataResult.CreateError<IEnumerable<KeyValuePair<JsonNode, JsonNode?>>>($"{nameof(GetMapValues)} called with not a map: {input}");
+            return DataResult.CreateError<IEnumerable<Pair<JsonNode, JsonNode?>>>($"{nameof(GetMapValues)} called with not a map: {input}");
         }
 
-        return DataResult.CreateSuccess(jsonObject.Select(pair => pair.MapKey(CreateString)));
+        return DataResult.CreateSuccess(jsonObject.Select(pair => Pair.Create(CreateString(pair.Key), pair.Value)));
     }
 
     /// <inheritdoc/>
@@ -480,9 +480,9 @@ public sealed class JsonOps : DynamicOps<JsonNode>
 
         public override JsonNode? this[string key] => jsonObject[key];
 
-        public override IEnumerator<KeyValuePair<JsonNode, JsonNode?>> GetEnumerator()
+        public override IEnumerator<Pair<JsonNode, JsonNode?>> GetEnumerator()
         {
-            return jsonObject.Select(pair => pair.MapKey(ops.CreateString)).GetEnumerator();
+            return jsonObject.Select(pair => Pair.Create(ops.CreateString(pair.Key), pair.Value)).GetEnumerator();
         }
     }
 

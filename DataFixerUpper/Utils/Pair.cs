@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using DataFixerUpper.Extensions;
 
 namespace DataFixerUpper.Utils;
@@ -20,6 +21,30 @@ public static class Pair
     public static Pair<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second)
     {
         return new Pair<TFirst, TSecond>(first, second);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="T:DataFixerUpper.Utils.Pair`2"/> instance from <see cref="T:System.Collections.Generic.KeyValuePair`2"/>.
+    /// </summary>
+    /// <param name="pair">The pair.</param>
+    /// <typeparam name="TFirst">First type.</typeparam>
+    /// <typeparam name="TSecond">Second type.</typeparam>
+    /// <returns>New <see cref="T:DataFixerUpper.Utils.Pair`2"/> instance contains values.</returns>
+    public static Pair<TFirst, TSecond> FromKeyValuePair<TFirst, TSecond>(KeyValuePair<TFirst, TSecond> pair)
+    {
+        return Create(pair.Key, pair.Value);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="T:DataFixerUpper.Utils.Pair`2"/> instance from <see cref="T:System.ValueTuple`2"/>.
+    /// </summary>
+    /// <param name="tuple">The tuple.</param>
+    /// <typeparam name="TFirst">First type.</typeparam>
+    /// <typeparam name="TSecond">Second type.</typeparam>
+    /// <returns>New <see cref="T:DataFixerUpper.Utils.Pair`2"/> instance contains values.</returns>
+    public static Pair<TFirst, TSecond> FromTuple<TFirst, TSecond>((TFirst, TSecond) tuple)
+    {
+        return Create(tuple.Item1, tuple.Item2);
     }
 
     /// <summary>
@@ -108,6 +133,24 @@ public readonly struct Pair<TFirst, TSecond> : IEquatable<Pair<TFirst, TSecond>>
         return new Pair<TFirst, TSecond1>(First, mapper.Apply(Second));
     }
 
+    /// <summary>
+    /// Convert this <see cref="T:DataFixerUpper.Utils.Pair`2"/> into <see cref="T:System.Collections.Generic.KeyValuePair`2"/>.
+    /// </summary>
+    /// <returns>Converted <see cref="T:System.Collections.Generic.KeyValuePair`2"/>.</returns>
+    public KeyValuePair<TFirst, TSecond> ToKeyValuePair()
+    {
+        return new KeyValuePair<TFirst, TSecond>(First, Second);
+    }
+
+    /// <summary>
+    /// Convert this <see cref="T:DataFixerUpper.Utils.Pair`2"/> into <see cref="T:System.ValueTuple`2"/>.
+    /// </summary>
+    /// <returns>Converted <see cref="T:System.ValueTuple`2"/>.</returns>
+    public (TFirst, TSecond) ToTuple()
+    {
+        return (First, Second);
+    }
+
     /// <inheritdoc/>
     public bool Equals(Pair<TFirst, TSecond> other)
     {
@@ -130,6 +173,16 @@ public readonly struct Pair<TFirst, TSecond> : IEquatable<Pair<TFirst, TSecond>>
     public override string ToString()
     {
         return $"({First},{Second})";
+    }
+
+    /// <summary>Deconstructs the current <see cref="T:DataFixerUpper.Utils.Pair`2" />.</summary>
+    /// <param name="first">The first of the current <see cref="T:DataFixerUpper.Utils.Pair`2" />.</param>
+    /// <param name="second">The second of the current <see cref="T:DataFixerUpper.Utils.Pair`2" />.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void Deconstruct(out TFirst first, out TSecond second)
+    {
+        first = First;
+        second = Second;
     }
 
     private bool EqualsCore(Pair<TFirst, TSecond> other)

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Collections;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Utils;
@@ -262,13 +261,13 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override object CreateMap(IEnumerable<KeyValuePair<object, object?>> entries)
+    public override object CreateMap(IEnumerable<Pair<object, object?>> entries)
     {
         return entries.ToImmutableDictionary();
     }
 
     /// <inheritdoc/>
-    public override object CreateMap(IEnumerable<KeyValuePair<string, object?>> entries)
+    public override object CreateMap(IEnumerable<Pair<string, object?>> entries)
     {
         return entries.ToImmutableDictionary();
     }
@@ -317,7 +316,7 @@ public sealed class DotnetOps : DynamicOps<object>
         if (dict is IDictionary id)
         {
             ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
-            builder.AddRange(GetDictionaryEntries(id));
+            builder.AddRange(GetDictionaryEntriesKvp(id));
             builder.Add(key, value);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
         }
@@ -339,39 +338,39 @@ public sealed class DotnetOps : DynamicOps<object>
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<object, object?>> values)
+    public override DataResult<object> MergeToMap(object? dict, IEnumerable<Pair<object, object?>> values)
     {
         if (dict is IDictionary id)
         {
-            ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
-            builder.AddRange(GetDictionaryEntries(id));
+            ImmutableList<Pair<object, object?>>.Builder builder = ImmutableList.CreateBuilder<Pair<object, object?>>();
+            builder.AddRange(GetDictionaryEntriesP(id));
             builder.AddRange(values);
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
         }
 
         if (dict is null)
         {
-            return DataResult.CreateSuccess<object>(ImmutableDictionary.CreateRange(values));
+            return DataResult.CreateSuccess<object>(ImmutableList.CreateRange(values));
         }
 
         return DataResult.CreateError($"{nameof(MergeToMap)} called with not a dict: {dict}", Optional.Create(dict));
     }
 
     /// <inheritdoc/>
-    public override DataResult<object> MergeToMap(object? dict, IEnumerable<KeyValuePair<string, object?>> values)
+    public override DataResult<object> MergeToMap(object? dict, IEnumerable<Pair<string, object?>> values)
     {
-        return MergeToMap(dict, values.Select(p => p.MapKey(object (k) => k)));
+        return MergeToMap(dict, values.Select(p => p.MapFirst(object (k) => k)));
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<object, object?>>> GetMapValues(object? input)
+    public override DataResult<IEnumerable<Pair<object, object?>>> GetMapValues(object? input)
     {
         if (input is not IDictionary id)
         {
-            return DataResult.CreateError<IEnumerable<KeyValuePair<object, object?>>>($"{nameof(GetMapValues)} called with not a dict: {input}");
+            return DataResult.CreateError<IEnumerable<Pair<object, object?>>>($"{nameof(GetMapValues)} called with not a dict: {input}");
         }
 
-        return DataResult.CreateSuccess(GetDictionaryEntries(id));
+        return DataResult.CreateSuccess(GetDictionaryEntriesP(id));
     }
 
     /// <inheritdoc/>
@@ -393,7 +392,7 @@ public sealed class DotnetOps : DynamicOps<object>
             return DataResult.CreateError<MapLike<object>>($"{nameof(GetMap)} called with not a dict: {input}");
         }
 
-        return DataResult.CreateSuccess(MapLike<object>.ForMap(ImmutableDictionary.CreateRange(GetDictionaryEntries(id)), this));
+        return DataResult.CreateSuccess(MapLike<object>.ForMap(ImmutableDictionary.CreateRange(GetDictionaryEntriesKvp(id)), this));
     }
 
     /// <inheritdoc/>
@@ -493,36 +492,46 @@ public sealed class DotnetOps : DynamicOps<object>
         throw new NotSupportedException($"Unsupported primitive type: {input.GetType()}");
     }
 
-    private static IEnumerable<KeyValuePair<object, object?>> GetDictionaryEntries(IDictionary dictionary)
+    private static IEnumerable<KeyValuePair<object, object?>> GetDictionaryEntriesKvp(IDictionary dictionary)
     {
         // ReSharper disable once GenericEnumeratorNotDisposed
         IDictionaryEnumerator enumerator = dictionary.GetEnumerator();
         while (enumerator.MoveNext())
         {
-            yield return new KeyValuePair<object, object?>(enumerator.Key, enumerator.Value);
+            yield return new KeyValuePair<object, object?>(enumerator.Key!, enumerator.Value);
         }
     }
 
-    private sealed class FixedDictionaryBuilder(DynamicOps<object> ops) : MapBuilderBase<object, ImmutableDictionary<object, object?>.Builder>(ops)
+    private static IEnumerable<Pair<object, object?>> GetDictionaryEntriesP(IDictionary dictionary)
     {
-        protected override ImmutableDictionary<object, object?>.Builder InitBuilder()
+        // ReSharper disable once GenericEnumeratorNotDisposed
+        IDictionaryEnumerator enumerator = dictionary.GetEnumerator();
+        while (enumerator.MoveNext())
         {
-            return ImmutableDictionary.CreateBuilder<object, object?>();
+            yield return Pair.Create<object, object?>(enumerator.Key!, enumerator.Value);
+        }
+    }
+
+    private sealed class FixedDictionaryBuilder(DynamicOps<object> ops) : MapBuilderBase<object, ImmutableList<Pair<object, object?>>.Builder>(ops)
+    {
+        protected override ImmutableList<Pair<object, object?>>.Builder InitBuilder()
+        {
+            return ImmutableList.CreateBuilder<Pair<object, object?>>();
         }
 
-        protected override DataResult<object> BuildResult(ImmutableDictionary<object, object?>.Builder builder, object? prefix)
+        protected override DataResult<object> BuildResult(ImmutableList<Pair<object, object?>>.Builder builder, object? prefix)
         {
             return Ops.MergeToMap(prefix, builder.ToImmutable());
         }
 
-        protected override ImmutableDictionary<object, object?>.Builder Append(object key, object? value, ImmutableDictionary<object, object?>.Builder builder)
+        protected override ImmutableList<Pair<object, object?>>.Builder Append(object key, object? value, ImmutableList<Pair<object, object?>>.Builder builder)
         {
-            return builder.AddAndReturn(key, value);
+            return builder.AddAndReturn(Pair.Create(key, value));
         }
 
-        protected override ImmutableDictionary<object, object?>.Builder Append(string key, object? value, ImmutableDictionary<object, object?>.Builder builder)
+        protected override ImmutableList<Pair<object, object?>>.Builder Append(string key, object? value, ImmutableList<Pair<object, object?>>.Builder builder)
         {
-            return builder.AddAndReturn((object) key, value);
+            return builder.AddAndReturn(Pair.Create((object) key, value));
         }
     }
 }

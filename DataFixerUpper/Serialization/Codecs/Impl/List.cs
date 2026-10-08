@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Serialization.DynamicOps;
 using DataFixerUpper.Utils;
@@ -33,7 +32,7 @@ internal sealed class ListCodec<T>(Codec<T> elementCodec, int minSize = 0, int m
         return builderBase.Build(prefix);
     }
 
-    public override DataResult<(IList<T>, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<IList<T>, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetList(input).FlatMap(l =>
@@ -51,9 +50,9 @@ internal sealed class ListCodec<T>(Codec<T> elementCodec, int minSize = 0, int m
                         continue;
                     }
 
-                    DataResult<(T, TObject?)> elementResult = _elementCodec.Decode(ops, element);
+                    DataResult<Pair<T, TObject?>> elementResult = _elementCodec.Decode(ops, element);
                     elementResult.IfError(_ => fails.Add(element));
-                    if (elementResult.TryGetResultOrPartial(out (T, TObject?) result))
+                    if (elementResult.TryGetResultOrPartial(out Pair<T, TObject?> result))
                     {
                         values.AddLast(result.First);
                     }
@@ -63,7 +62,7 @@ internal sealed class ListCodec<T>(Codec<T> elementCodec, int minSize = 0, int m
 
                 if (values.Count < _minSize)
                 {
-                    return GetInvalidLength<(IList<T>, TObject?)>(values.Count);
+                    return GetInvalidLength<Pair<IList<T>, TObject?>>(values.Count);
                 }
 
                 if (count > _maxSize)
@@ -73,9 +72,9 @@ internal sealed class ListCodec<T>(Codec<T> elementCodec, int minSize = 0, int m
 
                 TObject errors = ops.CreateList(fails.ToImmutable());
                 IList<T> resultValues = _mutable ? new List<T>(values) : System.Collections.Immutable.ImmutableList.CreateRange(values);
-                (IList<T> value, TObject result) rp = (resultValues, errors);
+                Pair<IList<T>, TObject?> rp = Pair.Create<IList<T>, TObject?>(resultValues, errors);
 
-                return initResult.Map<(IList<T>, TObject?)>(_ => rp).SetPartial(rp);
+                return initResult.Map<Pair<IList<T>, TObject?>>(_ => rp).SetPartial(rp);
             }
         );
     }
@@ -126,7 +125,7 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
         return builderBase.Build(prefix);
     }
 
-    public override DataResult<(T[], TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T[], TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetList(input).FlatMap(l =>
@@ -135,7 +134,7 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
 
                 if (objects.Length != _length)
                 {
-                    return GetInvalidLength<(T[], TObject?)>(objects.Length);
+                    return GetInvalidLength<Pair<T[], TObject?>>(objects.Length);
                 }
 
                 ImmutableList<TObject?>.Builder fails = System.Collections.Immutable.ImmutableList.CreateBuilder<TObject?>();
@@ -146,9 +145,9 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
                 for (int i = 0; i < _length; i++)
                 {
                     TObject? element = objects[i];
-                    DataResult<(T, TObject?)> elementResult = _elementCodec.Decode(ops, element);
+                    DataResult<Pair<T, TObject?>> elementResult = _elementCodec.Decode(ops, element);
                     elementResult.IfError(_ => fails.Add(element));
-                    if (elementResult.TryGetResultOrPartial(out (T, TObject?) result))
+                    if (elementResult.TryGetResultOrPartial(out Pair<T, TObject?> result))
                     {
                         resultArray[i] = result.First;
                     }
@@ -156,8 +155,8 @@ internal sealed class ArrayCodec<T>(Codec<T> elementCodec, int length)
                     initResult = initResult.CombineStable(Functions.LiftFirst, elementResult);
                 }
 
-                (T[], TObject?) rp = (resultArray, ops.CreateList(fails.ToImmutable()));
-                return initResult.Map<(T[], TObject?)>(_ => rp).SetPartial(rp);
+                Pair<T[], TObject?> rp = Pair.Create<T[], TObject?>(resultArray, ops.CreateList(fails.ToImmutable()));
+                return initResult.Map<Pair<T[], TObject?>>(_ => rp).SetPartial(rp);
             }
         );
     }

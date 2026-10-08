@@ -142,7 +142,7 @@ internal sealed class MappedDecoder<TOri, TNew>(IDecoder<TOri> baseDecoder, Func
 
     private readonly Func<TOri, TNew> _func = func;
 
-    public override DataResult<(TNew, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<TNew, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseDecoder.Decode(ops, input).Map(result => result.MapFirst(_func));
@@ -231,10 +231,10 @@ internal sealed class FlatMappedDecoder<TOri, TNew>(IDecoder<TOri> baseDecoder, 
 
     private readonly Func<TOri, DataResult<TNew>> _func = func;
 
-    public override DataResult<(TNew, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<TNew, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return _baseDecoder.Decode(ops, input).FlatMap(result => _func.Apply(result.First).Map(mapped => (mapped, result.Second)));
+        return _baseDecoder.Decode(ops, input).FlatMap(result => _func.Apply(result.First).Map(mapped => Pair.Create(mapped, result.Second)));
     }
 
     public override string ToString()
@@ -259,7 +259,7 @@ internal sealed class PromptPartialDecoder<T>(IDecoder<T> baseDecoder, Consumer<
 
     private readonly Consumer<string> _onError = onError;
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseDecoder.Decode(ops, input).PromotePartial(_onError);
@@ -328,7 +328,7 @@ internal sealed class ResultMappedCodec<T>(Codec<T> baseCodec, Codec<T>.IResultM
         return _mapper.CoApply(ops, input, _baseCodec.Encode(input, ops, prefix));
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _mapper.Apply(ops, input, _baseCodec.Decode(ops, input));

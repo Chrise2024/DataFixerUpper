@@ -172,9 +172,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) 
     /// Reads the value of this <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> as a map.
     /// </summary>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the entries of the map, or an error if the value is not a map.</returns>
-    public DataResult<ImmutableDictionary<Dynamic<TObject>, Dynamic<TObject>>> GetMapValues()
+    public DataResult<ImmutableList<Pair<Dynamic<TObject>, Dynamic<TObject>>>> GetMapValues()
     {
-        return Ops.GetMapValues(Value).Map(map => map.ToImmutableDictionary(entry => new Dynamic<TObject>(Ops, entry.Key), entry => new Dynamic<TObject>(Ops, entry.Value)));
+        return Ops.GetMapValues(Value).Map(map => map.Select(entry => Pair.Create(new Dynamic<TObject>(Ops, entry.First),new Dynamic<TObject>(Ops, entry.Second))).ToImmutableList());
     }
 
     /// <summary>
@@ -182,7 +182,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) 
     /// </summary>
     /// <param name="updater">The function that transforms an entry.</param>
     /// <returns>New <see cref="T:DataFixerUpper.Serialization.DynamicOps.Dynamic`1"/> wrapping the updated map, or this dynamic itself if the value is not a map.</returns>
-    public Dynamic<TObject> UpdateMapValues(Func<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>, KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>> updater)
+    public Dynamic<TObject> UpdateMapValues(Func<Pair<Dynamic<TObject>, Dynamic<TObject>>, Pair<Dynamic<TObject>, Dynamic<TObject>>> updater)
     {
         return GetMapValues().Map(map => this.CreateMap(map.Select(updater))).GetResultOrDefault(this);
     }
@@ -317,7 +317,7 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) 
     }
 
     /// <inheritdoc/>
-    public override DataResult<(TResult, TObject?)> Decode<TResult>(IDecoder<TResult> decoder)
+    public override DataResult<Pair<TResult, TObject?>> Decode<TResult>(IDecoder<TResult> decoder)
     {
         return decoder.Decode(Ops, Value);
     }
@@ -347,9 +347,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) 
     }
 
     /// <inheritdoc/>
-    public override DataResult<IEnumerable<KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
+    public override DataResult<IEnumerable<Pair<Dynamic<TObject>, Dynamic<TObject>>>> AsMapOpt()
     {
-        return Ops.GetMapValues(Value).Map(map => map.Select(entry => new KeyValuePair<Dynamic<TObject>, Dynamic<TObject>>(new Dynamic<TObject>(Ops, entry.Key), new Dynamic<TObject>(Ops, entry.Value))));
+        return Ops.GetMapValues(Value).Map(map => map.Select(entry => Pair.Create(new Dynamic<TObject>(Ops, entry.First), new Dynamic<TObject>(Ops, entry.Second))));
     }
 
     /// <inheritdoc/>

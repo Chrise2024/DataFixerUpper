@@ -68,7 +68,7 @@ public static class CodecExtension
         public DataResult<T> Parse<TObject>(DynamicOps<TObject> ops, TObject? input)
             where TObject : notnull
         {
-            return decoder.Decode(ops, input).Map(result => result.Item1);
+            return decoder.Decode(ops, input).Map(Pair.First);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ public static class CodecExtension
         /// <param name="dynamic">The serialized data.</param>
         /// <typeparam name="TObject">The type of the encoded value.</typeparam>
         /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the decoded object and the remaining serialized data.</returns>
-        public DataResult<(T, TObject?)> Decode<TObject>(Dynamic<TObject> dynamic)
+        public DataResult<Pair<T, TObject?>> Decode<TObject>(Dynamic<TObject> dynamic)
             where TObject : notnull
 
         {
@@ -93,7 +93,7 @@ public static class CodecExtension
         public DataResult<T> Parse<TObject>(Dynamic<TObject> dynamic)
             where TObject : notnull
         {
-            return decoder.Decode(dynamic.Ops, dynamic.Value).Map(result => result.Item1);
+            return decoder.Decode(dynamic.Ops, dynamic.Value).Map(Pair.First);
         }
 
         /// <summary>

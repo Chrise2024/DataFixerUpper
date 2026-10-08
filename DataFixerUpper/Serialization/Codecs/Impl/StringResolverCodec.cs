@@ -24,7 +24,7 @@ internal sealed class StringResolverCodec<T>(Func<T, string> toString, Func<stri
         return ops.MergeToPrimitive(prefix, ops.CreateString(str));
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return ops.GetStringValue(input).FlatMap(t =>
@@ -32,10 +32,10 @@ internal sealed class StringResolverCodec<T>(Func<T, string> toString, Func<stri
                 T item = _fromString(t);
                 if (item is null)
                 {
-                    return DataResult.CreateError<(T, TObject?)>($"Unknown element name: {t}");
+                    return DataResult.CreateError<Pair<T, TObject?>>($"Unknown element name: {t}");
                 }
 
-                return DataResult.CreateSuccess((item, input));
+                return DataResult.CreateSuccess(Pair.Create(item, input));
             }
         );
     }

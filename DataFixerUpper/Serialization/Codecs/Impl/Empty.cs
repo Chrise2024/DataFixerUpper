@@ -2,6 +2,7 @@
 using System.Linq;
 using DataFixerUpper.Serialization.Collections.Builder;
 using DataFixerUpper.Serialization.DynamicOps;
+using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.Codecs.Impl;
 
@@ -59,10 +60,10 @@ internal sealed class ErrorEncoder<T>(string message) : EncoderBase<T>
 
 internal sealed class ErrorDecoder<T>(string message) : DecoderBase<T>
 {
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        return DataResult.CreateError<(T, TObject?)>(message);
+        return DataResult.CreateError<Pair<T, TObject?>>(message);
     }
 
     public override string ToString()

@@ -22,14 +22,14 @@ internal sealed class ValidateCodec<T>(Codec<T> baseCodec, Func<T, DataResult<T>
         return _validator.Apply(input).FlatMap(validated => _baseCodec.Encode(validated, ops, prefix));
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _baseCodec.Decode(ops, input).FlatMap(result =>
             {
-                T value = result.Item1;
-                TObject? remainder = result.Item2;
-                return _validator.Apply(value).Map(validated => (validated, remainder));
+                T value = result.First;
+                TObject? remainder = result.Second;
+                return _validator.Apply(value).Map(validated => Pair.Create(validated, remainder));
             }
         );
     }

@@ -26,7 +26,7 @@ internal sealed class RecursiveCodec<T> : Codec<T>
         return _wrapped.Value.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _wrapped.Value.Decode(ops, input);

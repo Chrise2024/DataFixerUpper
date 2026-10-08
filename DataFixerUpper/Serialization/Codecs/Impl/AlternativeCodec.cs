@@ -1,5 +1,4 @@
 ﻿using System;
-using DataFixerUpper.Extensions;
 using DataFixerUpper.Serialization.DynamicOps;
 using DataFixerUpper.Utils;
 
@@ -21,16 +20,16 @@ internal sealed class AlternativeCodec<T, TAlt>(Codec<T> codec, Codec<TAlt> altC
         return _codec.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
-        DataResult<(T, TObject?)> result = _codec.Decode(ops, input);
+        DataResult<Pair<T, TObject?>> result = _codec.Decode(ops, input);
         if (result.IsSuccess)
         {
             return result;
         }
 
-        DataResult<(TAlt, TObject?)> altResult = _altCodec.Decode(ops, input);
+        DataResult<Pair<TAlt, TObject?>> altResult = _altCodec.Decode(ops, input);
         if (altResult.IsSuccess)
         {
             return altResult.Map(p => p.MapFirst(_converter));
@@ -79,7 +78,7 @@ internal sealed class AlternativeCodec<T>(Codec<T> codec, Codec<T> altCodec)
         return _impl.Encode(input, ops, prefix);
     }
 
-    public override DataResult<(T, TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<T, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _impl.Decode(ops, input);

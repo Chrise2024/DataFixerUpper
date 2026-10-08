@@ -7,7 +7,7 @@ using DataFixerUpper.Utils;
 
 namespace DataFixerUpper.Serialization.Codecs.Impl;
 
-internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCodec) : Codec<(T1, T2)>
+internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCodec) : Codec<Pair<T1, T2>>
 {
     private readonly Codec<T1> _leftCodec = leftCodec;
 
@@ -15,20 +15,20 @@ internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCode
 
     public override ValueHolder<string> CodecNameHolder => $"PairCodec[{_leftCodec} {_rightCodec}]";
 
-    public override DataResult<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, TObject? prefix)
+    public override DataResult<TObject> Encode<TObject>(Pair<T1, T2> input, DynamicOps<TObject> ops, TObject? prefix)
         where TObject : default
     {
-        return _leftCodec.Encode(input.Item1, ops, prefix).FlatMap(firstEncoded =>
-            _rightCodec.Encode(input.Item2, ops, firstEncoded)
+        return _leftCodec.Encode(input.First, ops, prefix).FlatMap(firstEncoded =>
+            _rightCodec.Encode(input.Second, ops, firstEncoded)
         );
     }
 
-    public override DataResult<((T1, T2), TObject?)> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
+    public override DataResult<Pair<Pair<T1, T2>, TObject?>> Decode<TObject>(DynamicOps<TObject> ops, TObject? input)
         where TObject : default
     {
         return _leftCodec.Decode(ops, input).FlatMap(firstDecoded =>
-            _rightCodec.Decode(ops, firstDecoded.Item2).Map(secondDecoded =>
-                ((firstDecoded.Item1, secondDecoded.Item1), secondDecoded.Item2)
+            _rightCodec.Decode(ops, firstDecoded.Second).Map(secondDecoded =>
+                Pair.Create(Pair.Create(firstDecoded.First, secondDecoded.First), secondDecoded.Second)
             )
         );
     }
@@ -44,7 +44,7 @@ internal sealed class PairCodec<T1, T2>(Codec<T1> leftCodec, Codec<T2> rightCode
     }
 }
 
-internal sealed class PairMapCodec<T1, T2>(MapCodec<T1> leftCodec, MapCodec<T2> rightCodec) : MapCodec<(T1, T2)>
+internal sealed class PairMapCodec<T1, T2>(MapCodec<T1> leftCodec, MapCodec<T2> rightCodec) : MapCodec<Pair<T1, T2>>
 {
     private readonly MapCodec<T1> _leftCodec = leftCodec;
 
@@ -52,14 +52,14 @@ internal sealed class PairMapCodec<T1, T2>(MapCodec<T1> leftCodec, MapCodec<T2> 
 
     public override ValueHolder<string> CodecNameHolder => $"PairCodec[{_leftCodec} {_rightCodec}]";
 
-    public override RecordBuilder<TObject> Encode<TObject>((T1, T2) input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
+    public override RecordBuilder<TObject> Encode<TObject>(Pair<T1, T2> input, DynamicOps<TObject> ops, RecordBuilder<TObject> prefix)
     {
-        return _leftCodec.Encode(input.Item1, ops, _rightCodec.Encode(input.Item2, ops, prefix));
+        return _leftCodec.Encode(input.First, ops, _rightCodec.Encode(input.Second, ops, prefix));
     }
 
-    public override DataResult<(T1, T2)> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
+    public override DataResult<Pair<T1, T2>> Decode<TObject>(DynamicOps<TObject> ops, MapLike<TObject> input)
     {
-        return _leftCodec.Decode(ops, input).FlatMap(firstDecoded => _rightCodec.Decode(ops, input).Map(secondDecoded => (firstDecoded, secondDecoded)));
+        return _leftCodec.Decode(ops, input).FlatMap(firstDecoded => _rightCodec.Decode(ops, input).Map(secondDecoded => Pair.Create(firstDecoded, secondDecoded)));
     }
 
     public override IEnumerable<TObject> GetKeys<TObject>(DynamicOps<TObject> ops)
