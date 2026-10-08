@@ -2,6 +2,8 @@
 
 namespace System.Diagnostics.CodeAnalysis;
 
+#if NETSTANDARD2_0
+
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
 internal sealed class MemberNotNullWhenAttribute : Attribute
 {
@@ -21,3 +23,5 @@ internal sealed class MemberNotNullWhenAttribute : Attribute
 
     public string[] Members { get; }
 }
+
+#endif
