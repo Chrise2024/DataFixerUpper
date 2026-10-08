@@ -389,9 +389,9 @@ public sealed class Dynamic<TObject>(DynamicOps<TObject> ops, TObject? wrapped) 
     /// </summary>
     /// <param name="other">The dynamic to compare with.</param>
     /// <returns>A <see langword="true"/> if <paramref name="other"/> wraps the same value with the same ops; otherwise, <see langword="false"/>.</returns>
-    public bool Equals(Dynamic<TObject> other)
+    public bool Equals(Dynamic<TObject>? other)
     {
-        return EqualsCore(other);
+        return other is not null && EqualsCore(other);
     }
 
     /// <summary>

@@ -406,7 +406,7 @@ public sealed class DotnetOps : DynamicOps<object>
             return DataResult.CreateError<object>($"{nameof(Get)} called with not a dict: {input}");
         }
 
-        object value = id[key];
+        object? value = id[key];
         return value is null
             ? DataResult.CreateError<object>($"No value found for {key}")
             : DataResult.CreateSuccess(value);
@@ -444,8 +444,8 @@ public sealed class DotnetOps : DynamicOps<object>
             return input;
         }
 
-        ImmutableDictionary<object, object>.Builder builder = ImmutableDictionary.CreateBuilder<object, object>();
-        builder.AddRange(id.Cast<DictionaryEntry>().Select(e => new KeyValuePair<object, object>(e.Key, e.Value)));
+        ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
+        builder.AddRange(id.Cast<DictionaryEntry>().Select(e => new KeyValuePair<object, object?>(e.Key, e.Value)));
         builder.Remove(key);
         return builder.ToImmutable();
     }

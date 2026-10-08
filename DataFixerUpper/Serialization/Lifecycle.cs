@@ -67,7 +67,7 @@ public abstract class Lifecycle : IEquatable<Lifecycle>
     }
 
     /// <inheritdoc/>
-    public bool Equals(Lifecycle other)
+    public bool Equals(Lifecycle? other)
     {
         return EqualsCore(other);
     }
