@@ -126,6 +126,22 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
         return HasValue ? _value : defaultValue.Value;
     }
 
+    /// <summary>Retrieves the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or another <see cref="T:DataFixerUpper.Utils.Optional`1"/>.</summary>
+    /// <param name="provider">A provider of value to return if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.</param>
+    /// <returns>The <see cref="T:DataFixerUpper.Utils.Optional`1"/> self if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="provider"/> parameter provided.</returns>
+    public Optional<T> GetOrElse(Provider<Optional<T>> provider)
+    {
+        return HasValue ? this : provider.Get();
+    }
+
+    /// <summary>Retrieves the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or another <see cref="T:DataFixerUpper.Utils.Optional`1"/>.</summary>
+    /// <param name="else">A value to return if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.</param>
+    /// <returns>The <see cref="T:DataFixerUpper.Utils.Optional`1"/> self if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>; otherwise, the <paramref name="else"/> parameter.</returns>
+    public Optional<T> GetOrElse(Optional<T> @else)
+    {
+        return HasValue ? this : @else;
+    }
+
     /// <summary>
     /// Tries to get the current value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object and returns a value that indicates if has value.
     /// </summary>
@@ -154,6 +170,37 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
     }
 
     /// <summary>
+    /// Projects value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object, or do nothing and return <see cref="P:DataFixerUpper.Utils.Optional`1.Empty"/> if the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/>.
+    /// </summary>
+    /// <param name="selector">Transformation function.</param>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <returns>The transformed <see cref="T:DataFixerUpper.Utils.Optional`1"/>.</returns>
+    public Optional<TResult> SelectMany<TResult>(Func<T, Optional<TResult>> selector)
+    {
+        if (selector is null)
+        {
+            throw new ArgumentNullException(nameof(selector));
+        }
+
+        return HasValue ? selector.Apply(_value) : Optional<TResult>.Empty;
+    }
+
+    /// <summary>
+    /// Projects value of the current <see cref="T:DataFixerUpper.Utils.Optional`1"/> object.
+    /// </summary>
+    /// <param name="predicate">The predicate to apply to the value, if <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>.</param>
+    /// <returns>If <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="false"/> or value is not match <paramref name="predicate"/>, <see cref="P:DataFixerUpper.Utils.Optional`1.Empty"/>; or else self.</returns>
+    public Optional<T> Where(Predicate<T> predicate)
+    {
+        if (!HasValue || predicate.Test(_value))
+        {
+            return this;
+        }
+
+        return Empty;
+    }
+
+    /// <summary>
     /// If the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>, perform the given action on the value of <see cref="T:DataFixerUpper.Utils.Optional`1"/>.
     /// </summary>
     /// <param name="action">Action to perform.</param>
@@ -162,6 +209,23 @@ public readonly struct Optional<T> : IEquatable<Optional<T>>
         if (HasValue)
         {
             action.Accept(_value);
+        }
+    }
+    
+    /// <summary>
+    /// If the <see cref="P:DataFixerUpper.Utils.Optional`1.HasValue"/> property is <see langword="true"/>, perform the given action on the value of <see cref="T:DataFixerUpper.Utils.Optional`1"/> or else action if <see langword="false"/>.
+    /// </summary>
+    /// <param name="action">Action to perform if has value.</param>
+    /// <param name="else">Action to perform if not has value.</param>
+    public void IfHasValueOrElse(Consumer<T> action, Action @else)
+    {
+        if (HasValue)
+        {
+            action.Accept(_value);
+        }
+        else
+        {
+            @else.Invoke();
         }
     }
 
