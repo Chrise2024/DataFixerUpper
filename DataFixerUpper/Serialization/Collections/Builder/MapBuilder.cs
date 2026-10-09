@@ -42,4 +42,23 @@ public class MapBuilder<TObject> : MapBuilderBase<TObject, ImmutableList<Pair<TO
     {
         return builder.AddAndReturn(Pair.Create(Ops.CreateString(key), value));
     }
+
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> Add(Pair<TObject, TObject?> pair)
+    {
+        Builder = Builder.Map(builder => builder.AddAndReturn(pair));
+        return this;
+    }
+
+    /// <inheritdoc/>
+    public override RecordBuilder<TObject> AddRange(IEnumerable<Pair<TObject, TObject?>> pairs)
+    {
+        Builder = Builder.Map(builder =>
+            {
+                builder.AddRange(pairs);
+                return builder;
+            }
+        );
+        return this;
+    }
 }

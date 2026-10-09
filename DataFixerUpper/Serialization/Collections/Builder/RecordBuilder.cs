@@ -40,7 +40,7 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="pair">The entry to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> Add(Pair<TObject, TObject?> pair)
+    public virtual RecordBuilder<TObject> Add(Pair<TObject, TObject?> pair)
     {
         return Add(pair.First, pair.Second);
     }
@@ -50,7 +50,7 @@ public abstract class RecordBuilder<TObject>
     /// </summary>
     /// <param name="pairs">The entries to add.</param>
     /// <returns>This builder.</returns>
-    public RecordBuilder<TObject> AddRange(IEnumerable<Pair<TObject, TObject?>> pairs)
+    public virtual RecordBuilder<TObject> AddRange(IEnumerable<Pair<TObject, TObject?>> pairs)
     {
         return pairs.Aggregate(this, (builder, pair) => builder.Add(pair));
     }
@@ -110,7 +110,7 @@ public abstract class RecordBuilder<TObject>
     /// <remarks>
     /// The key is converted with <c>CreateString</c>.
     /// </remarks>
-    public RecordBuilder<TObject> Add<T>(string key, T value, IEncoder<T> encoder)
+    public virtual RecordBuilder<TObject> Add<T>(string key, T value, IEncoder<T> encoder)
     {
         return Add(key, encoder.EncodeStart(Ops, value));
     }
@@ -222,7 +222,7 @@ public abstract class RecordBuilderBase<TObject, TBuilder> : RecordBuilder<TObje
     /// </summary>
     /// <param name="prefix">The existing value to merge the built value into, which may be empty.</param>
     /// <returns>A <see cref="T:DataFixerUpper.Serialization.DataResult`1"/> containing the built value, or an error if it could not be built.</returns>
-    public override DataResult<TObject> Build(TObject? prefix)
+    public sealed override DataResult<TObject> Build(TObject? prefix)
     {
         DataResult<TObject> result = Builder.FlatMap(builder => BuildResult(builder, prefix));
         Builder = CreateBuilder();
