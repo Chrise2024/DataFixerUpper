@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json;
@@ -21,7 +22,11 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// </summary>
     public static readonly JsonOps Instance = new(false);
 
-    //public static readonly JsonOps Compressed = new(true);
+    /// <summary>
+    /// Instance of compressed <see cref="T:DataFixerUpper.Serialization.DynamicOps.JsonOps"/>.
+    /// </summary>
+    public static readonly JsonOps Compressed = new(true);
+
     private JsonOps(bool compressed)
     {
         _compressed = compressed;
@@ -57,7 +62,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         };
     }
 
-    private static TOther ConvertJsonNumber<TOther>(DynamicOps<TOther> otherOp, JsonNode input)
+    private TOther ConvertJsonNumber<TOther>(DynamicOps<TOther> otherOp, JsonNode input)
         where TOther : notnull
     {
         if (TryGetDoubleFromValue(input.AsValue(), out double number))
@@ -149,12 +154,21 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     /// <inheritdoc/>
     public override DataResult<string> GetStringValue(JsonNode? @string)
     {
-        if (@string is not JsonValue jsonValue || jsonValue.GetValueKind() != JsonValueKind.String)
+        if (@string is JsonValue jsonValue)
         {
-            return DataResult.CreateError<string>($"{nameof(GetStringValue)} called with not a string: {@string}");
+            JsonValueKind kind = jsonValue.GetValueKind();
+            if (_compressed && kind == JsonValueKind.Number)
+            {
+                return DataResult.CreateSuccess(jsonValue.ToString());
+            }
+
+            if (kind == JsonValueKind.String)
+            {
+                return DataResult.CreateSuccess(jsonValue.GetValue<string>());
+            }
         }
 
-        return DataResult.CreateSuccess(jsonValue.GetValue<string>());
+        return DataResult.CreateError<string>($"{nameof(GetStringValue)} called with not a string: {@string}");
     }
 
     /// <inheritdoc/>
@@ -276,12 +290,17 @@ public sealed class JsonOps : DynamicOps<JsonNode>
     {
         ThrowIfKeyNull(key);
 
-        if (key.GetValueKind() != JsonValueKind.String)
+        if (key.GetValueKind() == JsonValueKind.String)
         {
-            return DataResult.CreateError($"Key is not a string: {key}", Optional.Create(map));
+            return MergeToMap(map, key.GetValue<string>(), value);
         }
 
-        return MergeToMap(map, key.GetValue<string>(), value);
+        if (key.GetValueKind() == JsonValueKind.Number && _compressed)
+        {
+            return MergeToMap(map, key.ToString(), value);
+        }
+
+        return DataResult.CreateError($"Key is not a string: {key}", Optional.Create(map));
     }
 
     /// <inheritdoc/>
@@ -313,21 +332,26 @@ public sealed class JsonOps : DynamicOps<JsonNode>
 
 
         JsonObject newObject = IsEmpty(map) ? new JsonObject() : map.DeepClone().AsObject();
-        LinkedList<JsonNode> fails = new();
+        ImmutableList<JsonNode>.Builder fails = ImmutableList.CreateBuilder<JsonNode>();
 
         foreach (Pair<JsonNode, JsonNode?> pair in values)
         {
-            if (pair.First.GetValueKind() != JsonValueKind.String)
+            if (pair.First.GetValueKind() == JsonValueKind.String)
             {
-                fails.AddLast(pair.First);
-                continue;
+                newObject[pair.First.GetValue<string>()] = pair.Second?.DeepClone();
             }
-
-            newObject[pair.First.GetValue<string>()] = pair.Second?.DeepClone();
+            else if (pair.First.GetValueKind() == JsonValueKind.Number && _compressed)
+            {
+                newObject[pair.First.ToString()] = pair.Second?.DeepClone();
+            }
+            else
+            {
+                fails.Add(pair.First);
+            }
         }
 
         return fails.Count > 0
-            ? DataResult.CreateError($"Some keys are not strings: {CreateList(fails)}", Optional.Create<JsonNode>(newObject))
+            ? DataResult.CreateError($"Some keys are not strings: {CreateList(fails.ToImmutable())}", Optional.Create<JsonNode>(newObject))
             : DataResult.CreateSuccess<JsonNode>(newObject);
     }
 
@@ -440,7 +464,7 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         return source?.DeepClone();
     }
 
-    private static bool TryGetDoubleFromValue(JsonValue? value, out double result)
+    private bool TryGetDoubleFromValue(JsonValue? value, out double result)
     {
         if (value?.GetValueKind() != JsonValueKind.Number)
         {
@@ -460,16 +484,33 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return true;
         }
 
-        try
+        if (_compressed && value.GetValueKind() == JsonValueKind.String)
         {
-            result = value.Deserialize(JsonOpsContext.Default.Double);
-            return true;
+            try
+            {
+                result = value.Deserialize(JsonOpsContext.Default.Int32);
+                return true;
+            }
+            catch
+            {
+                // ignored
+            }
         }
-        catch
+        else
         {
-            result = 0;
-            return false;
+            try
+            {
+                result = value.Deserialize(JsonOpsContext.Default.Double);
+                return true;
+            }
+            catch
+            {
+                // ignored
+            }
         }
+
+        result = 0;
+        return false;
     }
 
     private sealed class JsonMap(JsonObject jsonObject, JsonOps ops) : MapLike<JsonNode>
@@ -485,14 +526,14 @@ public sealed class JsonOps : DynamicOps<JsonNode>
         }
     }
 
-    private sealed class JsonMapBuilder(JsonOps ops) : MapBuilderBase<JsonNode, JsonObject>(ops)
+    private sealed class JsonMapBuilder(JsonOps ops) : MapBuilderBase<JsonNode, ImmutableList<Pair<string, JsonNode?>>.Builder>(ops)
     {
-        protected override JsonObject InitBuilder()
+        protected override ImmutableList<Pair<string, JsonNode?>>.Builder InitBuilder()
         {
-            return new JsonObject();
+            return ImmutableList.CreateBuilder<Pair<string, JsonNode?>>();
         }
 
-        protected override JsonObject Append(JsonNode key, JsonNode? value, JsonObject builder)
+        protected override ImmutableList<Pair<string, JsonNode?>>.Builder Append(JsonNode key, JsonNode? value, ImmutableList<Pair<string, JsonNode?>>.Builder builder)
         {
             if (key.GetValueKind() != JsonValueKind.String)
             {
@@ -502,33 +543,20 @@ public sealed class JsonOps : DynamicOps<JsonNode>
             return Append(key.GetValue<string>(), value, builder);
         }
 
-        protected override JsonObject Append(string key, JsonNode? value, JsonObject builder)
+        protected override ImmutableList<Pair<string, JsonNode?>>.Builder Append(string key, JsonNode? value, ImmutableList<Pair<string, JsonNode?>>.Builder builder)
         {
-            builder[key] = value?.DeepClone();
+            builder.Add(Pair.Create(key, value?.DeepClone()));
             return builder;
         }
 
-        protected override DataResult<JsonNode> BuildResult(JsonObject builder, JsonNode? prefix)
+        protected override DataResult<JsonNode> BuildResult(ImmutableList<Pair<string, JsonNode?>>.Builder builder, JsonNode? prefix)
         {
             if (Ops.IsEmpty(prefix))
             {
-                return DataResult.CreateSuccess<JsonNode>(builder);
+                return DataResult.CreateSuccess(Ops.CreateMap(builder.ToImmutable()));
             }
 
-            if (prefix is not JsonObject prefixObject)
-            {
-                return DataResult.CreateError($"Cannot merge json object into not an object: {prefix}", Optional.Create(prefix));
-            }
-
-            JsonObject merged = builder.Aggregate(
-                prefixObject, (obj, pair) =>
-                {
-                    obj[pair.Key] = pair.Value;
-                    return obj;
-                }
-            );
-
-            return DataResult.CreateSuccess<JsonNode>(merged);
+            return Ops.MergeToMap(prefix, builder.ToImmutable());
         }
     }
 
@@ -587,4 +615,6 @@ public sealed class JsonOps : DynamicOps<JsonNode>
 }
 
 [JsonSerializable(typeof(double))]
+[JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(string))]
 internal partial class JsonOpsContext : JsonSerializerContext;
