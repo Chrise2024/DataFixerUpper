@@ -522,7 +522,7 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             if (Ops.IsEmpty(prefix))
             {
-                return DataResult.CreateSuccess<object>(builder.ToImmutable());
+                return DataResult.CreateSuccess<object>(Ops.CreateMap(builder.ToImmutable()));
             }
 
             return DataResult.CreateSuccess<object>(Ops.MergeToMap(prefix, builder.ToImmutable()));
