@@ -9,3 +9,14 @@ implement apis(MapCodec.Dependent, Codec.XXXRange, Codec.Lazy)
 
 - v2.0.0
 implement & align apis, release
+
+-v2.1.0
+enable nullable
+
+-v2.1.2
+extract DataFixers kind's interfaces.
+
+-v2.2.0
+add net8.0 to target framework for better aot support.
+replace pair types(ValueTuple/KeyValuePair) with Pair
+compressed JsonOps
