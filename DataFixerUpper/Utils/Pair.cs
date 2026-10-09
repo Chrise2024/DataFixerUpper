@@ -62,6 +62,18 @@ public static class Pair
     {
         return pair.Second;
     }
+
+    /// <summary>
+    /// Creates a new <see cref="T:System.Collections.Generic.KeyValuePair`2"/> instance from <see cref="T:DataFixerUpper.Utils.Pair`2"/>.
+    /// </summary>
+    /// <param name="pair">The pair.</param>
+    /// <typeparam name="TFirst">First type.</typeparam>
+    /// <typeparam name="TSecond">Second type.</typeparam>
+    /// <returns>New <see cref="T:System.Collections.Generic.KeyValuePair`2"/> instance contains values.</returns>
+    public static KeyValuePair<TFirst, TSecond> ToKeyValuePair<TFirst, TSecond>(Pair<TFirst, TSecond> pair)
+    {
+        return new KeyValuePair<TFirst, TSecond>(pair.First, pair.Second);
+    }
 }
 
 /// <summary>
