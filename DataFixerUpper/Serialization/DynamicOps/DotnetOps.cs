@@ -283,7 +283,7 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         if (list is IList il)
         {
-            return DataResult.CreateSuccess<object>(il.Cast<object>().Append(other).ToImmutableList());
+            return DataResult.CreateSuccess<object>(il.Cast<object?>().Append(other).ToImmutableList());
         }
 
         if (list is null)
@@ -299,7 +299,7 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         if (list is IList il)
         {
-            return DataResult.CreateSuccess<object>(il.Cast<object>().Concat(values).ToImmutableList());
+            return DataResult.CreateSuccess<object>(il.Cast<object?>().Concat(values).ToImmutableList());
         }
 
         if (list is null)
@@ -342,15 +342,14 @@ public sealed class DotnetOps : DynamicOps<object>
     {
         if (dict is IDictionary id)
         {
-            ImmutableList<Pair<object, object?>>.Builder builder = ImmutableList.CreateBuilder<Pair<object, object?>>();
-            builder.AddRange(GetDictionaryEntriesP(id));
-            builder.AddRange(values);
+            ImmutableDictionary<object, object?>.Builder builder = ImmutableDictionary.CreateBuilder<object, object?>();
+            builder.AddRange(GetDictionaryEntriesKvp(id).Concat(values.Select(Pair.ToKeyValuePair)));
             return DataResult.CreateSuccess<object>(builder.ToImmutable());
         }
 
         if (dict is null)
         {
-            return DataResult.CreateSuccess<object>(ImmutableList.CreateRange(values));
+            return DataResult.CreateSuccess<object>(values.ToImmutableDictionary());
         }
 
         return DataResult.CreateError($"{nameof(MergeToMap)} called with not a dict: {dict}", Optional.Create(dict));
@@ -523,23 +522,10 @@ public sealed class DotnetOps : DynamicOps<object>
         {
             if (Ops.IsEmpty(prefix))
             {
-                return DataResult.CreateSuccess<object>(builder);
+                return DataResult.CreateSuccess<object>(builder.ToImmutable());
             }
 
-            if (prefix is not IDictionary<object, object?> prefixObject)
-            {
-                return DataResult.CreateError($"Cannot merge json object into not an object: {prefix}", Optional.Create(prefix));
-            }
-            
-            IDictionary<object, object?> merged = builder.Aggregate(
-                prefixObject, (obj, pair) =>
-                {
-                    obj[pair.First] = pair.Second;
-                    return obj;
-                }
-            );
-            
-            return DataResult.CreateSuccess<object>(merged);
+            return DataResult.CreateSuccess<object>(Ops.MergeToMap(prefix, builder.ToImmutable()));
         }
 
         protected override ImmutableList<Pair<object, object?>>.Builder Append(object key, object? value, ImmutableList<Pair<object, object?>>.Builder builder)
