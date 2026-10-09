@@ -13,16 +13,18 @@ namespace DataFixerUpper.Test;
 public class CodecTest
 {
     #region Utils
-    
+
     private static readonly Codec<string> ToLowerCase = Codec.String.XMap(s => s.ToLowerInvariant(), s => s.ToLowerInvariant());
 
     private static readonly IEqualityComparer<object> TestComparer = new TestComparer();
-    
-    private static object ToDotnet<T>(Codec<T> codec, T value) {
+
+    private static object ToDotnet<T>(Codec<T> codec, T value)
+    {
         return codec.EncodeStart(DotnetOps.Instance, value).GetResultOrThrow(m => new AssertFailedException(m));
     }
 
-    private static T FromDotnet<T> (Codec<T> codec, object value) {
+    private static T FromDotnet<T>(Codec<T> codec, object value)
+    {
         return codec.Parse(DotnetOps.Instance, value).GetResultOrThrow(m => new AssertFailedException(m));
     }
 
@@ -31,37 +33,43 @@ public class CodecTest
         return codec.Parse(DotnetOps.Instance, value).GetResultOrPartialOrThrow(m => new AssertFailedException(m));
     }
 
-    private static string FromDotnetErrorMessage(Codec<string> codec, object value) {
+    private static string FromDotnetErrorMessage(Codec<string> codec, object value)
+    {
         return codec.Parse(DotnetOps.Instance, value).ErrorResult?.Message ?? throw new AssertFailedException();
     }
 
-    private static void AssertFromDotnetFails<TR>(Codec<TR> codec, object value) {
+    private static void AssertFromDotnetFails<TR>(Codec<TR> codec, object value)
+    {
         DataResult<TR> result = codec.Parse(DotnetOps.Instance, value);
         Assert.IsTrue(result.IsError, "Expected data result error, but got: " + result.GetResult());
     }
 
-    private static void AssertFromDotnetFailsPartial<TR>(Codec<TR> codec, object value) {
+    private static void AssertFromDotnetFailsPartial<TR>(Codec<TR> codec, object value)
+    {
         DataResult<TR> result = codec.Parse(DotnetOps.Instance, value);
         Assert.IsFalse(result.HasResultOrPartial, "Expected data result error, but got: " + result.GetResultOrPartial());
     }
 
-    private static void AssertToDotnetFails<T>(Codec<T> codec, T value) {
+    private static void AssertToDotnetFails<T>(Codec<T> codec, T value)
+    {
         DataResult<object> result = codec.EncodeStart(DotnetOps.Instance, value);
         Assert.IsTrue(result.IsError, "Expected data result error, but got: " + result.GetResult());
     }
-    
-    private static void AssertRoundTrip<T>(Codec<T> codec, T value, object dotnet) {
+
+    private static void AssertRoundTrip<T>(Codec<T> codec, T value, object dotnet)
+    {
         Assert.AreEqual(dotnet, ToDotnet(codec, value), TestComparer);
         Assert.AreEqual(value, FromDotnet(codec, dotnet), TestComparer);
     }
 
-    private static void AssertRoundTrips<T>(IEnumerable<Codec<T>> codecs, T value, object dotnet) {
+    private static void AssertRoundTrips<T>(IEnumerable<Codec<T>> codecs, T value, object dotnet)
+    {
         foreach (Codec<T> codec in codecs)
         {
             AssertRoundTrip(codec, value, dotnet);
         }
     }
-    
+
     #endregion
 
     #region Tests
@@ -75,16 +83,14 @@ public class CodecTest
                 ["foo"] = 1,
                 ["bar"] = 2
             },
-            JMap.Of([
-                "foo", 1, 
-                "bar", 2
-            ]),
+            JMap.Of(["foo", 1, "bar", 2]),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void unboundedDictionary_simple() {
+    public void unboundedDictionary_simple()
+    {
         AssertRoundTrip(
             Codec.CreateUnboundedDictionary(Codec.String, Codec.Int),
             new Dictionary<string, int>
@@ -92,25 +98,26 @@ public class CodecTest
                 ["foo"] = 1,
                 ["bar"] = 2
             },
-            JMap.Of([
-                    "foo", 1, 
-                    "bar", 2
-                ])
+            JMap.Of(["foo", 1, "bar", 2])
         );
     }
-    
+
     [TestMethod]
-    public void unboundedDictionary_invalidEntry() {
+    public void unboundedDictionary_invalidEntry()
+    {
         Codec<IDictionary<string, int>> codec = Codec.CreateUnboundedDictionary(Codec.String, Codec.Int);
-        AssertFromDotnetFails(codec, JMap.Of(
-            "foo", 1,
-            "bar", "garbage",
-            "baz", 3
-        ));
+        AssertFromDotnetFails(
+            codec, JMap.Of(
+                "foo", 1,
+                "bar", "garbage",
+                "baz", 3
+            )
+        );
     }
-    
+
     [TestMethod]
-    public void unboundedMap_invalidEntryPartial() {
+    public void unboundedMap_invalidEntryPartial()
+    {
         Codec<IDictionary<string, int>> codec = Codec.CreateUnboundedDictionary(Codec.String, Codec.Int);
         Assert.AreEqual(
             new Dictionary<string, int>
@@ -118,17 +125,20 @@ public class CodecTest
                 ["foo"] = 1,
                 ["baz"] = 3
             },
-            FromDotnetOrPartial(codec, JMap.Of(
-                "foo", 1,
-                "bar", "garbage",
-                "baz", 3
-            )),
+            FromDotnetOrPartial(
+                codec, JMap.Of(
+                    "foo", 1,
+                    "bar", "garbage",
+                    "baz", 3
+                )
+            ),
             TestComparer
         );
     }
-    
+
     [TestMethod]
-    public void unboundedMap_invalidEntryNestedPartial() {
+    public void unboundedMap_invalidEntryNestedPartial()
+    {
         Codec<IDictionary<string, IDictionary<string, int>>> codec = Codec.CreateUnboundedDictionary(Codec.String, Codec.CreateUnboundedDictionary(Codec.String, Codec.Int));
         Assert.AreEqual(
             new Dictionary<string, IDictionary<string, int>>
@@ -145,9 +155,7 @@ public class CodecTest
             },
             FromDotnetOrPartial(
                 codec, JMap.Of(
-                    "foo", JMap.Of(
-                        "foo", 1
-                    ),
+                    "foo", JMap.Of("foo", 1),
                     "bar", JMap.Of(
                         "foo", 1,
                         "bar", "garbage",
@@ -158,15 +166,18 @@ public class CodecTest
             TestComparer
         );
     }
-    
+
     [TestMethod]
-    public void unboundedMap_repeatedKeys() {
+    public void unboundedMap_repeatedKeys()
+    {
         Codec<IDictionary<string, int>> codec = Codec.CreateUnboundedDictionary(ToLowerCase, Codec.Int);
-        AssertFromDotnetFails(codec, new Dictionary<string, int>
-        {
-            ["foo"] = 1,
-            ["FOO"] = 3
-        });
+        AssertFromDotnetFails(
+            codec, new Dictionary<string, int>
+            {
+                ["foo"] = 1,
+                ["FOO"] = 3
+            }
+        );
     }
 
     /// <summary>
@@ -175,7 +186,8 @@ public class CodecTest
     /// So assign same value to avoid random order.
     /// </summary>
     [TestMethod]
-    public void unboundedMap_repeatedKeysPartial() {
+    public void unboundedMap_repeatedKeysPartial()
+    {
         Codec<IDictionary<string, int>> codec = Codec.CreateUnboundedDictionary(ToLowerCase, Codec.Int);
         Assert.AreEqual(
             new Dictionary<string, int>
@@ -184,47 +196,69 @@ public class CodecTest
                 ["foo"] = 1,
                 ["bar"] = 2
             },
-            FromDotnetOrPartial(codec, JMap.Of(
-                "foo", 1,
-                "bar", 2,
-                "FOO", 1
-            )),
+            FromDotnetOrPartial(
+                codec, JMap.Of(
+                    "foo", 1,
+                    "bar", 2,
+                    "FOO", 1
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void list_roundTrip() {
+    public void list_roundTrip()
+    {
         AssertRoundTrip(
             Codec.String.List(),
-            new List<string> { "foo", "bar", "baz" },
+            new List<string>
+            {
+                "foo",
+                "bar",
+                "baz"
+            },
             JList.Of("foo", "bar", "baz")
         );
     }
-    
+
     [TestMethod]
-    public void list_invalidValues() {
+    public void list_invalidValues()
+    {
         Codec<IList<string>> codec = Codec.String.List();
         AssertFromDotnetFails(codec, JObjList.Of("foo", 2, "baz", false));
 
         Assert.AreEqual(
-            new List<string> { "foo", "bar" },
+            new List<string>
+            {
+                "foo",
+                "bar"
+            },
             FromDotnetOrPartial(codec, JObjList.Of("foo", "bar", 2, false)),
             TestComparer
         );
 
         Assert.AreEqual(
-            new List<string> { "foo", "baz" },
+            new List<string>
+            {
+                "foo",
+                "baz"
+            },
             FromDotnetOrPartial(codec, JObjList.Of("foo", 2, "baz", false)),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void sizeLimitedList_roundTrip() {
+    public void sizeLimitedList_roundTrip()
+    {
         AssertRoundTrip(
             Codec.String.List(0, 2),
-            new List<string> { "foo", "bar" },
+            new List<string>
+            {
+                "foo",
+                "bar"
+            },
             JList.Of("foo", "bar")
         );
     }
@@ -234,17 +268,29 @@ public class CodecTest
     {
         Codec<IList<string>> codec = Codec.String.List(0, 2);
         AssertFromDotnetFails(codec, JObjList.Of("foo", "bar", "baz"));
-        AssertToDotnetFails(codec, new List<string> { "foo", "bar", "baz" });
+        AssertToDotnetFails(
+            codec, new List<string>
+            {
+                "foo",
+                "bar",
+                "baz"
+            }
+        );
 
         // Input is clipped in partial result
         Assert.AreEqual(
-            new List<string>{ "foo", "bar" },
+            new List<string>
+            {
+                "foo",
+                "bar"
+            },
             FromDotnetOrPartial(codec, JList.Of("foo", "bar", "baz")),
             TestComparer
         );
     }
-    
-    public void sizeLimitedList_tooLongWithInvalid() {
+
+    public void sizeLimitedList_tooLongWithInvalid()
+    {
         Codec<IList<string>> codec = Codec.String.List(0, 2);
 
         // Input is clipped only by valid entries
@@ -256,7 +302,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void sizeLimitedList_tooShort() {
+    public void sizeLimitedList_tooShort()
+    {
         Codec<IList<string>> codec = Codec.String.List(2, 3);
         AssertToDotnetFails(codec, JList.Of("foo"));
         // We can't get any partial result if the data is too short
@@ -267,7 +314,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void sizeLimitedList_tooShortWithInvalid() {
+    public void sizeLimitedList_tooShortWithInvalid()
+    {
         Codec<IList<string>> codec = Codec.String.List(2, 3);
         AssertFromDotnetFailsPartial(codec, JObjList.Of("foo", 1, 2));
 
@@ -279,7 +327,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void CreateAlternative_simple() {
+    public void CreateAlternative_simple()
+    {
         Codec<string> codec = Codec.CreateAlternative(Codec.String, Codec.Int, integer => "integer:" + integer);
         AssertRoundTrip(codec, "string", "string");
         Assert.AreEqual("integer:23", FromDotnet(codec, 23), TestComparer);
@@ -298,7 +347,8 @@ public class CodecTest
     public static readonly Codec<string> NeverWithPartialAlternative = Codec.String.Validate(s => DataResult.CreateError("Failed Alternative with partial", Optional.Create("Partial Alternative: " + s)));
 
     [TestMethod]
-    public void CreateAlternative_primaryPartialAlternativeFails() {
+    public void CreateAlternative_primaryPartialAlternativeFails()
+    {
         Codec<string> codec = Codec.CreateAlternative(
             NeverWithPartialPrimary,
             NeverAlternative
@@ -317,12 +367,13 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void CreateAlternative_primaryFailsAlternativePartial() {
+    public void CreateAlternative_primaryFailsAlternativePartial()
+    {
         Codec<string> codec = Codec.CreateAlternative(
             NeverPrimary,
             NeverWithPartialAlternative
         );
-        
+
         Assert.AreEqual(
             "Partial Alternative: value",
             FromDotnetOrPartial(codec, "value"),
@@ -337,7 +388,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void CreateAlternative_bothPartialPrefersPrimary() {
+    public void CreateAlternative_bothPartialPrefersPrimary()
+    {
         Codec<string> codec = Codec.CreateAlternative(
             NeverWithPartialPrimary,
             NeverWithPartialAlternative
@@ -367,7 +419,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void CreateAlternative_bothSuccessful() {
+    public void CreateAlternative_bothSuccessful()
+    {
         Codec<string> codec = Codec.CreateAlternative(Codec.String, ToLowerCase);
         AssertRoundTrip(codec, "string", "string");
 
@@ -375,110 +428,129 @@ public class CodecTest
         AssertRoundTrip(codec, "String", "String");
     }
 
-    private record Node(string value, Optional<Node> next) {
-        public static readonly Codec<Node> Codec = Serialization.Codecs.Codec.CreateRecursive<Node>("Node", self =>
-            RecordCodecBuilder.CreateCodec<Node>(i => i.Group(
-                Serialization.Codecs.Codec.String.Field("value").ForGetter<Node>(o => o.value),
-                self.OptionalField("next").ForGetter<Node>(o => o.next)
-            ).Apply(i, (v, n) => new Node(v, n)))
+    private record Node(string value, Optional<Node> next)
+    {
+        public static readonly Codec<Node> Codec = Serialization.Codecs.Codec.CreateRecursive<Node>(
+            "Node", self =>
+                RecordCodecBuilder.CreateCodec<Node>(i => i.Group(
+                        Serialization.Codecs.Codec.String.Field("value").ForGetter<Node>(o => o.value),
+                        self.OptionalField("next").ForGetter<Node>(o => o.next)
+                    ).Apply(i, (v, n) => new Node(v, n))
+                )
         );
 
-        public void ToList(IList<string> output) {
+        public void ToList(IList<string> output)
+        {
             output.Add(value);
             next.IfHasValue(l => l.ToList(output));
         }
 
-        public IList<string> ToList() {
+        public IList<string> ToList()
+        {
             IList<string> result = new List<string>();
             ToList(result);
             return result;
         }
 
-        private static Optional<Node> Create(IEnumerator<string> values) {
-            if (values.MoveNext()) {
+        private static Optional<Node> Create(IEnumerator<string> values)
+        {
+            if (values.MoveNext())
+            {
                 string value = values.Current;
                 Optional<Node> next = Create(values);
                 return Optional.Create(new Node(value, next));
             }
+
             return Optional<Node>.Empty;
         }
 
-        public static void AssertParsingEquals(IList<string> asList, object asData) {
+        public static void AssertParsingEquals(IList<string> asList, object asData)
+        {
             TestDecode(asList, asData);
             TestEncode(asList, asData);
         }
 
-        private static void TestDecode(IList<string> expected, object asData) {
+        private static void TestDecode(IList<string> expected, object asData)
+        {
             Assert.AreEqual(expected, FromDotnet(Codec, asData).ToList(), TestComparer);
         }
 
-        private static void TestEncode(IList<string> asList, object expected) {
+        private static void TestEncode(IList<string> asList, object expected)
+        {
             Node fromList = Create(asList.GetEnumerator()).GetOrThrow(() => new AssertFailedException());
             Assert.AreEqual(expected, ToDotnet(Codec, fromList), TestComparer);
         }
     }
 
     [TestMethod]
-    public void SelfRecursive() {
+    public void SelfRecursive()
+    {
         Node.AssertParsingEquals(JList.Of("a"), JMap.Of("value", "a"));
         Node.AssertParsingEquals(JList.Of("a", "b"), JMap.Of("value", "a", "next", JMap.Of("value", "b")));
         Node.AssertParsingEquals(JList.Of("a", "b", "c"), JMap.Of("value", "a", "next", JMap.Of("value", "b", "next", JMap.Of("value", "c"))));
     }
 
-    private record Left(Optional<Right> next) {
-        public static readonly Codec<Left> Codec = RecordCodecBuilder.CreateCodec<Left>(i => i.Group(
-            Right.Codec.OptionalField("next").ForGetter<Left>(o => o.next)
-        ).Apply(i, n => new Left(n)));
+    private record Left(Optional<Right> next)
+    {
+        public static readonly Codec<Left> Codec = RecordCodecBuilder.CreateCodec<Left>(i => i.Group(Right.Codec.OptionalField("next").ForGetter<Left>(o => o.next)).Apply(i, n => new Left(n)));
 
         public int Count => 1 + next.Select(r => r.Depth).GetOrDefault(0);
 
-        public static Optional<Left> Create(int length) {
+        public static Optional<Left> Create(int length)
+        {
             return length == 0 ? Optional<Left>.Empty : Optional.Create(new Left(Right.Create(length - 1)));
         }
     }
 
-    private record Right(Optional<Left> next) {
-        public static readonly Codec<Right> Codec = Serialization.Codecs.Codec.CreateRecursive<Right>("Right", _ =>
-            RecordCodecBuilder.CreateCodec<Right>(i => i.Group(
-                Left.Codec.OptionalField("next").ForGetter<Right>(o => o.next)
-            ).Apply(i, n => new Right(n)))
+    private record Right(Optional<Left> next)
+    {
+        public static readonly Codec<Right> Codec = Serialization.Codecs.Codec.CreateRecursive<Right>(
+            "Right", _ =>
+                RecordCodecBuilder.CreateCodec<Right>(i => i.Group(Left.Codec.OptionalField("next").ForGetter<Right>(o => o.next)).Apply(i, n => new Right(n)))
         );
 
         public int Depth => 1 + next.Select(l => l.Count).GetOrDefault(0);
 
-        public static Optional<Right> Create(int depth) {
+        public static Optional<Right> Create(int depth)
+        {
             return depth == 0 ? Optional<Right>.Empty : Optional.Create(new Right(Left.Create(depth - 1)));
         }
 
-        public static IDictionary<string, object> CreateChain(int depth) {
+        public static IDictionary<string, object> CreateChain(int depth)
+        {
             return depth == 1 ? JMap.Of<string, object>() : JMap.Of<string, object>("next", CreateChain(depth - 1));
         }
 
-        public static void AssertParsingAtDepth(int depth) {
+        public static void AssertParsingAtDepth(int depth)
+        {
             IDictionary<string, object> asData = CreateChain(depth);
             TestDecode(depth, asData);
             TestEncode(depth, asData);
         }
 
-        private static void TestDecode(int depth, IDictionary<string, object> asData) {
+        private static void TestDecode(int depth, IDictionary<string, object> asData)
+        {
             Right parsed = FromDotnet(Codec, asData);
             Assert.AreEqual(depth, parsed.Depth, TestComparer);
         }
 
-        private static void TestEncode(int depth, IDictionary<string, object> asData) {
+        private static void TestEncode(int depth, IDictionary<string, object> asData)
+        {
             Right fresh = Create(depth).GetOrThrow(() => new AssertFailedException());
             Assert.AreEqual(asData, ToDotnet(Codec, fresh), TestComparer);
         }
     }
 
     [TestMethod]
-    public void MutuallyRecursiveCodecTest() {
+    public void MutuallyRecursiveCodecTest()
+    {
         Right.AssertParsingAtDepth(1);
         Right.AssertParsingAtDepth(2);
         Right.AssertParsingAtDepth(3);
     }
 
-    private class Variant {
+    private class Variant
+    {
         public static readonly Variant Foo = new(V.Foo);
         public static readonly Variant Bar = new(V.Bar);
 
@@ -501,9 +573,9 @@ public class CodecTest
         {
             _var = var;
         }
-        
+
         private readonly V _var;
-        
+
         private enum V
         {
             Foo,
@@ -512,18 +584,20 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void stringResolver_simple() {
+    public void stringResolver_simple()
+    {
         AssertRoundTrip(Variant.Codec, Variant.Foo, "foo");
         AssertRoundTrip(Variant.Codec, Variant.Bar, "bar");
         AssertFromDotnetFails(Variant.Codec, "baz");
     }
 
-    private record DispatchType {
+    private record DispatchType
+    {
         public static readonly DispatchType Any = new(DType.Any, "any", Serialization.Codecs.Codec.String);
-        public static readonly DispatchType LowerCase = new(DType.LowerCase,"lower_case", Serialization.Codecs.Codec.String.Validate(s => s.ToLowerInvariant().Equals(s, StringComparison.Ordinal) ? DataResult.CreateSuccess(s) : DataResult.CreateError<string>("Not lower case: " + s)));
-        public static readonly DispatchType UpperCase = new(DType.UpperCase,"upper_case", Serialization.Codecs.Codec.String.Validate(s => s.ToUpperInvariant().Equals(s, StringComparison.Ordinal) ? DataResult.CreateSuccess(s) : DataResult.CreateError<string>("Not upper case: " + s)));
-        public static readonly DispatchType Never = new(DType.Never,"never", Serialization.Codecs.Codec.String.Validate(_ => DataResult.CreateError<string>("No")));
-        public static readonly DispatchType NeverWithPartial = new(DType.NeverWithPartial,"never_with_partial", Serialization.Codecs.Codec.String.Validate(s => DataResult.CreateError("No", Optional.Create(s))));
+        public static readonly DispatchType LowerCase = new(DType.LowerCase, "lower_case", Serialization.Codecs.Codec.String.Validate(s => s.ToLowerInvariant().Equals(s, StringComparison.Ordinal) ? DataResult.CreateSuccess(s) : DataResult.CreateError<string>("Not lower case: " + s)));
+        public static readonly DispatchType UpperCase = new(DType.UpperCase, "upper_case", Serialization.Codecs.Codec.String.Validate(s => s.ToUpperInvariant().Equals(s, StringComparison.Ordinal) ? DataResult.CreateSuccess(s) : DataResult.CreateError<string>("Not upper case: " + s)));
+        public static readonly DispatchType Never = new(DType.Never, "never", Serialization.Codecs.Codec.String.Validate(_ => DataResult.CreateError<string>("No")));
+        public static readonly DispatchType NeverWithPartial = new(DType.NeverWithPartial, "never_with_partial", Serialization.Codecs.Codec.String.Validate(s => DataResult.CreateError("No", Optional.Create(s))));
 
         public static readonly Codec<DispatchType> Codec = Serialization.Codecs.Codec.CreateStringResolver(t => t.GetSerializedName(), str => Lookup(str));
         public static readonly Codec<DispatchType> CaseInsensitiveCodec = Serialization.Codecs.Codec.CreateStringResolver(t => t.GetSerializedName(), str => Lookup(str, true));
@@ -531,9 +605,10 @@ public class CodecTest
         public readonly DType Type;
         private readonly string _name;
         public readonly Codec<string> ElemCodec;
-        
 
-        DispatchType(DType dType, string name, Codec<string> elemCodec) {
+
+        DispatchType(DType dType, string name, Codec<string> elemCodec)
+        {
             Type = dType;
             _name = name;
             ElemCodec = elemCodec;
@@ -547,10 +622,11 @@ public class CodecTest
             return Values.FirstOrDefault(type => type.GetSerializedName().Equals(name, c));
         }
 
-        public string GetSerializedName() {
+        public string GetSerializedName()
+        {
             return _name;
         }
-        
+
         public enum DType
         {
             Any,
@@ -564,66 +640,73 @@ public class CodecTest
     private static readonly Codec<IDictionary<DispatchType, string>> DispatchedMapCodec = Codec.CreateDispatchedDictionary(DispatchType.Codec, t => t.ElemCodec);
 
     [TestMethod]
-    public void dispatchedMap_encode() {
+    public void dispatchedMap_encode()
+    {
         Assert.AreEqual(
             JMap.Of(
                 "any", "Some text",
                 "lower_case", "very quietly",
                 "upper_case", "NOT SHOUTING"
             ),
-            ToDotnet(DispatchedMapCodec, JMap.Of(
-                DispatchType.Any, "Some text",
-                DispatchType.LowerCase, "very quietly",
-                DispatchType.UpperCase, "NOT SHOUTING"
-            )),
+            ToDotnet(
+                DispatchedMapCodec, JMap.Of(
+                    DispatchType.Any, "Some text",
+                    DispatchType.LowerCase, "very quietly",
+                    DispatchType.UpperCase, "NOT SHOUTING"
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void dispatchedMap_decode() {
+    public void dispatchedMap_decode()
+    {
         Assert.AreEqual(
             JMap.Of(
                 DispatchType.Any, "Some text",
                 DispatchType.LowerCase, "very quietly",
                 DispatchType.UpperCase, "NOT SHOUTING"
             ),
-            FromDotnet(DispatchedMapCodec, JMap.Of(
-                "any", "Some text",
-                "lower_case", "very quietly",
-                "upper_case", "NOT SHOUTING"
-            )),
+            FromDotnet(
+                DispatchedMapCodec, JMap.Of(
+                    "any", "Some text",
+                    "lower_case", "very quietly",
+                    "upper_case", "NOT SHOUTING"
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void dispatchedMap_decodeInvalidType() {
-        AssertFromDotnetFails(DispatchedMapCodec, JMap.Of(
-            "invalid", "Some text"
-        ));
+    public void dispatchedMap_decodeInvalidType()
+    {
+        AssertFromDotnetFails(DispatchedMapCodec, JMap.Of("invalid", "Some text"));
     }
 
     [TestMethod]
-    public void dispatchedMap_decodeInvalidValue() {
-        AssertFromDotnetFails(DispatchedMapCodec, JMap.Of(
-            "lower_case", "SHOUTING"
-        ));
+    public void dispatchedMap_decodeInvalidValue()
+    {
+        AssertFromDotnetFails(DispatchedMapCodec, JMap.Of("lower_case", "SHOUTING"));
     }
 
     [TestMethod]
-    public void dispatchedMap_decodePartialResult() {
+    public void dispatchedMap_decodePartialResult()
+    {
         Assert.AreEqual(
             JMap.Of(
                 DispatchType.Any, "Some text",
                 DispatchType.UpperCase, "NOT SHOUTING"
             ),
-            FromDotnetOrPartial(DispatchedMapCodec, JMap.Of(
-                "any", "Some text",
-                "invalid", string.Empty,
-                "lower_case", "SHOUTING",
-                "upper_case", "NOT SHOUTING"
-            )),
+            FromDotnetOrPartial(
+                DispatchedMapCodec, JMap.Of(
+                    "any", "Some text",
+                    "invalid", string.Empty,
+                    "lower_case", "SHOUTING",
+                    "upper_case", "NOT SHOUTING"
+                )
+            ),
             TestComparer
         );
 
@@ -632,11 +715,13 @@ public class CodecTest
                 DispatchType.Any, "Some text",
                 DispatchType.UpperCase, "NOT SHOUTING"
             ),
-            FromDotnetOrPartial(DispatchedMapCodec, JMap.Of(
-                "invalid", string.Empty,
-                "any", "Some text",
-                "upper_case", "NOT SHOUTING"
-            )),
+            FromDotnetOrPartial(
+                DispatchedMapCodec, JMap.Of(
+                    "invalid", string.Empty,
+                    "any", "Some text",
+                    "upper_case", "NOT SHOUTING"
+                )
+            ),
             TestComparer
         );
     }
@@ -649,31 +734,36 @@ public class CodecTest
                 DispatchType.NeverWithPartial, "Fails with partial result",
                 DispatchType.Any, "Something else"
             ),
-            FromDotnetOrPartial(DispatchedMapCodec, JMap.Of(
-                "never_with_partial", "Fails with partial result",
-                "any", "Something else"
-            )),
+            FromDotnetOrPartial(
+                DispatchedMapCodec, JMap.Of(
+                    "never_with_partial", "Fails with partial result",
+                    "any", "Something else"
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void dispatchedMap_decodeRepeatedEntries() {
+    public void dispatchedMap_decodeRepeatedEntries()
+    {
         Codec<IDictionary<DispatchType, string>> dispatchedMapCodec = Codec.CreateDispatchedDictionary(DispatchType.CaseInsensitiveCodec, t => t.ElemCodec);
 
-        AssertFromDotnetFails(dispatchedMapCodec, JMap.Of(
-            "lower_case", "first",
-            "LOWER_CASE", "second"
-        ));
+        AssertFromDotnetFails(
+            dispatchedMapCodec, JMap.Of(
+                "lower_case", "first",
+                "LOWER_CASE", "second"
+            )
+        );
 
         Assert.AreEqual(
-            JMap.Of(
-                DispatchType.LowerCase, "first"
+            JMap.Of(DispatchType.LowerCase, "first"),
+            FromDotnetOrPartial(
+                dispatchedMapCodec, JMap.Of(
+                    "lower_case", "first",
+                    "LOWER_CASE", "first"
+                )
             ),
-            FromDotnetOrPartial(dispatchedMapCodec, JMap.Of(
-                "lower_case", "first",
-                "LOWER_CASE", "first"
-            )),
             TestComparer
         );
     }
@@ -681,20 +771,24 @@ public class CodecTest
     private record SimpleOptionals(
         Optional<string> str,
         Optional<int> integer
-    ) {
+    )
+    {
         public static readonly Codec<SimpleOptionals> StrictCodec = RecordCodecBuilder.CreateCodec<SimpleOptionals>(i => i.Group(
-            Codec.String.OptionalField("string").ForGetter<SimpleOptionals>(so => so.str),
-            Codec.Int.OptionalField("integer").ForGetter<SimpleOptionals>(so => so.integer)
-        ).Apply(i, (s, oi) => new SimpleOptionals(s, oi)));
+                Codec.String.OptionalField("string").ForGetter<SimpleOptionals>(so => so.str),
+                Codec.Int.OptionalField("integer").ForGetter<SimpleOptionals>(so => so.integer)
+            ).Apply(i, (s, oi) => new SimpleOptionals(s, oi))
+        );
 
         public static readonly Codec<SimpleOptionals> LenientCodec = RecordCodecBuilder.CreateCodec<SimpleOptionals>(i => i.Group(
-            Codec.String.OptionalField("string", true).ForGetter<SimpleOptionals>(so => so.str),
-            Codec.Int.OptionalField("integer", true).ForGetter<SimpleOptionals>(so => so.integer)
-        ).Apply(i, (s, oi) => new SimpleOptionals(s, oi)));
+                Codec.String.OptionalField("string", true).ForGetter<SimpleOptionals>(so => so.str),
+                Codec.Int.OptionalField("integer", true).ForGetter<SimpleOptionals>(so => so.integer)
+            ).Apply(i, (s, oi) => new SimpleOptionals(s, oi))
+        );
     }
 
     [TestMethod]
-    public void optionalField_roundTrip() {
+    public void optionalField_roundTrip()
+    {
         AssertRoundTrips(
             JList.Of(SimpleOptionals.StrictCodec, SimpleOptionals.LenientCodec),
             new SimpleOptionals(Optional.Create("foo"), Optional.Create(1)),
@@ -706,14 +800,13 @@ public class CodecTest
         AssertRoundTrips(
             JList.Of(SimpleOptionals.StrictCodec, SimpleOptionals.LenientCodec),
             new SimpleOptionals(Optional<string>.Empty, Optional.Create(1)),
-            JMap.Of(
-                "integer", 1
-            )
+            JMap.Of("integer", 1)
         );
     }
 
     [TestMethod]
-    public void optionalField_strictInvalidValues() {
+    public void optionalField_strictInvalidValues()
+    {
         AssertFromDotnetFails(
             SimpleOptionals.StrictCodec,
             JMap.Of("string", 54)
@@ -734,52 +827,59 @@ public class CodecTest
         var r = SimpleOptionals.StrictCodec.Parse(DotnetOps.Instance, t);
         Assert.AreEqual(
             new SimpleOptionals(Optional<string>.Empty, Optional.Create(23)),
-            FromDotnetOrPartial(SimpleOptionals.StrictCodec, JMap.Of(
-                "string", false,
-                "integer", 23
-            )),
+            FromDotnetOrPartial(
+                SimpleOptionals.StrictCodec, JMap.Of(
+                    "string", false,
+                    "integer", 23
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void optionalField_lenientInvalidValues() {
+    public void optionalField_lenientInvalidValues()
+    {
         Assert.AreEqual(
             new SimpleOptionals(Optional<string>.Empty, Optional.Create(23)),
-            FromDotnet(SimpleOptionals.LenientCodec, JMap.Of(
-                "string", false,
-                "integer", 23
-            ))
+            FromDotnet(
+                SimpleOptionals.LenientCodec, JMap.Of(
+                    "string", false,
+                    "integer", 23
+                )
+            )
         );
     }
 
     private record NestedStrictOptionals(
         Optional<SimpleOptionals> nested
-    ) {
-        public static readonly Codec<NestedStrictOptionals> TopLevelStrictCodec = RecordCodecBuilder.CreateCodec<NestedStrictOptionals>(i => i.Group(
-            SimpleOptionals.StrictCodec.OptionalField("nested").ForGetter<NestedStrictOptionals>(n => n.nested)
-        ).Apply(i, n => new NestedStrictOptionals(n)));
+    )
+    {
+        public static readonly Codec<NestedStrictOptionals> TopLevelStrictCodec = RecordCodecBuilder.CreateCodec<NestedStrictOptionals>(i => i.Group(SimpleOptionals.StrictCodec.OptionalField("nested").ForGetter<NestedStrictOptionals>(n => n.nested)).Apply(i, n => new NestedStrictOptionals(n)));
 
-        public static readonly Codec<NestedStrictOptionals> TopLevelLenientCodec = RecordCodecBuilder.CreateCodec<NestedStrictOptionals>(i => i.Group(
-            SimpleOptionals.StrictCodec.OptionalField("nested", true).ForGetter<NestedStrictOptionals>(n => n.nested)
-        ).Apply(i, n => new NestedStrictOptionals(n)));
+        public static readonly Codec<NestedStrictOptionals> TopLevelLenientCodec = RecordCodecBuilder.CreateCodec<NestedStrictOptionals>(i => i.Group(SimpleOptionals.StrictCodec.OptionalField("nested", true).ForGetter<NestedStrictOptionals>(n => n.nested)).Apply(i, n => new NestedStrictOptionals(n)));
     }
 
     [TestMethod]
-    public void optionalField_nestedStrictOptionals() {
+    public void optionalField_nestedStrictOptionals()
+    {
         Assert.AreEqual(
             new NestedStrictOptionals(
-                Optional.Create(new SimpleOptionals(
-                    Optional.Create("foo"),
-                    Optional.Create(1)
-                ))
-            ),
-            FromDotnet(NestedStrictOptionals.TopLevelStrictCodec, JMap.Of(
-                "nested", JMap.Of(
-                    "string", "foo",
-                    "integer", 1
+                Optional.Create(
+                    new SimpleOptionals(
+                        Optional.Create("foo"),
+                        Optional.Create(1)
+                    )
                 )
-            )),
+            ),
+            FromDotnet(
+                NestedStrictOptionals.TopLevelStrictCodec, JMap.Of(
+                    "nested", JMap.Of(
+                        "string", "foo",
+                        "integer", 1
+                    )
+                )
+            ),
             TestComparer
         );
     }
@@ -789,10 +889,12 @@ public class CodecTest
     {
         Assert.AreEqual(
             new NestedStrictOptionals(
-                Optional.Create(new SimpleOptionals(
-                    Optional.Create("foo"),
-                    Optional<int>.Empty
-                ))
+                Optional.Create(
+                    new SimpleOptionals(
+                        Optional.Create("foo"),
+                        Optional<int>.Empty
+                    )
+                )
             ),
             FromDotnetOrPartial(
                 NestedStrictOptionals.TopLevelStrictCodec, JMap.Of(
@@ -806,28 +908,31 @@ public class CodecTest
         );
 
         Assert.AreEqual(
-            new NestedStrictOptionals(
-                Optional<SimpleOptionals>.Empty
-            ),
-            FromDotnet(NestedStrictOptionals.TopLevelLenientCodec, JMap.Of(
-                "nested", JMap.Of(
-                    "string", "foo",
-                    "integer", "not an int"
+            new NestedStrictOptionals(Optional<SimpleOptionals>.Empty),
+            FromDotnet(
+                NestedStrictOptionals.TopLevelLenientCodec, JMap.Of(
+                    "nested", JMap.Of(
+                        "string", "foo",
+                        "integer", "not an int"
+                    )
                 )
-            )),
+            ),
             TestComparer
         );
     }
 
-    private record Simple(string str, int integer) {
+    private record Simple(string str, int integer)
+    {
         public static readonly Codec<Simple> Codec = RecordCodecBuilder.CreateCodec<Simple>(i => i.Group(
-            Serialization.Codecs.Codec.String.Field("string").ForGetter<Simple>(s => s.str),
-            Serialization.Codecs.Codec.Int.Field("integer").ForGetter<Simple>(s => s.integer)
-        ).Apply(i, (s, oi) => new Simple(s, oi)));
+                Serialization.Codecs.Codec.String.Field("string").ForGetter<Simple>(s => s.str),
+                Serialization.Codecs.Codec.Int.Field("integer").ForGetter<Simple>(s => s.integer)
+            ).Apply(i, (s, oi) => new Simple(s, oi))
+        );
     }
 
     [TestMethod]
-    public void assumeMap_recordCodec() {
+    public void assumeMap_recordCodec()
+    {
         AssertRoundTrips(
             JList.Of(
                 Simple.Codec,
@@ -849,7 +954,8 @@ public class CodecTest
         );
     }
 
-    private static Codec<TA> ObfuscateCodecType<TA>(Codec<TA> codec) {
+    private static Codec<TA> ObfuscateCodecType<TA>(Codec<TA> codec)
+    {
         return Codec.Create(codec, codec);
     }
 
@@ -858,36 +964,42 @@ public class CodecTest
     /// So this test performs different from mojang's
     /// </summary>
     [TestMethod]
-    public void assumeMap_primitiveCodec() {
+    public void assumeMap_primitiveCodec()
+    {
         // This codec should be original Codec.Int
         Codec<int> codec = MapCodec.AssumeMapUnsafe(Codec.Int).AsCodec();
         AssertRoundTrip(codec, 123, 123);
         AssertRoundTrip(codec, 123, 123);
     }
 
-    private record RecordWith5Fields(int f1, int f2, int f3, int f4, int f5) {
+    private record RecordWith5Fields(int f1, int f2, int f3, int f4, int f5)
+    {
         public static readonly Codec<RecordWith5Fields> Codec = RecordCodecBuilder.CreateCodec<RecordWith5Fields>(i => i.Group(
-            Serialization.Codecs.Codec.Int.Field("f1").ForGetter<RecordWith5Fields>(r => r.f1),
-            Serialization.Codecs.Codec.Int.Field("f2").ForGetter<RecordWith5Fields>(r => r.f2),
-            Serialization.Codecs.Codec.Int.Field("f3").ForGetter<RecordWith5Fields>(r => r.f3),
-            Serialization.Codecs.Codec.Int.Field("f4").ForGetter<RecordWith5Fields>(r => r.f4),
-            Serialization.Codecs.Codec.Int.Field("f5").ForGetter<RecordWith5Fields>(r => r.f5)
-        ).Apply(i, (f1, f2, f3, f4, f5) => new RecordWith5Fields(f1, f2, f3, f4, f5)));
+                Serialization.Codecs.Codec.Int.Field("f1").ForGetter<RecordWith5Fields>(r => r.f1),
+                Serialization.Codecs.Codec.Int.Field("f2").ForGetter<RecordWith5Fields>(r => r.f2),
+                Serialization.Codecs.Codec.Int.Field("f3").ForGetter<RecordWith5Fields>(r => r.f3),
+                Serialization.Codecs.Codec.Int.Field("f4").ForGetter<RecordWith5Fields>(r => r.f4),
+                Serialization.Codecs.Codec.Int.Field("f5").ForGetter<RecordWith5Fields>(r => r.f5)
+            ).Apply(i, (f1, f2, f3, f4, f5) => new RecordWith5Fields(f1, f2, f3, f4, f5))
+        );
     }
 
-    private record RecordWith7Fields(int f1, int f2, int f3, int f4, int f5, int f6, int f7) {
+    private record RecordWith7Fields(int f1, int f2, int f3, int f4, int f5, int f6, int f7)
+    {
         public static readonly Codec<RecordWith7Fields> Codec = RecordCodecBuilder.CreateCodec<RecordWith7Fields>(i => i.Group(
-            Serialization.Codecs.Codec.Int.Field("f1").ForGetter<RecordWith7Fields>(r => r.f1),
-            Serialization.Codecs.Codec.Int.Field("f2").ForGetter<RecordWith7Fields>(r => r.f2),
-            Serialization.Codecs.Codec.Int.Field("f3").ForGetter<RecordWith7Fields>(r => r.f3),
-            Serialization.Codecs.Codec.Int.Field("f4").ForGetter<RecordWith7Fields>(r => r.f4),
-            Serialization.Codecs.Codec.Int.Field("f5").ForGetter<RecordWith7Fields>(r => r.f5),
-            Serialization.Codecs.Codec.Int.Field("f6").ForGetter<RecordWith7Fields>(r => r.f6),
-            Serialization.Codecs.Codec.Int.Field("f7").ForGetter<RecordWith7Fields>(r => r.f7)
-        ).Apply(i, (f1, f2, f3, f4, f5, f6, f7) => new RecordWith7Fields(f1, f2, f3, f4, f5, f6, f7)));
+                Serialization.Codecs.Codec.Int.Field("f1").ForGetter<RecordWith7Fields>(r => r.f1),
+                Serialization.Codecs.Codec.Int.Field("f2").ForGetter<RecordWith7Fields>(r => r.f2),
+                Serialization.Codecs.Codec.Int.Field("f3").ForGetter<RecordWith7Fields>(r => r.f3),
+                Serialization.Codecs.Codec.Int.Field("f4").ForGetter<RecordWith7Fields>(r => r.f4),
+                Serialization.Codecs.Codec.Int.Field("f5").ForGetter<RecordWith7Fields>(r => r.f5),
+                Serialization.Codecs.Codec.Int.Field("f6").ForGetter<RecordWith7Fields>(r => r.f6),
+                Serialization.Codecs.Codec.Int.Field("f7").ForGetter<RecordWith7Fields>(r => r.f7)
+            ).Apply(i, (f1, f2, f3, f4, f5, f6, f7) => new RecordWith7Fields(f1, f2, f3, f4, f5, f6, f7))
+        );
     }
 
-    private static void AssertMapOrderEqual(IDictionary expected, object actual) {
+    private static void AssertMapOrderEqual(IDictionary expected, object actual)
+    {
         Assert.IsTrue(actual is IDictionary);
         object[] es1 = expected.Cast<object>().ToArray();
         object[] es2 = ((IDictionary) actual).Cast<object>().ToArray();
@@ -895,7 +1007,8 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void recordCodec_maintainFieldOrder() {
+    public void recordCodec_maintainFieldOrder()
+    {
         AssertMapOrderEqual(
             (IDictionary) JMap.Of(
                 "f1", 5,
@@ -921,9 +1034,11 @@ public class CodecTest
         );
     }
 
-    private record DispatchedValue(DispatchType type, string value) {
-        public static readonly Codec<DispatchedValue> Codec = DispatchType.Codec.Dispatch(v => v.type, t =>
-            t.ElemCodec.Field("value").XMap(s => new DispatchedValue(t, s), v => v.value)
+    private record DispatchedValue(DispatchType type, string value)
+    {
+        public static readonly Codec<DispatchedValue> Codec = DispatchType.Codec.Dispatch(
+            v => v.type, t =>
+                t.ElemCodec.Field("value").XMap(s => new DispatchedValue(t, s), v => v.value)
         );
     }
 
@@ -946,42 +1061,51 @@ public class CodecTest
     }
 
     [TestMethod]
-    public void valueDispatch_decodeInvalidType() {
-        AssertFromDotnetFails(DispatchedValue.Codec, JMap.Of(
-            "type", "invalid",
-            "value", "Some text"
-        ));
+    public void valueDispatch_decodeInvalidType()
+    {
+        AssertFromDotnetFails(
+            DispatchedValue.Codec, JMap.Of(
+                "type", "invalid",
+                "value", "Some text"
+            )
+        );
     }
 
     [TestMethod]
-    public void valueDispatch_decodeMissingType() {
-        AssertFromDotnetFails(DispatchedValue.Codec, JMap.Of(
-            "value", "Some text"
-        ));
+    public void valueDispatch_decodeMissingType()
+    {
+        AssertFromDotnetFails(DispatchedValue.Codec, JMap.Of("value", "Some text"));
     }
 
     [TestMethod]
-    public void valueDispatch_decodeInvalidValue() {
-        AssertFromDotnetFails(DispatchedValue.Codec, JMap.Of(
-            "type", "lower_case",
-            "value", "SHOUTING"
-        ));
+    public void valueDispatch_decodeInvalidValue()
+    {
+        AssertFromDotnetFails(
+            DispatchedValue.Codec, JMap.Of(
+                "type", "lower_case",
+                "value", "SHOUTING"
+            )
+        );
     }
 
     [TestMethod]
-    public void valueDispatch_decodeInvalidValuePartialResult() {
+    public void valueDispatch_decodeInvalidValuePartialResult()
+    {
         Assert.AreEqual(
             new DispatchedValue(DispatchType.NeverWithPartial, "Some text"),
-            FromDotnetOrPartial(DispatchedValue.Codec, JMap.Of(
-                "type", "never_with_partial",
-                "value", "Some text"
-            )),
+            FromDotnetOrPartial(
+                DispatchedValue.Codec, JMap.Of(
+                    "type", "never_with_partial",
+                    "value", "Some text"
+                )
+            ),
             TestComparer
         );
     }
 
     [TestMethod]
-    public void unitMapCodec_Encoding() {
+    public void unitMapCodec_Encoding()
+    {
         object marker = new object();
 
         AssertRoundTrip(
